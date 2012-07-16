@@ -6,7 +6,7 @@ namespace LtlSharp
 {
 	#region Interface
 
-	public interface Expression
+	public interface LTLFormula
 	{
 	}
 
@@ -14,39 +14,39 @@ namespace LtlSharp
 
 	#region Abstract classes
 
-	public abstract class UnaryOperator : Expression
+	public abstract class UnaryOperator : LTLFormula
 	{
-		public Expression Enclosed { get; private set; }
+		public LTLFormula Enclosed { get; private set; }
 
-		public UnaryOperator (Expression enclosed)
+		public UnaryOperator (LTLFormula enclosed)
 		{
 			Enclosed = enclosed;
 		}
 	}
 
-	public abstract class BinaryOperator : Expression
+	public abstract class BinaryOperator : LTLFormula
 	{
-		public Expression Left  { get; private set; }
-		public Expression Right { get; private set; }
+		public LTLFormula Left  { get; private set; }
+		public LTLFormula Right { get; private set; }
 
-		public BinaryOperator (Expression left, Expression right)
+		public BinaryOperator (LTLFormula left, LTLFormula right)
 		{
 			Left = left; Right = right;
 		}
 	}
 
-	public abstract class NaryOperator : Expression
+	public abstract class NaryOperator : LTLFormula
 	{
-		public IList<Expression> Expressions  { get; private set; }
+		public IList<LTLFormula> Expressions  { get; private set; }
 
-		public NaryOperator (params Expression[] expressions)
+		public NaryOperator (params LTLFormula[] expressions)
 		{
-			Expressions = new List<Expression> ();
+			Expressions = new List<LTLFormula> ();
 			foreach (var e in expressions)
 				Expressions.Add (e);
 		}
 
-		public void Push (Expression expression)
+		public void Push (LTLFormula expression)
 		{
 			Expressions.Add (expression);
 		}
@@ -56,7 +56,7 @@ namespace LtlSharp
 
 	#region Logic operators
 
-	public class Proposition : Expression
+	public class Proposition : LTLFormula
 	{
 		public string Name  { get; private set; }
 
@@ -73,35 +73,35 @@ namespace LtlSharp
 
 	public class Implication : BinaryOperator
 	{
-		public Implication (Expression left, Expression right)
+		public Implication (LTLFormula left, LTLFormula right)
 			: base (left, right)
 		{}
 	}
 
 	public class Conjunction : NaryOperator
 	{
-		public Conjunction (params Expression[] expressions)
+		public Conjunction (params LTLFormula[] expressions)
 			: base (expressions)
 		{}
 	}
 
 	public class Disjunction : NaryOperator
 	{
-		public Disjunction (params Expression[] expressions)
+		public Disjunction (params LTLFormula[] expressions)
 			: base (expressions)
 		{}
 	}
 
 	public class Negation : UnaryOperator
 	{
-		public Negation (Expression expression)
+		public Negation (LTLFormula expression)
 			: base (expression)
 		{}
 	}
 
 	public class ParenthesedExpression : UnaryOperator
 	{
-		public ParenthesedExpression (Expression expression)
+		public ParenthesedExpression (LTLFormula expression)
 			: base (expression)
 		{}
 	}
@@ -112,42 +112,42 @@ namespace LtlSharp
 
 	public class Next : UnaryOperator
 	{
-		public Next (Expression expression)
+		public Next (LTLFormula expression)
 			: base (expression)
 		{}
 	}
 
 	public class Finally : UnaryOperator
 	{
-		public Finally (Expression expression)
+		public Finally (LTLFormula expression)
 			: base (expression)
 		{}
 	}
 
 	public class Globally : UnaryOperator
 	{
-		public Globally (Expression expression)
+		public Globally (LTLFormula expression)
 			: base (expression)
 		{}
 	}
 
 	public class Until : BinaryOperator
 	{
-		public Until (Expression left, Expression right)
+		public Until (LTLFormula left, LTLFormula right)
 			: base (left, right)
 		{}
 	}
 	
 	public class Release : BinaryOperator
 	{
-		public Release (Expression left, Expression right)
+		public Release (LTLFormula left, LTLFormula right)
 			: base (left, right)
 		{}
 	}
 	
 	public class Unless : BinaryOperator
 	{
-		public Unless (Expression left, Expression right)
+		public Unless (LTLFormula left, LTLFormula right)
 			: base (left, right)
 		{}
 	}

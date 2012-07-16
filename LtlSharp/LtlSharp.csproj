@@ -41,10 +41,13 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Expression.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="LTLLexer.cs" />
     <Compile Include="LTLParser.cs" />
+    <Compile Include="LTLFormula.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="LTL.g" />
+  </ItemGroup>
 </Project>

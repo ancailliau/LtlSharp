@@ -93,7 +93,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 	#region Rules
 	public sealed partial class parse_return : AstParserRuleReturnScope<object, IToken>
 	{
-		public Expression value;
+		public LTLFormula value;
 		public parse_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
@@ -139,7 +139,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 			EOF2_tree = (object)adaptor.Create(EOF2);
 			adaptor.AddChild(root_0, EOF2_tree);
 			DebugLocation(12, 18);
-			retval.value = (formula1!=null?formula1.value:default(Expression));
+			retval.value = (formula1!=null?formula1.value:default(LTLFormula));
 
 			}
 
@@ -171,7 +171,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 	private sealed partial class formula_return : AstParserRuleReturnScope<object, IToken>
 	{
-		public Expression value;
+		public LTLFormula value;
 		public formula_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
@@ -211,7 +211,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 			adaptor.AddChild(root_0, f.Tree);
 			DebugLocation(16, 17);
-			retval.value = (f!=null?f.value:default(Expression));
+			retval.value = (f!=null?f.value:default(LTLFormula));
 
 			}
 
@@ -243,7 +243,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 	private sealed partial class binary_return : AstParserRuleReturnScope<object, IToken>
 	{
-		public Expression value;
+		public LTLFormula value;
 		public binary_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
@@ -290,7 +290,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 			adaptor.AddChild(root_0, a.Tree);
 			DebugLocation(20, 22);
-			 retval.value = (a!=null?a.value:default(Expression)); 
+			 retval.value = (a!=null?a.value:default(LTLFormula)); 
 			DebugLocation(21, 6);
 			// ./LtlSharp/LTL.g:21:6: ( 'U' b= binary | 'R' b= binary | 'W' b= binary )?
 			int alt1=4;
@@ -333,7 +333,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 				adaptor.AddChild(root_0, b.Tree);
 				DebugLocation(21, 23);
-				 retval.value = new Until ((a!=null?a.value:default(Expression)), (b!=null?b.value:default(Expression))); 
+				 retval.value = new Until ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -352,7 +352,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 				adaptor.AddChild(root_0, b.Tree);
 				DebugLocation(22, 23);
-				 retval.value = new Release ((a!=null?a.value:default(Expression)), (b!=null?b.value:default(Expression))); 
+				 retval.value = new Release ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -371,7 +371,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 				adaptor.AddChild(root_0, b.Tree);
 				DebugLocation(23, 23);
-				 retval.value = new Unless ((a!=null?a.value:default(Expression)), (b!=null?b.value:default(Expression))); 
+				 retval.value = new Unless ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -410,7 +410,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 	private sealed partial class implication_return : AstParserRuleReturnScope<object, IToken>
 	{
-		public Expression value;
+		public LTLFormula value;
 		public implication_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
@@ -453,7 +453,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 			adaptor.AddChild(root_0, a.Tree);
 			DebugLocation(28, 22);
-			 retval.value = (a!=null?a.value:default(Expression)); 
+			 retval.value = (a!=null?a.value:default(LTLFormula)); 
 			DebugLocation(28, 45);
 			// ./LtlSharp/LTL.g:28:45: ( '->' b= implication )?
 			int alt2=2;
@@ -483,7 +483,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 				adaptor.AddChild(root_0, b.Tree);
 				DebugLocation(28, 67);
-				 retval.value = new Implication ((a!=null?a.value:default(Expression)), (b!=null?b.value:default(Expression))); 
+				 retval.value = new Implication ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -522,7 +522,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 	private sealed partial class conjunction_return : AstParserRuleReturnScope<object, IToken>
 	{
-		public Expression value;
+		public LTLFormula value;
 		public conjunction_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
@@ -565,7 +565,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 			adaptor.AddChild(root_0, a.Tree);
 			DebugLocation(32, 22);
-			 retval.value = (a!=null?a.value:default(Expression)); 
+			 retval.value = (a!=null?a.value:default(LTLFormula)); 
 			DebugLocation(32, 45);
 			// ./LtlSharp/LTL.g:32:45: ( '&' b= conjunction )?
 			int alt3=2;
@@ -595,7 +595,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 				adaptor.AddChild(root_0, b.Tree);
 				DebugLocation(32, 66);
-				 if (retval.value.GetType() == typeof(Conjunction)) { ((Conjunction) retval.value).Push ((b!=null?b.value:default(Expression))); } else { retval.value = new Conjunction (retval.value, (b!=null?b.value:default(Expression))); } 
+				 if (retval.value.GetType() == typeof(Conjunction)) { ((Conjunction) retval.value).Push ((b!=null?b.value:default(LTLFormula))); } else { retval.value = new Conjunction (retval.value, (b!=null?b.value:default(LTLFormula))); } 
 
 				}
 				break;
@@ -634,7 +634,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 	private sealed partial class disjunction_return : AstParserRuleReturnScope<object, IToken>
 	{
-		public Expression value;
+		public LTLFormula value;
 		public disjunction_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
@@ -677,7 +677,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 			adaptor.AddChild(root_0, a.Tree);
 			DebugLocation(36, 16);
-			 retval.value = (a!=null?a.value:default(Expression)); 
+			 retval.value = (a!=null?a.value:default(LTLFormula)); 
 			DebugLocation(36, 39);
 			// ./LtlSharp/LTL.g:36:39: ( '|' b= disjunction )?
 			int alt4=2;
@@ -707,7 +707,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 				adaptor.AddChild(root_0, b.Tree);
 				DebugLocation(36, 60);
-				 if (retval.value.GetType() == typeof(Disjunction)) { ((Disjunction) retval.value).Push ((b!=null?b.value:default(Expression))); } else { retval.value = new Disjunction (retval.value, (b!=null?b.value:default(Expression))); } 
+				 if (retval.value.GetType() == typeof(Disjunction)) { ((Disjunction) retval.value).Push ((b!=null?b.value:default(LTLFormula))); } else { retval.value = new Disjunction (retval.value, (b!=null?b.value:default(LTLFormula))); } 
 
 				}
 				break;
@@ -746,7 +746,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 	private sealed partial class unary_return : AstParserRuleReturnScope<object, IToken>
 	{
-		public Expression value;
+		public LTLFormula value;
 		public unary_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
@@ -837,7 +837,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 				adaptor.AddChild(root_0, atom9.Tree);
 				DebugLocation(40, 11);
-				 retval.value = (atom9!=null?atom9.value:default(Expression)); 
+				 retval.value = (atom9!=null?atom9.value:default(LTLFormula)); 
 
 				}
 				break;
@@ -858,7 +858,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 				adaptor.AddChild(root_0, a.Tree);
 				DebugLocation(41, 19);
-				 retval.value = new Negation ((a!=null?a.value:default(Expression))); 
+				 retval.value = new Negation ((a!=null?a.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -879,7 +879,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 				adaptor.AddChild(root_0, a.Tree);
 				DebugLocation(42, 19);
-				 retval.value = new Next ((a!=null?a.value:default(Expression))); 
+				 retval.value = new Next ((a!=null?a.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -900,7 +900,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 				adaptor.AddChild(root_0, a.Tree);
 				DebugLocation(43, 19);
-				 retval.value = new Finally ((a!=null?a.value:default(Expression))); 
+				 retval.value = new Finally ((a!=null?a.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -921,7 +921,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 				adaptor.AddChild(root_0, a.Tree);
 				DebugLocation(44, 19);
-				 retval.value = new Globally ((a!=null?a.value:default(Expression))); 
+				 retval.value = new Globally ((a!=null?a.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -955,7 +955,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 	private sealed partial class atom_return : AstParserRuleReturnScope<object, IToken>
 	{
-		public Expression value;
+		public LTLFormula value;
 		public atom_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
@@ -1046,7 +1046,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 				char_literal17_tree = (object)adaptor.Create(char_literal17);
 				adaptor.AddChild(root_0, char_literal17_tree);
 				DebugLocation(49, 21);
-				 retval.value = new ParenthesedExpression ((formula16!=null?formula16.value:default(Expression))); 
+				 retval.value = new ParenthesedExpression ((formula16!=null?formula16.value:default(LTLFormula))); 
 
 				}
 				break;

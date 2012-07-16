@@ -5,7 +5,7 @@ namespace LtlSharp
 {
 	public class Parser
 	{
-		public static Expression Parse (string expression)
+		public static LTLFormula Parse (string expression)
 		{
 			var input = new ANTLRStringStream(expression); 
 			var lexer = new LTLLexer(input);
