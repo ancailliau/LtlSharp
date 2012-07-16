@@ -13,25 +13,31 @@ public parse returns [LTLFormula value]
   ;
   
 formula returns [LTLFormula value]
-  :  f = equivalence {$value = $f.value;}
+  :  f = strongbinary {$value = $f.value;}
   ;
 
-equivalence returns [LTLFormula value]
+strongbinary returns [LTLFormula value]
   :  a = binary { $value = $a.value; } 
-     ('<->' b = equivalence { $value = new Equivalence ($a.value, $b.value); })?
+     ( 
+       '<=>' b = strongbinary { $value = new StrongEquivalence ($a.value, $b.value); }
+       | '=>' b = strongbinary { $value = new StrongImplication ($a.value, $b.value); }
+     )?
   ;
 
 binary returns [LTLFormula value]
-  :  a = implication { $value = $a.value; } 
+  :  a = implyequiv { $value = $a.value; } 
      ( 'U' b = binary { $value = new Until ($a.value, $b.value); }
      | 'R' b = binary { $value = new Release ($a.value, $b.value); }
      | 'W' b = binary { $value = new Unless ($a.value, $b.value); }
      )?
   ;
     
-implication returns [LTLFormula value]
+implyequiv returns [LTLFormula value]
   :  a = conjunction { $value = $a.value; } 
-     ('->' b = implication { $value = new Implication ($a.value, $b.value); })?
+     ( 
+       '<->' b = implyequiv { $value = new Equivalence ($a.value, $b.value); }
+       | '->' b = implyequiv { $value = new Implication ($a.value, $b.value); }
+     )?
   ;
   
 conjunction returns [LTLFormula value]

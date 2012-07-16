@@ -158,6 +158,20 @@ namespace LtlSharp
 			: base (left, right)
 		{}
 	}
+	
+	public class StrongEquivalence : BinaryOperator
+	{
+		public StrongEquivalence (LTLFormula left, LTLFormula right)
+			: base (left, right)
+		{}
+	}
+	
+	public class StrongImplication : BinaryOperator
+	{
+		public StrongImplication (LTLFormula left, LTLFormula right)
+			: base (left, right)
+		{}
+	}
 
 	#endregion
 }

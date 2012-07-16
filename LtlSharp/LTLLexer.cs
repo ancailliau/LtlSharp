@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// $ANTLR 3.4 ./LtlSharp/LTL.g 2012-07-16 07:52:30
+// $ANTLR 3.4 ./LtlSharp/LTL.g 2012-07-16 08:30:13
 
 // The variable 'variable' is assigned but its value is never used.
 #pragma warning disable 219
@@ -44,6 +44,8 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 	public const int T__15=15;
 	public const int T__16=16;
 	public const int T__17=17;
+	public const int T__18=18;
+	public const int T__19=19;
 	public const int PROPOSITION=4;
 
     // delegates
@@ -298,12 +300,13 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 		{
 			int _type = T__11;
 			int _channel = DefaultTokenChannel;
-			// ./LtlSharp/LTL.g:15:7: ( 'F' )
+			// ./LtlSharp/LTL.g:15:7: ( '<=>' )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:15:9: 'F'
+			// ./LtlSharp/LTL.g:15:9: '<=>'
 			{
 			DebugLocation(15, 9);
-			Match('F'); 
+			Match("<=>"); 
+
 
 			}
 
@@ -333,12 +336,13 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 		{
 			int _type = T__12;
 			int _channel = DefaultTokenChannel;
-			// ./LtlSharp/LTL.g:16:7: ( 'G' )
+			// ./LtlSharp/LTL.g:16:7: ( '=>' )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:16:9: 'G'
+			// ./LtlSharp/LTL.g:16:9: '=>'
 			{
 			DebugLocation(16, 9);
-			Match('G'); 
+			Match("=>"); 
+
 
 			}
 
@@ -368,12 +372,12 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 		{
 			int _type = T__13;
 			int _channel = DefaultTokenChannel;
-			// ./LtlSharp/LTL.g:17:7: ( 'R' )
+			// ./LtlSharp/LTL.g:17:7: ( 'F' )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:17:9: 'R'
+			// ./LtlSharp/LTL.g:17:9: 'F'
 			{
 			DebugLocation(17, 9);
-			Match('R'); 
+			Match('F'); 
 
 			}
 
@@ -403,12 +407,12 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 		{
 			int _type = T__14;
 			int _channel = DefaultTokenChannel;
-			// ./LtlSharp/LTL.g:18:7: ( 'U' )
+			// ./LtlSharp/LTL.g:18:7: ( 'G' )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:18:9: 'U'
+			// ./LtlSharp/LTL.g:18:9: 'G'
 			{
 			DebugLocation(18, 9);
-			Match('U'); 
+			Match('G'); 
 
 			}
 
@@ -438,12 +442,12 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 		{
 			int _type = T__15;
 			int _channel = DefaultTokenChannel;
-			// ./LtlSharp/LTL.g:19:7: ( 'W' )
+			// ./LtlSharp/LTL.g:19:7: ( 'R' )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:19:9: 'W'
+			// ./LtlSharp/LTL.g:19:9: 'R'
 			{
 			DebugLocation(19, 9);
-			Match('W'); 
+			Match('R'); 
 
 			}
 
@@ -473,12 +477,12 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 		{
 			int _type = T__16;
 			int _channel = DefaultTokenChannel;
-			// ./LtlSharp/LTL.g:20:7: ( 'X' )
+			// ./LtlSharp/LTL.g:20:7: ( 'U' )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:20:9: 'X'
+			// ./LtlSharp/LTL.g:20:9: 'U'
 			{
 			DebugLocation(20, 9);
-			Match('X'); 
+			Match('U'); 
 
 			}
 
@@ -508,12 +512,12 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 		{
 			int _type = T__17;
 			int _channel = DefaultTokenChannel;
-			// ./LtlSharp/LTL.g:21:7: ( '|' )
+			// ./LtlSharp/LTL.g:21:7: ( 'W' )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:21:9: '|'
+			// ./LtlSharp/LTL.g:21:9: 'W'
 			{
 			DebugLocation(21, 9);
-			Match('|'); 
+			Match('W'); 
 
 			}
 
@@ -529,6 +533,76 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 	}
 	// $ANTLR end "T__17"
 
+	partial void EnterRule_T__18();
+	partial void LeaveRule_T__18();
+
+	// $ANTLR start "T__18"
+	[GrammarRule("T__18")]
+	private void mT__18()
+	{
+		EnterRule_T__18();
+		EnterRule("T__18", 14);
+		TraceIn("T__18", 14);
+		try
+		{
+			int _type = T__18;
+			int _channel = DefaultTokenChannel;
+			// ./LtlSharp/LTL.g:22:7: ( 'X' )
+			DebugEnterAlt(1);
+			// ./LtlSharp/LTL.g:22:9: 'X'
+			{
+			DebugLocation(22, 9);
+			Match('X'); 
+
+			}
+
+			state.type = _type;
+			state.channel = _channel;
+		}
+		finally
+		{
+			TraceOut("T__18", 14);
+			LeaveRule("T__18", 14);
+			LeaveRule_T__18();
+		}
+	}
+	// $ANTLR end "T__18"
+
+	partial void EnterRule_T__19();
+	partial void LeaveRule_T__19();
+
+	// $ANTLR start "T__19"
+	[GrammarRule("T__19")]
+	private void mT__19()
+	{
+		EnterRule_T__19();
+		EnterRule("T__19", 15);
+		TraceIn("T__19", 15);
+		try
+		{
+			int _type = T__19;
+			int _channel = DefaultTokenChannel;
+			// ./LtlSharp/LTL.g:23:7: ( '|' )
+			DebugEnterAlt(1);
+			// ./LtlSharp/LTL.g:23:9: '|'
+			{
+			DebugLocation(23, 9);
+			Match('|'); 
+
+			}
+
+			state.type = _type;
+			state.channel = _channel;
+		}
+		finally
+		{
+			TraceOut("T__19", 15);
+			LeaveRule("T__19", 15);
+			LeaveRule_T__19();
+		}
+	}
+	// $ANTLR end "T__19"
+
 	partial void EnterRule_PROPOSITION();
 	partial void LeaveRule_PROPOSITION();
 
@@ -537,17 +611,17 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 	private void mPROPOSITION()
 	{
 		EnterRule_PROPOSITION();
-		EnterRule("PROPOSITION", 14);
-		TraceIn("PROPOSITION", 14);
+		EnterRule("PROPOSITION", 16);
+		TraceIn("PROPOSITION", 16);
 		try
 		{
 			int _type = PROPOSITION;
 			int _channel = DefaultTokenChannel;
-			// ./LtlSharp/LTL.g:60:13: ( ( 'a' .. 'z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+			// ./LtlSharp/LTL.g:66:13: ( ( 'a' .. 'z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:60:15: ( 'a' .. 'z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+			// ./LtlSharp/LTL.g:66:15: ( 'a' .. 'z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
 			{
-			DebugLocation(60, 15);
+			DebugLocation(66, 15);
 			if ((input.LA(1)>='a' && input.LA(1)<='z'))
 			{
 				input.Consume();
@@ -560,8 +634,8 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 				throw mse;
 			}
 
-			DebugLocation(60, 26);
-			// ./LtlSharp/LTL.g:60:26: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+			DebugLocation(66, 26);
+			// ./LtlSharp/LTL.g:66:26: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
 			try { DebugEnterSubRule(1);
 			while (true)
 			{
@@ -582,7 +656,7 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 					DebugEnterAlt(1);
 					// ./LtlSharp/LTL.g:
 					{
-					DebugLocation(60, 26);
+					DebugLocation(66, 26);
 					input.Consume();
 
 
@@ -607,8 +681,8 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 		}
 		finally
 		{
-			TraceOut("PROPOSITION", 14);
-			LeaveRule("PROPOSITION", 14);
+			TraceOut("PROPOSITION", 16);
+			LeaveRule("PROPOSITION", 16);
 			LeaveRule_PROPOSITION();
 		}
 	}
@@ -616,8 +690,8 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 
 	public override void mTokens()
 	{
-		// ./LtlSharp/LTL.g:1:8: ( T__5 | T__6 | T__7 | T__8 | T__9 | T__10 | T__11 | T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | PROPOSITION )
-		int alt2=14;
+		// ./LtlSharp/LTL.g:1:8: ( T__5 | T__6 | T__7 | T__8 | T__9 | T__10 | T__11 | T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | PROPOSITION )
+		int alt2=16;
 		try { DebugEnterDecision(2, false);
 		switch (input.LA(1))
 		{
@@ -648,42 +722,62 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 			break;
 		case '<':
 			{
-			alt2 = 6;
-			}
-			break;
-		case 'F':
+			int LA2_6 = input.LA(2);
+
+			if ((LA2_6=='-'))
 			{
-			alt2 = 7;
+				alt2 = 6;
+			}
+			else if ((LA2_6=='='))
+			{
+				alt2 = 7;
+			}
+			else
+			{
+				NoViableAltException nvae = new NoViableAltException("", 2, 6, input);
+				DebugRecognitionException(nvae);
+				throw nvae;
+			}
 			}
 			break;
-		case 'G':
+		case '=':
 			{
 			alt2 = 8;
 			}
 			break;
-		case 'R':
+		case 'F':
 			{
 			alt2 = 9;
 			}
 			break;
-		case 'U':
+		case 'G':
 			{
 			alt2 = 10;
 			}
 			break;
-		case 'W':
+		case 'R':
 			{
 			alt2 = 11;
 			}
 			break;
-		case 'X':
+		case 'U':
 			{
 			alt2 = 12;
 			}
 			break;
-		case '|':
+		case 'W':
 			{
 			alt2 = 13;
+			}
+			break;
+		case 'X':
+			{
+			alt2 = 14;
+			}
+			break;
+		case '|':
+			{
+			alt2 = 15;
 			}
 			break;
 		case 'a':
@@ -713,7 +807,7 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 		case 'y':
 		case 'z':
 			{
-			alt2 = 14;
+			alt2 = 16;
 			}
 			break;
 		default:
@@ -846,9 +940,27 @@ public partial class LTLLexer : Antlr.Runtime.Lexer
 			break;
 		case 14:
 			DebugEnterAlt(14);
-			// ./LtlSharp/LTL.g:1:83: PROPOSITION
+			// ./LtlSharp/LTL.g:1:83: T__18
 			{
 			DebugLocation(1, 83);
+			mT__18(); 
+
+			}
+			break;
+		case 15:
+			DebugEnterAlt(15);
+			// ./LtlSharp/LTL.g:1:89: T__19
+			{
+			DebugLocation(1, 89);
+			mT__19(); 
+
+			}
+			break;
+		case 16:
+			DebugEnterAlt(16);
+			// ./LtlSharp/LTL.g:1:95: PROPOSITION
+			{
+			DebugLocation(1, 95);
 			mPROPOSITION(); 
 
 			}

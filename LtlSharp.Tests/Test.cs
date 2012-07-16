@@ -30,6 +30,11 @@ namespace LtlSharp.Tests
 			var right = (Equivalence) ((Equivalence) expression).Right;
 			Assert.IsInstanceOf (typeof (Proposition), right.Left);
 			Assert.IsInstanceOf (typeof (Proposition), right.Right);
+			
+			expression = Parser.Parse ("test1 <-> test2 -> test3");
+			Assert.IsInstanceOf (typeof (Equivalence), expression);
+			Assert.IsInstanceOf (typeof (Proposition), ((Equivalence) expression).Left);
+			Assert.IsInstanceOf (typeof (Implication), ((Equivalence) expression).Right);
 		}
 
 		[Test()]
@@ -51,6 +56,11 @@ namespace LtlSharp.Tests
 			var right = (Implication) ((Implication) expression).Right;
 			Assert.IsInstanceOf (typeof (Proposition), right.Left);
 			Assert.IsInstanceOf (typeof (Proposition), right.Right);
+
+			expression = Parser.Parse ("test1 -> test2 <-> test3");
+			Assert.IsInstanceOf (typeof (Implication), expression);
+			Assert.IsInstanceOf (typeof (Proposition), ((Implication) expression).Left);
+			Assert.IsInstanceOf (typeof (Equivalence), ((Implication) expression).Right);
 		}
 
 		[Test()]
@@ -235,6 +245,52 @@ namespace LtlSharp.Tests
 			var unless = (Unless) until.Right;
 			Assert.IsInstanceOf (typeof (Proposition), unless.Left);
 			Assert.IsInstanceOf (typeof (Proposition), unless.Right);
+		}
+
+		[Test()]
+		public void TestTemporalEquivalence ()
+		{
+			var expression = Parser.Parse ("test1 <=> test2");
+			Assert.IsInstanceOf (typeof (StrongEquivalence), expression);
+			Assert.IsInstanceOf (typeof (Proposition), ((StrongEquivalence) expression).Left);
+			Assert.IsInstanceOf (typeof (Proposition), ((StrongEquivalence) expression).Right);
+
+			expression = Parser.Parse ("test1 <=> test2 <=> test3");
+			Assert.IsInstanceOf (typeof (StrongEquivalence), expression);
+			Assert.IsInstanceOf (typeof (Proposition), ((StrongEquivalence) expression).Left);
+			Assert.IsInstanceOf (typeof (StrongEquivalence), ((StrongEquivalence) expression).Right);
+
+			var right = (StrongEquivalence) ((StrongEquivalence) expression).Right;
+			Assert.IsInstanceOf (typeof (Proposition), right.Left);
+			Assert.IsInstanceOf (typeof (Proposition), right.Right);
+			
+			expression = Parser.Parse ("test1 <=> test2 => test3");
+			Assert.IsInstanceOf (typeof (StrongEquivalence), expression);
+			Assert.IsInstanceOf (typeof (Proposition), ((StrongEquivalence) expression).Left);
+			Assert.IsInstanceOf (typeof (StrongImplication), ((StrongEquivalence) expression).Right);
+		}
+
+		[Test()]
+		public void TestTemporalImplication ()
+		{
+			var expression = Parser.Parse ("test1 => test2");
+			Assert.IsInstanceOf (typeof (StrongImplication), expression);
+			Assert.IsInstanceOf (typeof (Proposition), ((StrongImplication) expression).Left);
+			Assert.IsInstanceOf (typeof (Proposition), ((StrongImplication) expression).Right);
+
+			expression = Parser.Parse ("test1 => test2 => test3");
+			Assert.IsInstanceOf (typeof (StrongImplication), expression);
+			Assert.IsInstanceOf (typeof (Proposition), ((StrongImplication) expression).Left);
+			Assert.IsInstanceOf (typeof (StrongImplication), ((StrongImplication) expression).Right);
+
+			var right = (StrongImplication) ((StrongImplication) expression).Right;
+			Assert.IsInstanceOf (typeof (Proposition), right.Left);
+			Assert.IsInstanceOf (typeof (Proposition), right.Right);
+
+			expression = Parser.Parse ("test1 => test2 <=> test3");
+			Assert.IsInstanceOf (typeof (StrongImplication), expression);
+			Assert.IsInstanceOf (typeof (Proposition), ((StrongImplication) expression).Left);
+			Assert.IsInstanceOf (typeof (StrongEquivalence), ((StrongImplication) expression).Right);
 		}
 	}
 }
