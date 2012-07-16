@@ -3,3 +3,4 @@ obj
 test-results
 *.userprefs
 *.tokens
+.DS_Store
