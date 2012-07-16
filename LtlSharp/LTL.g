@@ -49,7 +49,7 @@ unary returns [LTLFormula value]
 
 atom returns [LTLFormula value]
   :  PROPOSITION { $value = new Proposition ($PROPOSITION.Text); }
-     | '(' formula ')' { $value = new ParenthesedLTLFormula ($formula.value); }
+     | '(' formula ')' { $value = new ParenthesedExpression ($formula.value); }
   ;
 
 PROPOSITION : ('a'..'z') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
