@@ -13,7 +13,12 @@ public parse returns [LTLFormula value]
   ;
   
 formula returns [LTLFormula value]
-  :  f = binary {$value = $f.value;}
+  :  f = equivalence {$value = $f.value;}
+  ;
+
+equivalence returns [LTLFormula value]
+  :  a = binary { $value = $a.value; } 
+     ('<->' b = equivalence { $value = new Equivalence ($a.value, $b.value); })?
   ;
 
 binary returns [LTLFormula value]
@@ -23,7 +28,7 @@ binary returns [LTLFormula value]
      | 'W' b = binary { $value = new Unless ($a.value, $b.value); }
      )?
   ;
-
+    
 implication returns [LTLFormula value]
   :  a = conjunction { $value = $a.value; } 
      ('->' b = implication { $value = new Implication ($a.value, $b.value); })?

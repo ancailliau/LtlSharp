@@ -15,6 +15,24 @@ namespace LtlSharp.Tests
 		}
 
 		[Test()]
+		public void TestEquivalence ()
+		{
+			var expression = Parser.Parse ("test1 <-> test2");
+			Assert.IsInstanceOf (typeof (Equivalence), expression);
+			Assert.IsInstanceOf (typeof (Proposition), ((Equivalence) expression).Left);
+			Assert.IsInstanceOf (typeof (Proposition), ((Equivalence) expression).Right);
+
+			expression = Parser.Parse ("test1 <-> test2 <-> test3");
+			Assert.IsInstanceOf (typeof (Equivalence), expression);
+			Assert.IsInstanceOf (typeof (Proposition), ((Equivalence) expression).Left);
+			Assert.IsInstanceOf (typeof (Equivalence), ((Equivalence) expression).Right);
+
+			var right = (Equivalence) ((Equivalence) expression).Right;
+			Assert.IsInstanceOf (typeof (Proposition), right.Left);
+			Assert.IsInstanceOf (typeof (Proposition), right.Right);
+		}
+
+		[Test()]
 		public void TestImplication ()
 		{
 			var expression = Parser.Parse ("test1");

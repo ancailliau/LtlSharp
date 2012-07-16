@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// $ANTLR 3.4 ./LtlSharp/LTL.g 2012-07-11 11:28:35
+// $ANTLR 3.4 ./LtlSharp/LTL.g 2012-07-16 07:52:29
 
 // The variable 'variable' is assigned but its value is never used.
 #pragma warning disable 219
@@ -35,7 +35,7 @@ namespace  LtlSharp
 public partial class LTLParser : Antlr.Runtime.Parser
 {
 	internal static readonly string[] tokenNames = new string[] {
-		"<invalid>", "<EOR>", "<DOWN>", "<UP>", "PROPOSITION", "'!'", "'&'", "'('", "')'", "'->'", "'F'", "'G'", "'R'", "'U'", "'W'", "'X'", "'|'"
+		"<invalid>", "<EOR>", "<DOWN>", "<UP>", "PROPOSITION", "'!'", "'&'", "'('", "')'", "'->'", "'<->'", "'F'", "'G'", "'R'", "'U'", "'W'", "'X'", "'|'"
 	};
 	public const int EOF=-1;
 	public const int T__5=5;
@@ -50,6 +50,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 	public const int T__14=14;
 	public const int T__15=15;
 	public const int T__16=16;
+	public const int T__17=17;
 	public const int PROPOSITION=4;
 
 	public LTLParser(ITokenStream input)
@@ -102,7 +103,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 	partial void LeaveRule_parse();
 
 	// $ANTLR start "parse"
-	// ./LtlSharp/LTL.g:11:8: public parse returns [Expression value] : formula EOF ;
+	// ./LtlSharp/LTL.g:11:8: public parse returns [LTLFormula value] : formula EOF ;
 	[GrammarRule("parse")]
 	public LTLParser.parse_return parse()
 	{
@@ -129,13 +130,13 @@ public partial class LTLParser : Antlr.Runtime.Parser
 			root_0 = (object)adaptor.Nil();
 
 			DebugLocation(12, 6);
-			PushFollow(Follow._formula_in_parse59);
+			PushFollow(Follow._formula_in_parse60);
 			formula1=formula();
 			PopFollow();
 
 			adaptor.AddChild(root_0, formula1.Tree);
 			DebugLocation(12, 14);
-			EOF2=(IToken)Match(input,EOF,Follow._EOF_in_parse61); 
+			EOF2=(IToken)Match(input,EOF,Follow._EOF_in_parse62); 
 			EOF2_tree = (object)adaptor.Create(EOF2);
 			adaptor.AddChild(root_0, EOF2_tree);
 			DebugLocation(12, 18);
@@ -180,7 +181,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 	partial void LeaveRule_formula();
 
 	// $ANTLR start "formula"
-	// ./LtlSharp/LTL.g:15:1: formula returns [Expression value] : f= binary ;
+	// ./LtlSharp/LTL.g:15:1: formula returns [LTLFormula value] : f= equivalence ;
 	[GrammarRule("formula")]
 	private LTLParser.formula_return formula()
 	{
@@ -192,25 +193,25 @@ public partial class LTLParser : Antlr.Runtime.Parser
 
 		object root_0 = default(object);
 
-		LTLParser.binary_return f = default(LTLParser.binary_return);
+		LTLParser.equivalence_return f = default(LTLParser.equivalence_return);
 
 		try { DebugEnterRule(GrammarFileName, "formula");
 		DebugLocation(15, 2);
 		try
 		{
-			// ./LtlSharp/LTL.g:16:3: (f= binary )
+			// ./LtlSharp/LTL.g:16:3: (f= equivalence )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:16:6: f= binary
+			// ./LtlSharp/LTL.g:16:6: f= equivalence
 			{
 			root_0 = (object)adaptor.Nil();
 
 			DebugLocation(16, 8);
-			PushFollow(Follow._binary_in_formula87);
-			f=binary();
+			PushFollow(Follow._equivalence_in_formula88);
+			f=equivalence();
 			PopFollow();
 
 			adaptor.AddChild(root_0, f.Tree);
-			DebugLocation(16, 17);
+			DebugLocation(16, 22);
 			retval.value = (f!=null?f.value:default(LTLFormula));
 
 			}
@@ -241,137 +242,82 @@ public partial class LTLParser : Antlr.Runtime.Parser
 	}
 	// $ANTLR end "formula"
 
-	private sealed partial class binary_return : AstParserRuleReturnScope<object, IToken>
+	private sealed partial class equivalence_return : AstParserRuleReturnScope<object, IToken>
 	{
 		public LTLFormula value;
-		public binary_return(LTLParser grammar) {OnCreated(grammar);}
+		public equivalence_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
 
-	partial void EnterRule_binary();
-	partial void LeaveRule_binary();
+	partial void EnterRule_equivalence();
+	partial void LeaveRule_equivalence();
 
-	// $ANTLR start "binary"
-	// ./LtlSharp/LTL.g:19:1: binary returns [Expression value] : a= implication ( 'U' b= binary | 'R' b= binary | 'W' b= binary )? ;
-	[GrammarRule("binary")]
-	private LTLParser.binary_return binary()
+	// $ANTLR start "equivalence"
+	// ./LtlSharp/LTL.g:19:1: equivalence returns [LTLFormula value] : a= binary ( '<->' b= equivalence )? ;
+	[GrammarRule("equivalence")]
+	private LTLParser.equivalence_return equivalence()
 	{
-		EnterRule_binary();
-		EnterRule("binary", 3);
-		TraceIn("binary", 3);
-		LTLParser.binary_return retval = new LTLParser.binary_return(this);
+		EnterRule_equivalence();
+		EnterRule("equivalence", 3);
+		TraceIn("equivalence", 3);
+		LTLParser.equivalence_return retval = new LTLParser.equivalence_return(this);
 		retval.Start = (IToken)input.LT(1);
 
 		object root_0 = default(object);
 
-		IToken char_literal3 = default(IToken);
-		IToken char_literal4 = default(IToken);
-		IToken char_literal5 = default(IToken);
-		LTLParser.implication_return a = default(LTLParser.implication_return);
-		LTLParser.binary_return b = default(LTLParser.binary_return);
+		IToken string_literal3 = default(IToken);
+		LTLParser.binary_return a = default(LTLParser.binary_return);
+		LTLParser.equivalence_return b = default(LTLParser.equivalence_return);
 
-		object char_literal3_tree = default(object);
-		object char_literal4_tree = default(object);
-		object char_literal5_tree = default(object);
-		try { DebugEnterRule(GrammarFileName, "binary");
+		object string_literal3_tree = default(object);
+		try { DebugEnterRule(GrammarFileName, "equivalence");
 		DebugLocation(19, 2);
 		try
 		{
-			// ./LtlSharp/LTL.g:20:3: (a= implication ( 'U' b= binary | 'R' b= binary | 'W' b= binary )? )
+			// ./LtlSharp/LTL.g:20:3: (a= binary ( '<->' b= equivalence )? )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:20:6: a= implication ( 'U' b= binary | 'R' b= binary | 'W' b= binary )?
+			// ./LtlSharp/LTL.g:20:6: a= binary ( '<->' b= equivalence )?
 			{
 			root_0 = (object)adaptor.Nil();
 
 			DebugLocation(20, 8);
-			PushFollow(Follow._implication_in_binary111);
-			a=implication();
+			PushFollow(Follow._binary_in_equivalence112);
+			a=binary();
 			PopFollow();
 
 			adaptor.AddChild(root_0, a.Tree);
-			DebugLocation(20, 22);
+			DebugLocation(20, 17);
 			 retval.value = (a!=null?a.value:default(LTLFormula)); 
 			DebugLocation(21, 6);
-			// ./LtlSharp/LTL.g:21:6: ( 'U' b= binary | 'R' b= binary | 'W' b= binary )?
-			int alt1=4;
+			// ./LtlSharp/LTL.g:21:6: ( '<->' b= equivalence )?
+			int alt1=2;
 			try { DebugEnterSubRule(1);
 			try { DebugEnterDecision(1, false);
-			switch (input.LA(1))
-			{
-			case 13:
-				{
-				alt1 = 1;
-				}
-				break;
-			case 12:
-				{
-				alt1 = 2;
-				}
-				break;
-			case 14:
-				{
-				alt1 = 3;
-				}
-				break;
-			}
+			int LA1_0 = input.LA(1);
 
+			if ((LA1_0==10))
+			{
+				alt1 = 1;
+			}
 			} finally { DebugExitDecision(1); }
 			switch (alt1)
 			{
 			case 1:
 				DebugEnterAlt(1);
-				// ./LtlSharp/LTL.g:21:8: 'U' b= binary
+				// ./LtlSharp/LTL.g:21:7: '<->' b= equivalence
 				{
-				DebugLocation(21, 8);
-				char_literal3=(IToken)Match(input,13,Follow._13_in_binary123); 
-				char_literal3_tree = (object)adaptor.Create(char_literal3);
-				adaptor.AddChild(root_0, char_literal3_tree);
-				DebugLocation(21, 14);
-				PushFollow(Follow._binary_in_binary129);
-				b=binary();
+				DebugLocation(21, 7);
+				string_literal3=(IToken)Match(input,10,Follow._10_in_equivalence123); 
+				string_literal3_tree = (object)adaptor.Create(string_literal3);
+				adaptor.AddChild(root_0, string_literal3_tree);
+				DebugLocation(21, 15);
+				PushFollow(Follow._equivalence_in_equivalence129);
+				b=equivalence();
 				PopFollow();
 
 				adaptor.AddChild(root_0, b.Tree);
-				DebugLocation(21, 23);
-				 retval.value = new Until ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
-
-				}
-				break;
-			case 2:
-				DebugEnterAlt(2);
-				// ./LtlSharp/LTL.g:22:8: 'R' b= binary
-				{
-				DebugLocation(22, 8);
-				char_literal4=(IToken)Match(input,12,Follow._12_in_binary140); 
-				char_literal4_tree = (object)adaptor.Create(char_literal4);
-				adaptor.AddChild(root_0, char_literal4_tree);
-				DebugLocation(22, 14);
-				PushFollow(Follow._binary_in_binary146);
-				b=binary();
-				PopFollow();
-
-				adaptor.AddChild(root_0, b.Tree);
-				DebugLocation(22, 23);
-				 retval.value = new Release ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
-
-				}
-				break;
-			case 3:
-				DebugEnterAlt(3);
-				// ./LtlSharp/LTL.g:23:8: 'W' b= binary
-				{
-				DebugLocation(23, 8);
-				char_literal5=(IToken)Match(input,14,Follow._14_in_binary157); 
-				char_literal5_tree = (object)adaptor.Create(char_literal5);
-				adaptor.AddChild(root_0, char_literal5_tree);
-				DebugLocation(23, 14);
-				PushFollow(Follow._binary_in_binary163);
-				b=binary();
-				PopFollow();
-
-				adaptor.AddChild(root_0, b.Tree);
-				DebugLocation(23, 23);
-				 retval.value = new Unless ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
+				DebugLocation(21, 29);
+				 retval.value = new Equivalence ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -397,93 +343,148 @@ public partial class LTLParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("binary", 3);
-			LeaveRule("binary", 3);
-			LeaveRule_binary();
+			TraceOut("equivalence", 3);
+			LeaveRule("equivalence", 3);
+			LeaveRule_equivalence();
 		}
-		DebugLocation(25, 2);
-		} finally { DebugExitRule(GrammarFileName, "binary"); }
+		DebugLocation(22, 2);
+		} finally { DebugExitRule(GrammarFileName, "equivalence"); }
 		return retval;
 
 	}
-	// $ANTLR end "binary"
+	// $ANTLR end "equivalence"
 
-	private sealed partial class implication_return : AstParserRuleReturnScope<object, IToken>
+	private sealed partial class binary_return : AstParserRuleReturnScope<object, IToken>
 	{
 		public LTLFormula value;
-		public implication_return(LTLParser grammar) {OnCreated(grammar);}
+		public binary_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
 
-	partial void EnterRule_implication();
-	partial void LeaveRule_implication();
+	partial void EnterRule_binary();
+	partial void LeaveRule_binary();
 
-	// $ANTLR start "implication"
-	// ./LtlSharp/LTL.g:27:1: implication returns [Expression value] : a= conjunction ( '->' b= implication )? ;
-	[GrammarRule("implication")]
-	private LTLParser.implication_return implication()
+	// $ANTLR start "binary"
+	// ./LtlSharp/LTL.g:24:1: binary returns [LTLFormula value] : a= implication ( 'U' b= binary | 'R' b= binary | 'W' b= binary )? ;
+	[GrammarRule("binary")]
+	private LTLParser.binary_return binary()
 	{
-		EnterRule_implication();
-		EnterRule("implication", 4);
-		TraceIn("implication", 4);
-		LTLParser.implication_return retval = new LTLParser.implication_return(this);
+		EnterRule_binary();
+		EnterRule("binary", 4);
+		TraceIn("binary", 4);
+		LTLParser.binary_return retval = new LTLParser.binary_return(this);
 		retval.Start = (IToken)input.LT(1);
 
 		object root_0 = default(object);
 
-		IToken string_literal6 = default(IToken);
-		LTLParser.conjunction_return a = default(LTLParser.conjunction_return);
-		LTLParser.implication_return b = default(LTLParser.implication_return);
+		IToken char_literal4 = default(IToken);
+		IToken char_literal5 = default(IToken);
+		IToken char_literal6 = default(IToken);
+		LTLParser.implication_return a = default(LTLParser.implication_return);
+		LTLParser.binary_return b = default(LTLParser.binary_return);
 
-		object string_literal6_tree = default(object);
-		try { DebugEnterRule(GrammarFileName, "implication");
-		DebugLocation(27, 2);
+		object char_literal4_tree = default(object);
+		object char_literal5_tree = default(object);
+		object char_literal6_tree = default(object);
+		try { DebugEnterRule(GrammarFileName, "binary");
+		DebugLocation(24, 2);
 		try
 		{
-			// ./LtlSharp/LTL.g:28:3: (a= conjunction ( '->' b= implication )? )
+			// ./LtlSharp/LTL.g:25:3: (a= implication ( 'U' b= binary | 'R' b= binary | 'W' b= binary )? )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:28:6: a= conjunction ( '->' b= implication )?
+			// ./LtlSharp/LTL.g:25:6: a= implication ( 'U' b= binary | 'R' b= binary | 'W' b= binary )?
 			{
 			root_0 = (object)adaptor.Nil();
 
-			DebugLocation(28, 8);
-			PushFollow(Follow._conjunction_in_implication195);
-			a=conjunction();
+			DebugLocation(25, 8);
+			PushFollow(Follow._implication_in_binary155);
+			a=implication();
 			PopFollow();
 
 			adaptor.AddChild(root_0, a.Tree);
-			DebugLocation(28, 22);
+			DebugLocation(25, 22);
 			 retval.value = (a!=null?a.value:default(LTLFormula)); 
-			DebugLocation(28, 45);
-			// ./LtlSharp/LTL.g:28:45: ( '->' b= implication )?
-			int alt2=2;
+			DebugLocation(26, 6);
+			// ./LtlSharp/LTL.g:26:6: ( 'U' b= binary | 'R' b= binary | 'W' b= binary )?
+			int alt2=4;
 			try { DebugEnterSubRule(2);
 			try { DebugEnterDecision(2, false);
-			int LA2_0 = input.LA(1);
-
-			if ((LA2_0==9))
+			switch (input.LA(1))
 			{
+			case 14:
+				{
 				alt2 = 1;
+				}
+				break;
+			case 13:
+				{
+				alt2 = 2;
+				}
+				break;
+			case 15:
+				{
+				alt2 = 3;
+				}
+				break;
 			}
+
 			} finally { DebugExitDecision(2); }
 			switch (alt2)
 			{
 			case 1:
 				DebugEnterAlt(1);
-				// ./LtlSharp/LTL.g:28:46: '->' b= implication
+				// ./LtlSharp/LTL.g:26:8: 'U' b= binary
 				{
-				DebugLocation(28, 46);
-				string_literal6=(IToken)Match(input,9,Follow._9_in_implication200); 
-				string_literal6_tree = (object)adaptor.Create(string_literal6);
-				adaptor.AddChild(root_0, string_literal6_tree);
-				DebugLocation(28, 53);
-				PushFollow(Follow._implication_in_implication206);
-				b=implication();
+				DebugLocation(26, 8);
+				char_literal4=(IToken)Match(input,14,Follow._14_in_binary167); 
+				char_literal4_tree = (object)adaptor.Create(char_literal4);
+				adaptor.AddChild(root_0, char_literal4_tree);
+				DebugLocation(26, 14);
+				PushFollow(Follow._binary_in_binary173);
+				b=binary();
 				PopFollow();
 
 				adaptor.AddChild(root_0, b.Tree);
-				DebugLocation(28, 67);
-				 retval.value = new Implication ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
+				DebugLocation(26, 23);
+				 retval.value = new Until ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
+
+				}
+				break;
+			case 2:
+				DebugEnterAlt(2);
+				// ./LtlSharp/LTL.g:27:8: 'R' b= binary
+				{
+				DebugLocation(27, 8);
+				char_literal5=(IToken)Match(input,13,Follow._13_in_binary184); 
+				char_literal5_tree = (object)adaptor.Create(char_literal5);
+				adaptor.AddChild(root_0, char_literal5_tree);
+				DebugLocation(27, 14);
+				PushFollow(Follow._binary_in_binary190);
+				b=binary();
+				PopFollow();
+
+				adaptor.AddChild(root_0, b.Tree);
+				DebugLocation(27, 23);
+				 retval.value = new Release ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
+
+				}
+				break;
+			case 3:
+				DebugEnterAlt(3);
+				// ./LtlSharp/LTL.g:28:8: 'W' b= binary
+				{
+				DebugLocation(28, 8);
+				char_literal6=(IToken)Match(input,15,Follow._15_in_binary201); 
+				char_literal6_tree = (object)adaptor.Create(char_literal6);
+				adaptor.AddChild(root_0, char_literal6_tree);
+				DebugLocation(28, 14);
+				PushFollow(Follow._binary_in_binary207);
+				b=binary();
+				PopFollow();
+
+				adaptor.AddChild(root_0, b.Tree);
+				DebugLocation(28, 23);
+				 retval.value = new Unless ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -509,71 +510,71 @@ public partial class LTLParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("implication", 4);
-			LeaveRule("implication", 4);
-			LeaveRule_implication();
+			TraceOut("binary", 4);
+			LeaveRule("binary", 4);
+			LeaveRule_binary();
 		}
-		DebugLocation(29, 2);
-		} finally { DebugExitRule(GrammarFileName, "implication"); }
+		DebugLocation(30, 2);
+		} finally { DebugExitRule(GrammarFileName, "binary"); }
 		return retval;
 
 	}
-	// $ANTLR end "implication"
+	// $ANTLR end "binary"
 
-	private sealed partial class conjunction_return : AstParserRuleReturnScope<object, IToken>
+	private sealed partial class implication_return : AstParserRuleReturnScope<object, IToken>
 	{
 		public LTLFormula value;
-		public conjunction_return(LTLParser grammar) {OnCreated(grammar);}
+		public implication_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
 
-	partial void EnterRule_conjunction();
-	partial void LeaveRule_conjunction();
+	partial void EnterRule_implication();
+	partial void LeaveRule_implication();
 
-	// $ANTLR start "conjunction"
-	// ./LtlSharp/LTL.g:31:1: conjunction returns [Expression value] : a= disjunction ( '&' b= conjunction )? ;
-	[GrammarRule("conjunction")]
-	private LTLParser.conjunction_return conjunction()
+	// $ANTLR start "implication"
+	// ./LtlSharp/LTL.g:32:1: implication returns [LTLFormula value] : a= conjunction ( '->' b= implication )? ;
+	[GrammarRule("implication")]
+	private LTLParser.implication_return implication()
 	{
-		EnterRule_conjunction();
-		EnterRule("conjunction", 5);
-		TraceIn("conjunction", 5);
-		LTLParser.conjunction_return retval = new LTLParser.conjunction_return(this);
+		EnterRule_implication();
+		EnterRule("implication", 5);
+		TraceIn("implication", 5);
+		LTLParser.implication_return retval = new LTLParser.implication_return(this);
 		retval.Start = (IToken)input.LT(1);
 
 		object root_0 = default(object);
 
-		IToken char_literal7 = default(IToken);
-		LTLParser.disjunction_return a = default(LTLParser.disjunction_return);
-		LTLParser.conjunction_return b = default(LTLParser.conjunction_return);
+		IToken string_literal7 = default(IToken);
+		LTLParser.conjunction_return a = default(LTLParser.conjunction_return);
+		LTLParser.implication_return b = default(LTLParser.implication_return);
 
-		object char_literal7_tree = default(object);
-		try { DebugEnterRule(GrammarFileName, "conjunction");
-		DebugLocation(31, 2);
+		object string_literal7_tree = default(object);
+		try { DebugEnterRule(GrammarFileName, "implication");
+		DebugLocation(32, 2);
 		try
 		{
-			// ./LtlSharp/LTL.g:32:3: (a= disjunction ( '&' b= conjunction )? )
+			// ./LtlSharp/LTL.g:33:3: (a= conjunction ( '->' b= implication )? )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:32:6: a= disjunction ( '&' b= conjunction )?
+			// ./LtlSharp/LTL.g:33:6: a= conjunction ( '->' b= implication )?
 			{
 			root_0 = (object)adaptor.Nil();
 
-			DebugLocation(32, 8);
-			PushFollow(Follow._disjunction_in_conjunction234);
-			a=disjunction();
+			DebugLocation(33, 8);
+			PushFollow(Follow._conjunction_in_implication243);
+			a=conjunction();
 			PopFollow();
 
 			adaptor.AddChild(root_0, a.Tree);
-			DebugLocation(32, 22);
+			DebugLocation(33, 22);
 			 retval.value = (a!=null?a.value:default(LTLFormula)); 
-			DebugLocation(32, 45);
-			// ./LtlSharp/LTL.g:32:45: ( '&' b= conjunction )?
+			DebugLocation(34, 6);
+			// ./LtlSharp/LTL.g:34:6: ( '->' b= implication )?
 			int alt3=2;
 			try { DebugEnterSubRule(3);
 			try { DebugEnterDecision(3, false);
 			int LA3_0 = input.LA(1);
 
-			if ((LA3_0==6))
+			if ((LA3_0==9))
 			{
 				alt3 = 1;
 			}
@@ -582,20 +583,20 @@ public partial class LTLParser : Antlr.Runtime.Parser
 			{
 			case 1:
 				DebugEnterAlt(1);
-				// ./LtlSharp/LTL.g:32:46: '&' b= conjunction
+				// ./LtlSharp/LTL.g:34:7: '->' b= implication
 				{
-				DebugLocation(32, 46);
-				char_literal7=(IToken)Match(input,6,Follow._6_in_conjunction239); 
-				char_literal7_tree = (object)adaptor.Create(char_literal7);
-				adaptor.AddChild(root_0, char_literal7_tree);
-				DebugLocation(32, 52);
-				PushFollow(Follow._conjunction_in_conjunction245);
-				b=conjunction();
+				DebugLocation(34, 7);
+				string_literal7=(IToken)Match(input,9,Follow._9_in_implication254); 
+				string_literal7_tree = (object)adaptor.Create(string_literal7);
+				adaptor.AddChild(root_0, string_literal7_tree);
+				DebugLocation(34, 14);
+				PushFollow(Follow._implication_in_implication260);
+				b=implication();
 				PopFollow();
 
 				adaptor.AddChild(root_0, b.Tree);
-				DebugLocation(32, 66);
-				 if (retval.value.GetType() == typeof(Conjunction)) { ((Conjunction) retval.value).Push ((b!=null?b.value:default(LTLFormula))); } else { retval.value = new Conjunction (retval.value, (b!=null?b.value:default(LTLFormula))); } 
+				DebugLocation(34, 28);
+				 retval.value = new Implication ((a!=null?a.value:default(LTLFormula)), (b!=null?b.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -621,71 +622,71 @@ public partial class LTLParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("conjunction", 5);
-			LeaveRule("conjunction", 5);
-			LeaveRule_conjunction();
+			TraceOut("implication", 5);
+			LeaveRule("implication", 5);
+			LeaveRule_implication();
 		}
-		DebugLocation(33, 2);
-		} finally { DebugExitRule(GrammarFileName, "conjunction"); }
+		DebugLocation(35, 2);
+		} finally { DebugExitRule(GrammarFileName, "implication"); }
 		return retval;
 
 	}
-	// $ANTLR end "conjunction"
+	// $ANTLR end "implication"
 
-	private sealed partial class disjunction_return : AstParserRuleReturnScope<object, IToken>
+	private sealed partial class conjunction_return : AstParserRuleReturnScope<object, IToken>
 	{
 		public LTLFormula value;
-		public disjunction_return(LTLParser grammar) {OnCreated(grammar);}
+		public conjunction_return(LTLParser grammar) {OnCreated(grammar);}
 		partial void OnCreated(LTLParser grammar);
 	}
 
-	partial void EnterRule_disjunction();
-	partial void LeaveRule_disjunction();
+	partial void EnterRule_conjunction();
+	partial void LeaveRule_conjunction();
 
-	// $ANTLR start "disjunction"
-	// ./LtlSharp/LTL.g:35:1: disjunction returns [Expression value] : a= unary ( '|' b= disjunction )? ;
-	[GrammarRule("disjunction")]
-	private LTLParser.disjunction_return disjunction()
+	// $ANTLR start "conjunction"
+	// ./LtlSharp/LTL.g:37:1: conjunction returns [LTLFormula value] : a= disjunction ( '&' b= conjunction )? ;
+	[GrammarRule("conjunction")]
+	private LTLParser.conjunction_return conjunction()
 	{
-		EnterRule_disjunction();
-		EnterRule("disjunction", 6);
-		TraceIn("disjunction", 6);
-		LTLParser.disjunction_return retval = new LTLParser.disjunction_return(this);
+		EnterRule_conjunction();
+		EnterRule("conjunction", 6);
+		TraceIn("conjunction", 6);
+		LTLParser.conjunction_return retval = new LTLParser.conjunction_return(this);
 		retval.Start = (IToken)input.LT(1);
 
 		object root_0 = default(object);
 
 		IToken char_literal8 = default(IToken);
-		LTLParser.unary_return a = default(LTLParser.unary_return);
-		LTLParser.disjunction_return b = default(LTLParser.disjunction_return);
+		LTLParser.disjunction_return a = default(LTLParser.disjunction_return);
+		LTLParser.conjunction_return b = default(LTLParser.conjunction_return);
 
 		object char_literal8_tree = default(object);
-		try { DebugEnterRule(GrammarFileName, "disjunction");
-		DebugLocation(35, 2);
+		try { DebugEnterRule(GrammarFileName, "conjunction");
+		DebugLocation(37, 2);
 		try
 		{
-			// ./LtlSharp/LTL.g:36:3: (a= unary ( '|' b= disjunction )? )
+			// ./LtlSharp/LTL.g:38:3: (a= disjunction ( '&' b= conjunction )? )
 			DebugEnterAlt(1);
-			// ./LtlSharp/LTL.g:36:6: a= unary ( '|' b= disjunction )?
+			// ./LtlSharp/LTL.g:38:6: a= disjunction ( '&' b= conjunction )?
 			{
 			root_0 = (object)adaptor.Nil();
 
-			DebugLocation(36, 8);
-			PushFollow(Follow._unary_in_disjunction273);
-			a=unary();
+			DebugLocation(38, 8);
+			PushFollow(Follow._disjunction_in_conjunction288);
+			a=disjunction();
 			PopFollow();
 
 			adaptor.AddChild(root_0, a.Tree);
-			DebugLocation(36, 16);
+			DebugLocation(38, 22);
 			 retval.value = (a!=null?a.value:default(LTLFormula)); 
-			DebugLocation(36, 39);
-			// ./LtlSharp/LTL.g:36:39: ( '|' b= disjunction )?
+			DebugLocation(39, 6);
+			// ./LtlSharp/LTL.g:39:6: ( '&' b= conjunction )?
 			int alt4=2;
 			try { DebugEnterSubRule(4);
 			try { DebugEnterDecision(4, false);
 			int LA4_0 = input.LA(1);
 
-			if ((LA4_0==16))
+			if ((LA4_0==6))
 			{
 				alt4 = 1;
 			}
@@ -694,20 +695,20 @@ public partial class LTLParser : Antlr.Runtime.Parser
 			{
 			case 1:
 				DebugEnterAlt(1);
-				// ./LtlSharp/LTL.g:36:40: '|' b= disjunction
+				// ./LtlSharp/LTL.g:39:7: '&' b= conjunction
 				{
-				DebugLocation(36, 40);
-				char_literal8=(IToken)Match(input,16,Follow._16_in_disjunction278); 
+				DebugLocation(39, 7);
+				char_literal8=(IToken)Match(input,6,Follow._6_in_conjunction299); 
 				char_literal8_tree = (object)adaptor.Create(char_literal8);
 				adaptor.AddChild(root_0, char_literal8_tree);
-				DebugLocation(36, 46);
-				PushFollow(Follow._disjunction_in_disjunction284);
-				b=disjunction();
+				DebugLocation(39, 13);
+				PushFollow(Follow._conjunction_in_conjunction305);
+				b=conjunction();
 				PopFollow();
 
 				adaptor.AddChild(root_0, b.Tree);
-				DebugLocation(36, 60);
-				 if (retval.value.GetType() == typeof(Disjunction)) { ((Disjunction) retval.value).Push ((b!=null?b.value:default(LTLFormula))); } else { retval.value = new Disjunction (retval.value, (b!=null?b.value:default(LTLFormula))); } 
+				DebugLocation(39, 27);
+				 if (retval.value.GetType() == typeof(Conjunction)) { ((Conjunction) retval.value).Push ((b!=null?b.value:default(LTLFormula))); } else { retval.value = new Conjunction (retval.value, (b!=null?b.value:default(LTLFormula))); } 
 
 				}
 				break;
@@ -733,11 +734,123 @@ public partial class LTLParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("disjunction", 6);
-			LeaveRule("disjunction", 6);
+			TraceOut("conjunction", 6);
+			LeaveRule("conjunction", 6);
+			LeaveRule_conjunction();
+		}
+		DebugLocation(40, 2);
+		} finally { DebugExitRule(GrammarFileName, "conjunction"); }
+		return retval;
+
+	}
+	// $ANTLR end "conjunction"
+
+	private sealed partial class disjunction_return : AstParserRuleReturnScope<object, IToken>
+	{
+		public LTLFormula value;
+		public disjunction_return(LTLParser grammar) {OnCreated(grammar);}
+		partial void OnCreated(LTLParser grammar);
+	}
+
+	partial void EnterRule_disjunction();
+	partial void LeaveRule_disjunction();
+
+	// $ANTLR start "disjunction"
+	// ./LtlSharp/LTL.g:42:1: disjunction returns [LTLFormula value] : a= unary ( '|' b= disjunction )? ;
+	[GrammarRule("disjunction")]
+	private LTLParser.disjunction_return disjunction()
+	{
+		EnterRule_disjunction();
+		EnterRule("disjunction", 7);
+		TraceIn("disjunction", 7);
+		LTLParser.disjunction_return retval = new LTLParser.disjunction_return(this);
+		retval.Start = (IToken)input.LT(1);
+
+		object root_0 = default(object);
+
+		IToken char_literal9 = default(IToken);
+		LTLParser.unary_return a = default(LTLParser.unary_return);
+		LTLParser.disjunction_return b = default(LTLParser.disjunction_return);
+
+		object char_literal9_tree = default(object);
+		try { DebugEnterRule(GrammarFileName, "disjunction");
+		DebugLocation(42, 2);
+		try
+		{
+			// ./LtlSharp/LTL.g:43:3: (a= unary ( '|' b= disjunction )? )
+			DebugEnterAlt(1);
+			// ./LtlSharp/LTL.g:43:6: a= unary ( '|' b= disjunction )?
+			{
+			root_0 = (object)adaptor.Nil();
+
+			DebugLocation(43, 8);
+			PushFollow(Follow._unary_in_disjunction333);
+			a=unary();
+			PopFollow();
+
+			adaptor.AddChild(root_0, a.Tree);
+			DebugLocation(43, 16);
+			 retval.value = (a!=null?a.value:default(LTLFormula)); 
+			DebugLocation(44, 6);
+			// ./LtlSharp/LTL.g:44:6: ( '|' b= disjunction )?
+			int alt5=2;
+			try { DebugEnterSubRule(5);
+			try { DebugEnterDecision(5, false);
+			int LA5_0 = input.LA(1);
+
+			if ((LA5_0==17))
+			{
+				alt5 = 1;
+			}
+			} finally { DebugExitDecision(5); }
+			switch (alt5)
+			{
+			case 1:
+				DebugEnterAlt(1);
+				// ./LtlSharp/LTL.g:44:7: '|' b= disjunction
+				{
+				DebugLocation(44, 7);
+				char_literal9=(IToken)Match(input,17,Follow._17_in_disjunction344); 
+				char_literal9_tree = (object)adaptor.Create(char_literal9);
+				adaptor.AddChild(root_0, char_literal9_tree);
+				DebugLocation(44, 13);
+				PushFollow(Follow._disjunction_in_disjunction350);
+				b=disjunction();
+				PopFollow();
+
+				adaptor.AddChild(root_0, b.Tree);
+				DebugLocation(44, 27);
+				 if (retval.value.GetType() == typeof(Disjunction)) { ((Disjunction) retval.value).Push ((b!=null?b.value:default(LTLFormula))); } else { retval.value = new Disjunction (retval.value, (b!=null?b.value:default(LTLFormula))); } 
+
+				}
+				break;
+
+			}
+			} finally { DebugExitSubRule(5); }
+
+
+			}
+
+			retval.Stop = (IToken)input.LT(-1);
+
+			retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+			adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+
+		}
+		catch (RecognitionException re)
+		{
+			ReportError(re);
+			Recover(input,re);
+		retval.Tree = (object)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
+
+		}
+		finally
+		{
+			TraceOut("disjunction", 7);
+			LeaveRule("disjunction", 7);
 			LeaveRule_disjunction();
 		}
-		DebugLocation(37, 2);
+		DebugLocation(45, 2);
 		} finally { DebugExitRule(GrammarFileName, "disjunction"); }
 		return retval;
 
@@ -755,172 +868,172 @@ public partial class LTLParser : Antlr.Runtime.Parser
 	partial void LeaveRule_unary();
 
 	// $ANTLR start "unary"
-	// ./LtlSharp/LTL.g:39:1: unary returns [Expression value] : ( atom | '!' a= unary | 'X' a= unary | 'F' a= unary | 'G' a= unary );
+	// ./LtlSharp/LTL.g:47:1: unary returns [LTLFormula value] : ( atom | '!' a= unary | 'X' a= unary | 'F' a= unary | 'G' a= unary );
 	[GrammarRule("unary")]
 	private LTLParser.unary_return unary()
 	{
 		EnterRule_unary();
-		EnterRule("unary", 7);
-		TraceIn("unary", 7);
+		EnterRule("unary", 8);
+		TraceIn("unary", 8);
 		LTLParser.unary_return retval = new LTLParser.unary_return(this);
 		retval.Start = (IToken)input.LT(1);
 
 		object root_0 = default(object);
 
-		IToken char_literal10 = default(IToken);
 		IToken char_literal11 = default(IToken);
 		IToken char_literal12 = default(IToken);
 		IToken char_literal13 = default(IToken);
+		IToken char_literal14 = default(IToken);
 		LTLParser.unary_return a = default(LTLParser.unary_return);
-		LTLParser.atom_return atom9 = default(LTLParser.atom_return);
+		LTLParser.atom_return atom10 = default(LTLParser.atom_return);
 
-		object char_literal10_tree = default(object);
 		object char_literal11_tree = default(object);
 		object char_literal12_tree = default(object);
 		object char_literal13_tree = default(object);
+		object char_literal14_tree = default(object);
 		try { DebugEnterRule(GrammarFileName, "unary");
-		DebugLocation(39, 2);
+		DebugLocation(47, 2);
 		try
 		{
-			// ./LtlSharp/LTL.g:40:3: ( atom | '!' a= unary | 'X' a= unary | 'F' a= unary | 'G' a= unary )
-			int alt5=5;
-			try { DebugEnterDecision(5, false);
+			// ./LtlSharp/LTL.g:48:3: ( atom | '!' a= unary | 'X' a= unary | 'F' a= unary | 'G' a= unary )
+			int alt6=5;
+			try { DebugEnterDecision(6, false);
 			switch (input.LA(1))
 			{
 			case PROPOSITION:
 			case 7:
 				{
-				alt5 = 1;
+				alt6 = 1;
 				}
 				break;
 			case 5:
 				{
-				alt5 = 2;
+				alt6 = 2;
 				}
 				break;
-			case 15:
+			case 16:
 				{
-				alt5 = 3;
-				}
-				break;
-			case 10:
-				{
-				alt5 = 4;
+				alt6 = 3;
 				}
 				break;
 			case 11:
 				{
-				alt5 = 5;
+				alt6 = 4;
+				}
+				break;
+			case 12:
+				{
+				alt6 = 5;
 				}
 				break;
 			default:
 				{
-					NoViableAltException nvae = new NoViableAltException("", 5, 0, input);
+					NoViableAltException nvae = new NoViableAltException("", 6, 0, input);
 					DebugRecognitionException(nvae);
 					throw nvae;
 				}
 			}
 
-			} finally { DebugExitDecision(5); }
-			switch (alt5)
+			} finally { DebugExitDecision(6); }
+			switch (alt6)
 			{
 			case 1:
 				DebugEnterAlt(1);
-				// ./LtlSharp/LTL.g:40:6: atom
+				// ./LtlSharp/LTL.g:48:6: atom
 				{
 				root_0 = (object)adaptor.Nil();
 
-				DebugLocation(40, 6);
-				PushFollow(Follow._atom_in_unary306);
-				atom9=atom();
+				DebugLocation(48, 6);
+				PushFollow(Follow._atom_in_unary372);
+				atom10=atom();
 				PopFollow();
 
-				adaptor.AddChild(root_0, atom9.Tree);
-				DebugLocation(40, 11);
-				 retval.value = (atom9!=null?atom9.value:default(LTLFormula)); 
+				adaptor.AddChild(root_0, atom10.Tree);
+				DebugLocation(48, 11);
+				 retval.value = (atom10!=null?atom10.value:default(LTLFormula)); 
 
 				}
 				break;
 			case 2:
 				DebugEnterAlt(2);
-				// ./LtlSharp/LTL.g:41:5: '!' a= unary
+				// ./LtlSharp/LTL.g:49:8: '!' a= unary
 				{
 				root_0 = (object)adaptor.Nil();
 
-				DebugLocation(41, 5);
-				char_literal10=(IToken)Match(input,5,Follow._5_in_unary314); 
-				char_literal10_tree = (object)adaptor.Create(char_literal10);
-				adaptor.AddChild(root_0, char_literal10_tree);
-				DebugLocation(41, 11);
-				PushFollow(Follow._unary_in_unary320);
+				DebugLocation(49, 8);
+				char_literal11=(IToken)Match(input,5,Follow._5_in_unary383); 
+				char_literal11_tree = (object)adaptor.Create(char_literal11);
+				adaptor.AddChild(root_0, char_literal11_tree);
+				DebugLocation(49, 14);
+				PushFollow(Follow._unary_in_unary389);
 				a=unary();
 				PopFollow();
 
 				adaptor.AddChild(root_0, a.Tree);
-				DebugLocation(41, 19);
+				DebugLocation(49, 22);
 				 retval.value = new Negation ((a!=null?a.value:default(LTLFormula))); 
 
 				}
 				break;
 			case 3:
 				DebugEnterAlt(3);
-				// ./LtlSharp/LTL.g:42:5: 'X' a= unary
+				// ./LtlSharp/LTL.g:50:8: 'X' a= unary
 				{
 				root_0 = (object)adaptor.Nil();
 
-				DebugLocation(42, 5);
-				char_literal11=(IToken)Match(input,15,Follow._15_in_unary328); 
-				char_literal11_tree = (object)adaptor.Create(char_literal11);
-				adaptor.AddChild(root_0, char_literal11_tree);
-				DebugLocation(42, 11);
-				PushFollow(Follow._unary_in_unary334);
+				DebugLocation(50, 8);
+				char_literal12=(IToken)Match(input,16,Follow._16_in_unary400); 
+				char_literal12_tree = (object)adaptor.Create(char_literal12);
+				adaptor.AddChild(root_0, char_literal12_tree);
+				DebugLocation(50, 14);
+				PushFollow(Follow._unary_in_unary406);
 				a=unary();
 				PopFollow();
 
 				adaptor.AddChild(root_0, a.Tree);
-				DebugLocation(42, 19);
+				DebugLocation(50, 22);
 				 retval.value = new Next ((a!=null?a.value:default(LTLFormula))); 
 
 				}
 				break;
 			case 4:
 				DebugEnterAlt(4);
-				// ./LtlSharp/LTL.g:43:5: 'F' a= unary
+				// ./LtlSharp/LTL.g:51:8: 'F' a= unary
 				{
 				root_0 = (object)adaptor.Nil();
 
-				DebugLocation(43, 5);
-				char_literal12=(IToken)Match(input,10,Follow._10_in_unary342); 
-				char_literal12_tree = (object)adaptor.Create(char_literal12);
-				adaptor.AddChild(root_0, char_literal12_tree);
-				DebugLocation(43, 11);
-				PushFollow(Follow._unary_in_unary348);
+				DebugLocation(51, 8);
+				char_literal13=(IToken)Match(input,11,Follow._11_in_unary417); 
+				char_literal13_tree = (object)adaptor.Create(char_literal13);
+				adaptor.AddChild(root_0, char_literal13_tree);
+				DebugLocation(51, 14);
+				PushFollow(Follow._unary_in_unary423);
 				a=unary();
 				PopFollow();
 
 				adaptor.AddChild(root_0, a.Tree);
-				DebugLocation(43, 19);
+				DebugLocation(51, 22);
 				 retval.value = new Finally ((a!=null?a.value:default(LTLFormula))); 
 
 				}
 				break;
 			case 5:
 				DebugEnterAlt(5);
-				// ./LtlSharp/LTL.g:44:5: 'G' a= unary
+				// ./LtlSharp/LTL.g:52:8: 'G' a= unary
 				{
 				root_0 = (object)adaptor.Nil();
 
-				DebugLocation(44, 5);
-				char_literal13=(IToken)Match(input,11,Follow._11_in_unary356); 
-				char_literal13_tree = (object)adaptor.Create(char_literal13);
-				adaptor.AddChild(root_0, char_literal13_tree);
-				DebugLocation(44, 11);
-				PushFollow(Follow._unary_in_unary362);
+				DebugLocation(52, 8);
+				char_literal14=(IToken)Match(input,12,Follow._12_in_unary434); 
+				char_literal14_tree = (object)adaptor.Create(char_literal14);
+				adaptor.AddChild(root_0, char_literal14_tree);
+				DebugLocation(52, 14);
+				PushFollow(Follow._unary_in_unary440);
 				a=unary();
 				PopFollow();
 
 				adaptor.AddChild(root_0, a.Tree);
-				DebugLocation(44, 19);
+				DebugLocation(52, 22);
 				 retval.value = new Globally ((a!=null?a.value:default(LTLFormula))); 
 
 				}
@@ -942,11 +1055,11 @@ public partial class LTLParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("unary", 7);
-			LeaveRule("unary", 7);
+			TraceOut("unary", 8);
+			LeaveRule("unary", 8);
 			LeaveRule_unary();
 		}
-		DebugLocation(45, 2);
+		DebugLocation(53, 2);
 		} finally { DebugExitRule(GrammarFileName, "unary"); }
 		return retval;
 
@@ -964,89 +1077,89 @@ public partial class LTLParser : Antlr.Runtime.Parser
 	partial void LeaveRule_atom();
 
 	// $ANTLR start "atom"
-	// ./LtlSharp/LTL.g:47:1: atom returns [Expression value] : ( PROPOSITION | '(' formula ')' );
+	// ./LtlSharp/LTL.g:55:1: atom returns [LTLFormula value] : ( PROPOSITION | '(' formula ')' );
 	[GrammarRule("atom")]
 	private LTLParser.atom_return atom()
 	{
 		EnterRule_atom();
-		EnterRule("atom", 8);
-		TraceIn("atom", 8);
+		EnterRule("atom", 9);
+		TraceIn("atom", 9);
 		LTLParser.atom_return retval = new LTLParser.atom_return(this);
 		retval.Start = (IToken)input.LT(1);
 
 		object root_0 = default(object);
 
-		IToken PROPOSITION14 = default(IToken);
-		IToken char_literal15 = default(IToken);
-		IToken char_literal17 = default(IToken);
-		LTLParser.formula_return formula16 = default(LTLParser.formula_return);
+		IToken PROPOSITION15 = default(IToken);
+		IToken char_literal16 = default(IToken);
+		IToken char_literal18 = default(IToken);
+		LTLParser.formula_return formula17 = default(LTLParser.formula_return);
 
-		object PROPOSITION14_tree = default(object);
-		object char_literal15_tree = default(object);
-		object char_literal17_tree = default(object);
+		object PROPOSITION15_tree = default(object);
+		object char_literal16_tree = default(object);
+		object char_literal18_tree = default(object);
 		try { DebugEnterRule(GrammarFileName, "atom");
-		DebugLocation(47, 2);
+		DebugLocation(55, 2);
 		try
 		{
-			// ./LtlSharp/LTL.g:48:3: ( PROPOSITION | '(' formula ')' )
-			int alt6=2;
-			try { DebugEnterDecision(6, false);
-			int LA6_0 = input.LA(1);
+			// ./LtlSharp/LTL.g:56:3: ( PROPOSITION | '(' formula ')' )
+			int alt7=2;
+			try { DebugEnterDecision(7, false);
+			int LA7_0 = input.LA(1);
 
-			if ((LA6_0==PROPOSITION))
+			if ((LA7_0==PROPOSITION))
 			{
-				alt6 = 1;
+				alt7 = 1;
 			}
-			else if ((LA6_0==7))
+			else if ((LA7_0==7))
 			{
-				alt6 = 2;
+				alt7 = 2;
 			}
 			else
 			{
-				NoViableAltException nvae = new NoViableAltException("", 6, 0, input);
+				NoViableAltException nvae = new NoViableAltException("", 7, 0, input);
 				DebugRecognitionException(nvae);
 				throw nvae;
 			}
-			} finally { DebugExitDecision(6); }
-			switch (alt6)
+			} finally { DebugExitDecision(7); }
+			switch (alt7)
 			{
 			case 1:
 				DebugEnterAlt(1);
-				// ./LtlSharp/LTL.g:48:6: PROPOSITION
+				// ./LtlSharp/LTL.g:56:6: PROPOSITION
 				{
 				root_0 = (object)adaptor.Nil();
 
-				DebugLocation(48, 6);
-				PROPOSITION14=(IToken)Match(input,PROPOSITION,Follow._PROPOSITION_in_atom382); 
-				PROPOSITION14_tree = (object)adaptor.Create(PROPOSITION14);
-				adaptor.AddChild(root_0, PROPOSITION14_tree);
-				DebugLocation(48, 18);
-				 retval.value = new Proposition (PROPOSITION14.Text); 
+				DebugLocation(56, 6);
+				PROPOSITION15=(IToken)Match(input,PROPOSITION,Follow._PROPOSITION_in_atom460); 
+				PROPOSITION15_tree = (object)adaptor.Create(PROPOSITION15);
+				adaptor.AddChild(root_0, PROPOSITION15_tree);
+				DebugLocation(56, 18);
+				 retval.value = new Proposition (PROPOSITION15.Text); 
 
 				}
 				break;
 			case 2:
 				DebugEnterAlt(2);
-				// ./LtlSharp/LTL.g:49:5: '(' formula ')'
+				// ./LtlSharp/LTL.g:57:8: '(' formula ')'
 				{
 				root_0 = (object)adaptor.Nil();
 
-				DebugLocation(49, 5);
-				char_literal15=(IToken)Match(input,7,Follow._7_in_atom390); 
-				char_literal15_tree = (object)adaptor.Create(char_literal15);
-				adaptor.AddChild(root_0, char_literal15_tree);
-				DebugLocation(49, 9);
-				PushFollow(Follow._formula_in_atom392);
-				formula16=formula();
+				DebugLocation(57, 8);
+				char_literal16=(IToken)Match(input,7,Follow._7_in_atom471); 
+				char_literal16_tree = (object)adaptor.Create(char_literal16);
+				adaptor.AddChild(root_0, char_literal16_tree);
+				DebugLocation(57, 12);
+				PushFollow(Follow._formula_in_atom473);
+				formula17=formula();
 				PopFollow();
 
-				adaptor.AddChild(root_0, formula16.Tree);
-				DebugLocation(49, 17);
-				char_literal17=(IToken)Match(input,8,Follow._8_in_atom394); 
-				char_literal17_tree = (object)adaptor.Create(char_literal17);
-				adaptor.AddChild(root_0, char_literal17_tree);
-				DebugLocation(49, 21);
-				 retval.value = new ParenthesedExpression ((formula16!=null?formula16.value:default(LTLFormula))); 
+				adaptor.AddChild(root_0, formula17.Tree);
+				DebugLocation(57, 20);
+				char_literal18=(IToken)Match(input,8,Follow._8_in_atom475); 
+				char_literal18_tree = (object)adaptor.Create(char_literal18);
+				adaptor.AddChild(root_0, char_literal18_tree);
+				DebugLocation(57, 24);
+				 retval.value = new ParenthesedExpression ((formula17!=null?formula17.value:default(LTLFormula))); 
 
 				}
 				break;
@@ -1067,11 +1180,11 @@ public partial class LTLParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("atom", 8);
-			LeaveRule("atom", 8);
+			TraceOut("atom", 9);
+			LeaveRule("atom", 9);
 			LeaveRule_atom();
 		}
-		DebugLocation(50, 2);
+		DebugLocation(58, 2);
 		} finally { DebugExitRule(GrammarFileName, "atom"); }
 		return retval;
 
@@ -1083,38 +1196,41 @@ public partial class LTLParser : Antlr.Runtime.Parser
 	#region Follow sets
 	private static class Follow
 	{
-		public static readonly BitSet _formula_in_parse59 = new BitSet(new ulong[]{0x0UL});
-		public static readonly BitSet _EOF_in_parse61 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _binary_in_formula87 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _implication_in_binary111 = new BitSet(new ulong[]{0x7002UL});
-		public static readonly BitSet _13_in_binary123 = new BitSet(new ulong[]{0x8CB0UL});
-		public static readonly BitSet _binary_in_binary129 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _12_in_binary140 = new BitSet(new ulong[]{0x8CB0UL});
-		public static readonly BitSet _binary_in_binary146 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _14_in_binary157 = new BitSet(new ulong[]{0x8CB0UL});
-		public static readonly BitSet _binary_in_binary163 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _conjunction_in_implication195 = new BitSet(new ulong[]{0x202UL});
-		public static readonly BitSet _9_in_implication200 = new BitSet(new ulong[]{0x8CB0UL});
-		public static readonly BitSet _implication_in_implication206 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _disjunction_in_conjunction234 = new BitSet(new ulong[]{0x42UL});
-		public static readonly BitSet _6_in_conjunction239 = new BitSet(new ulong[]{0x8CB0UL});
-		public static readonly BitSet _conjunction_in_conjunction245 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _unary_in_disjunction273 = new BitSet(new ulong[]{0x10002UL});
-		public static readonly BitSet _16_in_disjunction278 = new BitSet(new ulong[]{0x8CB0UL});
-		public static readonly BitSet _disjunction_in_disjunction284 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _atom_in_unary306 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _5_in_unary314 = new BitSet(new ulong[]{0x8CB0UL});
-		public static readonly BitSet _unary_in_unary320 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _15_in_unary328 = new BitSet(new ulong[]{0x8CB0UL});
-		public static readonly BitSet _unary_in_unary334 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _10_in_unary342 = new BitSet(new ulong[]{0x8CB0UL});
-		public static readonly BitSet _unary_in_unary348 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _11_in_unary356 = new BitSet(new ulong[]{0x8CB0UL});
-		public static readonly BitSet _unary_in_unary362 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _PROPOSITION_in_atom382 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _7_in_atom390 = new BitSet(new ulong[]{0x8CB0UL});
-		public static readonly BitSet _formula_in_atom392 = new BitSet(new ulong[]{0x100UL});
-		public static readonly BitSet _8_in_atom394 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _formula_in_parse60 = new BitSet(new ulong[]{0x0UL});
+		public static readonly BitSet _EOF_in_parse62 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _equivalence_in_formula88 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _binary_in_equivalence112 = new BitSet(new ulong[]{0x402UL});
+		public static readonly BitSet _10_in_equivalence123 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _equivalence_in_equivalence129 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _implication_in_binary155 = new BitSet(new ulong[]{0xE002UL});
+		public static readonly BitSet _14_in_binary167 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _binary_in_binary173 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _13_in_binary184 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _binary_in_binary190 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _15_in_binary201 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _binary_in_binary207 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _conjunction_in_implication243 = new BitSet(new ulong[]{0x202UL});
+		public static readonly BitSet _9_in_implication254 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _implication_in_implication260 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _disjunction_in_conjunction288 = new BitSet(new ulong[]{0x42UL});
+		public static readonly BitSet _6_in_conjunction299 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _conjunction_in_conjunction305 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _unary_in_disjunction333 = new BitSet(new ulong[]{0x20002UL});
+		public static readonly BitSet _17_in_disjunction344 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _disjunction_in_disjunction350 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _atom_in_unary372 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _5_in_unary383 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _unary_in_unary389 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _16_in_unary400 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _unary_in_unary406 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _11_in_unary417 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _unary_in_unary423 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _12_in_unary434 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _unary_in_unary440 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _PROPOSITION_in_atom460 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _7_in_atom471 = new BitSet(new ulong[]{0x118B0UL});
+		public static readonly BitSet _formula_in_atom473 = new BitSet(new ulong[]{0x100UL});
+		public static readonly BitSet _8_in_atom475 = new BitSet(new ulong[]{0x2UL});
 	}
 	#endregion Follow sets
 }

@@ -77,6 +77,13 @@ namespace LtlSharp
 			: base (left, right)
 		{}
 	}
+	
+	public class Equivalence : BinaryOperator
+	{
+		public Equivalence (LTLFormula left, LTLFormula right)
+			: base (left, right)
+		{}
+	}
 
 	public class Conjunction : NaryOperator
 	{
