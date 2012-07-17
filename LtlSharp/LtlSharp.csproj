@@ -44,9 +44,13 @@
     <Compile Include="LTLLexer.cs" />
     <Compile Include="LTLParser.cs" />
     <Compile Include="LTLFormula.cs" />
+    <Compile Include="PrettyPrinters\Dot.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="LTL.g" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PrettyPrinters\" />
   </ItemGroup>
 </Project>

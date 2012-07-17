@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// $ANTLR 3.4 ./LtlSharp/LTL.g 2012-07-16 08:30:12
+// $ANTLR 3.4 ./LtlSharp/LTL.g 2012-07-16 10:48:00
 
 // The variable 'variable' is assigned but its value is never used.
 #pragma warning disable 219
@@ -1211,7 +1211,7 @@ public partial class LTLParser : Antlr.Runtime.Parser
 				char_literal20_tree = (object)adaptor.Create(char_literal20);
 				adaptor.AddChild(root_0, char_literal20_tree);
 				DebugLocation(63, 24);
-				 retval.value = new ParenthesedExpression ((formula19!=null?formula19.value:default(LTLFormula))); 
+				 retval.value = (formula19!=null?formula19.value:default(LTLFormula)); 
 
 				}
 				break;
