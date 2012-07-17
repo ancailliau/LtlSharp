@@ -21,6 +21,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <ConsolePause>false</ConsolePause>
+    <Commandlineparameters>--alphabet "G ((ambulanceMobilizedByFax | ambulanceMobilizedByPhone) -&gt; ambulanceMobilized)"</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -36,6 +37,7 @@
     <Reference Include="NDesk.Options">
       <HintPath>NDesk.Options.dll</HintPath>
     </Reference>
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />

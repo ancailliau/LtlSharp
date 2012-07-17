@@ -1,7 +1,8 @@
 using System;
-using CheckMyModels;
 using NDesk.Options;
 using System.Collections.Generic;
+using LtlSharp.Utils;
+using System.Linq;
 
 namespace LtlSharp.CLI
 {
@@ -10,11 +11,14 @@ namespace LtlSharp.CLI
 		public static void Main (string[] args)
         {
             bool show_help = false;
-            bool dot = false;
+            bool dot       = false;
+            bool alphabet  = false;
     
             var p = new OptionSet () {
                 { "dot", "Print syntaxic tree in dot format.",
                     v => dot = true },
+                { "alphabet", "Print alphabet",
+                    v => alphabet = true },
                 { "h|help",  "show this message and exit", 
                     v => show_help = v != null },
             };
@@ -22,10 +26,9 @@ namespace LtlSharp.CLI
             List<string> extra;
             try {
                 extra = p.Parse (args);
+                
             } catch (OptionException e) {
-                Console.Write ("ltlsharp: ");
-                Console.WriteLine (e.Message);
-                Console.WriteLine ("Try `greet --help' for more information.");
+                PrintError (e.Message);
                 return;
             }
     
@@ -35,17 +38,25 @@ namespace LtlSharp.CLI
             }
     
             if (extra.Count == 0) {
-                Console.Write ("ltlsharp: ");
-                Console.WriteLine ("Please give at least one formula");
-                Console.WriteLine ("Try `ltlsharp --help' for more information.");
+                PrintError ("Please provide at least one formula.");
     			return;
             }
     
             foreach (var formula in extra) {
                 var parsedFormula = Parser.Parse (formula);
+                
+                if (parsedFormula == null) {
+                    PrintError (string.Format ("Formula '{0}' could not be parsed. Check if it is well-formed.", formula));
+                    return;
+                }
+                
                 if (dot) {
-                    var dotPrettyPrinter = new Dot (parsedFormula);
+                    var dotPrettyPrinter = new DotPrettyPrinter (parsedFormula, Console.Out);
                     dotPrettyPrinter.PrettyPrint ();
+                }
+                if (alphabet) {
+                    var alphabetExtractor = new ExtractAlphabet (parsedFormula);
+                    Console.WriteLine (string.Join (", ", alphabetExtractor.Alphabet.ToArray ()));
                 }
             }
         }
@@ -56,6 +67,15 @@ namespace LtlSharp.CLI
             Console.WriteLine ();
             Console.WriteLine ("Options:");
             p.WriteOptionDescriptions (Console.Out);
+        }
+        
+        static void PrintError (string error)
+        {  
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Error.Write ("ltlsharp: ");
+            Console.Error.WriteLine (error);
+            Console.Error.WriteLine ("Try `ltlsharp --help' for more information.");
+            Console.ResetColor ();
         }
 	}
 }

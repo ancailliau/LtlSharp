@@ -1,4 +1,4 @@
 #!/bin/sh
 #
 
-mono LtlSharp.CLI/bin/Debug/LtlSharp.CLI.exe $@
+mono LtlSharp.CLI/bin/Debug/LtlSharp.CLI.exe "$@"

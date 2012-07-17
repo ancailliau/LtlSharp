@@ -44,13 +44,15 @@
     <Compile Include="LTLLexer.cs" />
     <Compile Include="LTLParser.cs" />
     <Compile Include="LTLFormula.cs" />
-    <Compile Include="PrettyPrinters\Dot.cs" />
+    <Compile Include="Traversal.cs" />
+    <Compile Include="Utils\DotPrettyPrinter.cs" />
+    <Compile Include="Utils\ExtractAlphabet.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="LTL.g" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="PrettyPrinters\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
 </Project>

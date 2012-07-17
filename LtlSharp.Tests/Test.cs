@@ -116,19 +116,6 @@ namespace LtlSharp.Tests
 		}
 		
 		[Test()]
-		public void TestParenthesedExpression ()
-		{
-			var expression = Parser.Parse ("(test1)");
-			Assert.IsInstanceOf (typeof (ParenthesedExpression), expression);
-			Assert.IsInstanceOf (typeof (Proposition), ((ParenthesedExpression) expression).Enclosed);
-			
-			expression = Parser.Parse ("((test1))");
-			Assert.IsInstanceOf (typeof (ParenthesedExpression), expression);
-			Assert.IsInstanceOf (typeof (ParenthesedExpression), ((ParenthesedExpression) expression).Enclosed);
-			Assert.IsInstanceOf (typeof (Proposition), ((ParenthesedExpression) ((ParenthesedExpression) expression).Enclosed).Enclosed);
-		}
-		
-		[Test()]
 		public void TestNextExpression ()
 		{
 			var expression = Parser.Parse ("X test1");

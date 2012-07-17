@@ -106,13 +106,6 @@ namespace LtlSharp
 		{}
 	}
 
-	public class ParenthesedExpression : UnaryOperator
-	{
-		public ParenthesedExpression (LTLFormula expression)
-			: base (expression)
-		{}
-	}
-
 	#endregion
 
 	#region Temporal operators

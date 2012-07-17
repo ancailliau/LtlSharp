@@ -11,7 +11,8 @@ namespace LtlSharp
 			var lexer = new LTLLexer(input);
 			var token = new CommonTokenStream(lexer);
 			var parser = new LTLParser(token);
-			return parser.parse ().value;
+            var a = parser.parse ();
+			return parser.NumberOfSyntaxErrors > 0 ? null : a.value;
 		}
 	}
 }
