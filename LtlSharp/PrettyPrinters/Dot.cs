@@ -1,59 +1,57 @@
 using System;
 using LtlSharp;
 using System.Collections.Generic;
+using System.IO;
 
-namespace CheckMyModels
+namespace LtlSharp.PrettyPrinters
 {
 	public class Dot
 	{
-		public Dot (LTLFormula formula)
+		private int i = 0;
+        private LTLFormula formula;
+        private Dictionary<LTLFormula, string> mapping;
+
+        public Dot (LTLFormula formula)
 		{
 			this.formula = formula;
 		}
 
-		private LTLFormula formula;
-		private int i = 0;
-		private Dictionary<LTLFormula, string> mapping;
-
-		private string pp (LTLFormula e)
+		private string GetNextId ()
+        {
+            return "node" + (++i);
+        }
+        
+		private void PrettyPrint (LTLFormula formula, TextWriter writer)
 		{
-			if (e is BinaryOperator) {
-				var element = (BinaryOperator) e;
+			if (formula is BinaryOperator) {
+				var @operator = (BinaryOperator) formula;
 
-				mapping.Add (element.Left, "node"+(++i));
-				mapping.Add (element.Right, "node"+(++i));
+				mapping.Add (@operator.Left,  GetNextId ());
+				mapping.Add (@operator.Right, GetNextId ());
+                
+                writer.WriteLine ("\t{0} -> {1};", mapping[@operator], mapping[@operator.Left]);
+                writer.WriteLine ("\t{0} -> {1};", mapping[@operator], mapping[@operator.Right]);
+               
+                PrettyPrint (@operator.Left,  writer);
+                PrettyPrint (@operator.Right, writer);
 
-				return string.Format ("\t{0} -> {2};\n"
-				                      + "\t{0} -> {4};\n",
-				                      mapping[element], element, mapping[element.Left], element.Left, mapping[element.Right], element.Right)
-					+ pp (element.Left) + pp (element.Right);
-
-
-			} else if (e is UnaryOperator) {
-				var element = (UnaryOperator) e;
-				mapping.Add (element.Enclosed, "node"+(++i));
-
-				return string.Format ("\t{0} -> {2};\n",
-				                      mapping[element], element, mapping[element.Enclosed], element.Enclosed)
-					+ pp (element.Enclosed);
-
-			} else if (e is NaryOperator) {
-				var element = (NaryOperator) e;
-				string output = "";
-				foreach (var el in element.Expressions) {
-					mapping.Add (el, "node"+(++i));
-					output += string.Format ("\t{0} -> {2};\n",
-				                      mapping[element], element, mapping[el], el) + pp (el);
+			} else if (formula is UnaryOperator) {
+				var @operator = (UnaryOperator) formula;
+                mapping.Add (@operator.Enclosed, GetNextId ());
+				writer.WriteLine ("\t{0} -> {1};", mapping[@operator], mapping[@operator.Enclosed]);               
+                PrettyPrint (@operator.Enclosed, writer);
+                
+			} else if (formula is NaryOperator) {
+				var @operator = (NaryOperator) formula;                
+				foreach (var expression in @operator.Expressions) {
+					mapping.Add (expression, GetNextId ());
+                    writer.WriteLine ("\t{0} -> {1};", mapping[@operator], mapping[expression]);               
+                    PrettyPrint (expression, writer);
 				}
-				return output;
-
-			} else if (e is Proposition) {
-
-			}
-			return "";
+            }
 		}
 
-		private string Name (LTLFormula f)
+		private string GetNameFor (LTLFormula f)
 		{
 			if (f is Proposition) {
 				return (f as Proposition).Name;
@@ -90,21 +88,24 @@ namespace CheckMyModels
 			return f.ToString ();
 		}
 
-		public string PrettyPrint ()
+		public void PrettyPrint ()
 		{
-			mapping = new Dictionary<LTLFormula, string> ();
+            PrettyPrint (Console.Out);
+        }
+        
+        public void PrettyPrint (TextWriter writer)
+        {
+            mapping = new Dictionary<LTLFormula, string> ();
+			mapping.Add (formula, GetNextId ());
 
-			i++;
-			mapping.Add (formula, "node"+i);
+			writer.WriteLine ("digraph G {");
+			PrettyPrint (formula, writer);
 
-			string output = "digraph G { \n";
-			output += pp (formula);
-
-			foreach (var v in mapping.Keys) {
-				output += "\t" + mapping[v] + "[label=\"" + Name(v) + "\"];\n";
+			foreach (var element in mapping.Keys) {
+                writer.WriteLine ("\t{0}[label=\"\"]", mapping[element], GetNameFor(element));
 			}
 
-			return output + "}";
+			writer.WriteLine ("}");
 		}
 	}
 }

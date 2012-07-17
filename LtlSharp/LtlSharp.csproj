@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{AA561918-B98E-40DA-93B1-A6BFE524AF42}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>CheckMyModels</RootNamespace>
+    <RootNamespace>LtlSharp</RootNamespace>
     <AssemblyName>CheckMyModels</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
