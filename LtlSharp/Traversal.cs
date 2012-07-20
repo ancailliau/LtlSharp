@@ -73,23 +73,28 @@ namespace LtlSharp
                 VisitStrongImplication (formula as StrongImplication);
                 VisitBinaryOperator (formula as BinaryOperator);
                 
+            } else if (formula is ParenthesedExpression) {
+                VisitParenthesedExpression (formula as ParenthesedExpression);
+                VisitUnaryOperator (formula as UnaryOperator);
+                
             }
         }
         
-        protected virtual void VisitProposition       (Proposition       proposition)       {}
-        protected virtual void VisitImplication       (Implication       implication)       {}
-        protected virtual void VisitEquivalence       (Equivalence       equivalence)       {}
-        protected virtual void VisitConjunction       (Conjunction       conjunction)       {}
-        protected virtual void VisitDisjunction       (Disjunction       disjunction)       {}
-        protected virtual void VisitNegation          (Negation          negation)          {}
-        protected virtual void VisitNext              (Next              next)              {}
-        protected virtual void VisitFinally           (Finally           @finally)          {}
-        protected virtual void VisitGlobally          (Globally          globally)          {}
-        protected virtual void VisitUntil             (Until             until)             {}
-        protected virtual void VisitRelease           (Release           release)           {}
-        protected virtual void VisitUnless            (Unless            unless)            {}
-        protected virtual void VisitStrongEquivalence (StrongEquivalence strongEquivalence) {}
-        protected virtual void VisitStrongImplication (StrongImplication strongImplication) {}
+        protected virtual void VisitProposition           (Proposition           proposition)       {}
+        protected virtual void VisitImplication           (Implication           implication)       {}
+        protected virtual void VisitEquivalence           (Equivalence           equivalence)       {}
+        protected virtual void VisitConjunction           (Conjunction           conjunction)       {}
+        protected virtual void VisitDisjunction           (Disjunction           disjunction)       {}
+        protected virtual void VisitNegation              (Negation              negation)          {}
+        protected virtual void VisitNext                  (Next                  next)              {}
+        protected virtual void VisitFinally               (Finally               @finally)          {}
+        protected virtual void VisitGlobally              (Globally              globally)          {}
+        protected virtual void VisitUntil                 (Until                 until)             {}
+        protected virtual void VisitRelease               (Release               release)           {}
+        protected virtual void VisitUnless                (Unless                unless)            {}
+        protected virtual void VisitStrongEquivalence     (StrongEquivalence     strongEquivalence) {}
+        protected virtual void VisitStrongImplication     (StrongImplication     strongImplication) {}
+        protected virtual void VisitParenthesedExpression (ParenthesedExpression strongImplication) {}
         
         protected virtual void VisitBinaryOperator    (BinaryOperator    binaryoperator)
         {

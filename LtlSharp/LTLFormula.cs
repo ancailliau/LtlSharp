@@ -16,18 +16,23 @@ namespace LtlSharp
 
 	public abstract class UnaryOperator : LTLFormula
 	{
-		public LTLFormula Enclosed { get; private set; }
+		public LTLFormula Enclosed { get; protected set; }
 
 		public UnaryOperator (LTLFormula enclosed)
 		{
 			Enclosed = enclosed;
 		}
+        
+        public override string ToString ()
+        {
+            return Enclosed is BinaryOperator | Enclosed is NaryOperator ? "( " + Enclosed.ToString () + ")" : Enclosed.ToString ();
+        }
 	}
 
 	public abstract class BinaryOperator : LTLFormula
 	{
-		public LTLFormula Left  { get; private set; }
-		public LTLFormula Right { get; private set; }
+		public LTLFormula Left  { get; protected set; }
+		public LTLFormula Right { get; protected set; }
 
 		public BinaryOperator (LTLFormula left, LTLFormula right)
 		{
@@ -37,7 +42,7 @@ namespace LtlSharp
 
 	public abstract class NaryOperator : LTLFormula
 	{
-		public IList<LTLFormula> Expressions  { get; private set; }
+		public IList<LTLFormula> Expressions  { get; protected set; }
 
 		public NaryOperator (params LTLFormula[] expressions)
 		{
@@ -76,6 +81,11 @@ namespace LtlSharp
 		public Implication (LTLFormula left, LTLFormula right)
 			: base (left, right)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Format ("{0} -> {1}", Left, Right);
+        }
 	}
 	
 	public class Equivalence : BinaryOperator
@@ -83,6 +93,11 @@ namespace LtlSharp
 		public Equivalence (LTLFormula left, LTLFormula right)
 			: base (left, right)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Format ("{0} <-> {1}", Left, Right);
+        }
 	}
 
 	public class Conjunction : NaryOperator
@@ -90,6 +105,11 @@ namespace LtlSharp
 		public Conjunction (params LTLFormula[] expressions)
 			: base (expressions)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Join (" & ", (from e in Expressions select e.ToString ()).ToArray ());
+        }
 	}
 
 	public class Disjunction : NaryOperator
@@ -97,6 +117,11 @@ namespace LtlSharp
 		public Disjunction (params LTLFormula[] expressions)
 			: base (expressions)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Join (" | ", (from e in Expressions select e.ToString ()).ToArray ());
+        }
 	}
 
 	public class Negation : UnaryOperator
@@ -104,8 +129,27 @@ namespace LtlSharp
 		public Negation (LTLFormula expression)
 			: base (expression)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Format ("! {0}", base.ToString ());
+        }
 	}
 
+    public class ParenthesedExpression : UnaryOperator
+    {
+        public ParenthesedExpression (LTLFormula expression)
+            : base (expression)
+        {
+            if (expression is ParenthesedExpression)
+                Enclosed = (expression as ParenthesedExpression).Enclosed;
+        }
+        
+        public override string ToString ()
+        {
+            return string.Format ("{0}", base.ToString ());
+        }
+    }
 	#endregion
 
 	#region Temporal operators
@@ -115,6 +159,11 @@ namespace LtlSharp
 		public Next (LTLFormula expression)
 			: base (expression)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Format ("X {0}", base.ToString ());
+        }
 	}
 
 	public class Finally : UnaryOperator
@@ -122,6 +171,11 @@ namespace LtlSharp
 		public Finally (LTLFormula expression)
 			: base (expression)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Format ("F {0}", base.ToString ());
+        }
 	}
 
 	public class Globally : UnaryOperator
@@ -129,6 +183,11 @@ namespace LtlSharp
 		public Globally (LTLFormula expression)
 			: base (expression)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Format ("G {0}", base.ToString ());
+        }
 	}
 
 	public class Until : BinaryOperator
@@ -136,6 +195,11 @@ namespace LtlSharp
 		public Until (LTLFormula left, LTLFormula right)
 			: base (left, right)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Format ("{0} U {1}", Left, Right);
+        }
 	}
 	
 	public class Release : BinaryOperator
@@ -143,6 +207,11 @@ namespace LtlSharp
 		public Release (LTLFormula left, LTLFormula right)
 			: base (left, right)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Format ("{0} R {1}", Left, Right);
+        }
 	}
 	
 	public class Unless : BinaryOperator
@@ -150,6 +219,11 @@ namespace LtlSharp
 		public Unless (LTLFormula left, LTLFormula right)
 			: base (left, right)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Format ("{0} W {1}", Left, Right);
+        }
 	}
 	
 	public class StrongEquivalence : BinaryOperator
@@ -157,6 +231,11 @@ namespace LtlSharp
 		public StrongEquivalence (LTLFormula left, LTLFormula right)
 			: base (left, right)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Format ("{0} <=> {1}", Left, Right);
+        }
 	}
 	
 	public class StrongImplication : BinaryOperator
@@ -164,6 +243,11 @@ namespace LtlSharp
 		public StrongImplication (LTLFormula left, LTLFormula right)
 			: base (left, right)
 		{}
+        
+        public override string ToString ()
+        {
+            return string.Format ("{0} => {1}", Left, Right);
+        }
 	}
 
 	#endregion
