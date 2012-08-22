@@ -62,5 +62,8 @@ atom returns [LTLFormula value]
   :  PROPOSITION { $value = new Proposition ($PROPOSITION.Text); }
      | '(' formula ')' { $value = new ParenthesedExpression($formula.value); }
   ;
-
+  
 PROPOSITION : ('a'..'z') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
+
+COMMENT_LINE: '#' ~(NEWLINE)* ;
+NEWLINE: '\r'? '\n' { $channel = HIDDEN; };
