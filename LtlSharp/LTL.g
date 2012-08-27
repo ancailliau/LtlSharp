@@ -17,29 +17,29 @@ formula returns [LTLFormula value]
   ;
 
 strongbinary returns [LTLFormula value]
-  :  a = binary { $value = $a.value; } 
+  :  a = implyequiv { $value = $a.value; } 
      ( 
        '<=>' b = strongbinary { $value = new StrongEquivalence ($a.value, $b.value); }
        | '=>' b = strongbinary { $value = new StrongImplication ($a.value, $b.value); }
      )?
   ;
 
-binary returns [LTLFormula value]
-  :  a = implyequiv { $value = $a.value; } 
-     ( 'U' b = binary { $value = new Until ($a.value, $b.value); }
-     | 'R' b = binary { $value = new Release ($a.value, $b.value); }
-     | 'W' b = binary { $value = new Unless ($a.value, $b.value); }
-     )?
-  ;
-    
 implyequiv returns [LTLFormula value]
-  :  a = conjunction { $value = $a.value; } 
+  :  a = binary { $value = $a.value; } 
      ( 
        '<->' b = implyequiv { $value = new Equivalence ($a.value, $b.value); }
        | '->' b = implyequiv { $value = new Implication ($a.value, $b.value); }
      )?
   ;
   
+binary returns [LTLFormula value]
+  :  a = conjunction { $value = $a.value; } 
+     ( 'U' b = binary { $value = new Until ($a.value, $b.value); }
+     | 'R' b = binary { $value = new Release ($a.value, $b.value); }
+     | 'W' b = binary { $value = new Unless ($a.value, $b.value); }
+     )?
+  ;
+      
 conjunction returns [LTLFormula value]
   :  a = disjunction { $value = $a.value; } 
      ('&' b = conjunction { if ($value.GetType() == typeof(Conjunction)) { ((Conjunction) $value).Push ($b.value); } else { $value = new Conjunction ($value, $b.value); } })?
@@ -64,6 +64,3 @@ atom returns [LTLFormula value]
   ;
   
 PROPOSITION : ('a'..'z') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
-
-COMMENT_LINE: '#' ~(NEWLINE)* ;
-NEWLINE: '\r'? '\n' { $channel = HIDDEN; };

@@ -55,15 +55,15 @@ namespace LtlSharp
                 
             } else if (formula is Until) {
                 VisitUntil (formula as Until);
-                VisitUnaryOperator (formula as UnaryOperator);
+                VisitBinaryOperator (formula as BinaryOperator);
                 
             } else if (formula is Release) {
                 VisitRelease (formula as Release);
-                VisitUnaryOperator (formula as UnaryOperator);
+                VisitBinaryOperator (formula as BinaryOperator);
                 
             } else if (formula is Unless) {
                 VisitUnless (formula as Unless);
-                VisitUnaryOperator (formula as UnaryOperator);
+                VisitBinaryOperator (formula as BinaryOperator);
                 
             } else if (formula is StrongEquivalence) {
                 VisitStrongEquivalence (formula as StrongEquivalence);

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// $ANTLR 3.4 ./LtlSharp/LTL.g 2012-07-17 13:23:51
+// $ANTLR 3.4 ./LtlSharp/LTL.g 2012-08-27 09:21:06
 
 // The variable 'variable' is assigned but its value is never used.
 #pragma warning disable 219

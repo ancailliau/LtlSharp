@@ -21,7 +21,8 @@ namespace LtlSharp.Utils
         
         protected override void VisitProposition (Proposition proposition)
         {
-            alphabet.Add (proposition.Name);
+            if (!alphabet.Contains (proposition.Name))
+                alphabet.Add (proposition.Name);
         }
     }
 }
