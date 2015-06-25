@@ -61,7 +61,7 @@ namespace LtlSharp.Tests
         [Test()]
         public void TestRelease ()
         {
-            Assert.AreEqual ("a R b", "a R b".ToCanonicString());
+            Assert.AreEqual ("a V b", "a R b".ToCanonicString());
         }
         
         [Test()]
@@ -73,7 +73,7 @@ namespace LtlSharp.Tests
         [Test()]
         public void TestUnless ()
         {
-            Assert.AreEqual ("b R (b | a)", "a W b".ToCanonicString());
+            Assert.AreEqual ("b V (b | a)", "a W b".ToCanonicString());
         }
 	}
 }

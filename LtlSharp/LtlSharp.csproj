@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{AA561918-B98E-40DA-93B1-A6BFE524AF42}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -11,24 +11,24 @@
     <AssemblyName>LtlSharp</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <Externalconsole>true</Externalconsole>
+    <Externalconsole>True</Externalconsole>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -39,14 +39,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Parser.cs" />
-    <Compile Include="LTLLexer.cs" />
-    <Compile Include="LTLParser.cs" />
-    <Compile Include="LTLFormula.cs" />
     <Compile Include="Traversal.cs" />
     <Compile Include="Utils\DotPrettyPrinter.cs" />
     <Compile Include="Utils\ExtractAlphabet.cs" />
     <Compile Include="Utils\CanonicToString.cs" />
+    <Compile Include="Utils\TexToString.cs" />
+    <Compile Include="RabinAutomata.cs" />
+    <Compile Include="Buchi\EmptinessChecker.cs" />
+    <Compile Include="Buchi\GBANode.cs" />
+    <Compile Include="Buchi\GeneralizedBuchiAutomaton.cs" />
+    <Compile Include="Buchi\Transition.cs" />
+    <Compile Include="ILTLFormula.cs" />
+    <Compile Include="Buchi\Node.cs" />
+    <Compile Include="Buchi\LTL2Buchi\Seminal.cs" />
+    <Compile Include="Buchi\Automaton.cs" />
+    <Compile Include="Buchi\LTL2Buchi\Dimitra.cs" />
+    <Compile Include="Buchi\LTL2Buchi\ILTL2Buchi.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -54,5 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />
+    <Folder Include="Buchi\" />
+    <Folder Include="Buchi\LTL2Buchi\" />
   </ItemGroup>
 </Project>

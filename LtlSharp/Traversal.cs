@@ -4,9 +4,9 @@ namespace LtlSharp
 {
     public abstract class Traversal
     {
-        protected LTLFormula formula;
+        protected ILTLFormula formula;
         
-        public Traversal (LTLFormula formula)
+        public Traversal (ILTLFormula formula)
         {
             this.formula = formula;
         }
@@ -16,66 +16,64 @@ namespace LtlSharp
             Visit (formula);
         }
         
-        protected virtual void Visit (LTLFormula formula)
+        protected virtual void Visit (ILTLFormula formula)
         {
             if (formula is Proposition) {
                 VisitProposition (formula as Proposition);
                 
             } else if (formula is Implication) {
                 VisitImplication (formula as Implication);
-                VisitBinaryOperator (formula as BinaryOperator);
+                VisitBinaryOperator (formula as IBinaryOperator);
                 
             } else if (formula is Equivalence) {
                 VisitEquivalence (formula as Equivalence);
-                VisitBinaryOperator (formula as BinaryOperator);
+                VisitBinaryOperator (formula as IBinaryOperator);
                 
             } else if (formula is Conjunction) {
                 VisitConjunction (formula as Conjunction);
-                VisitNaryOperator (formula as NaryOperator);
                 
             } else if (formula is Disjunction) {
                 VisitDisjunction (formula as Disjunction);
-                VisitNaryOperator (formula as NaryOperator);
                 
             } else if (formula is Negation) {
                 VisitNegation (formula as Negation);
-                VisitUnaryOperator (formula as UnaryOperator);
+                VisitUnaryOperator (formula as IUnaryOperator);
                 
             } else if (formula is Next) {
                 VisitNext (formula as Next);
-                VisitUnaryOperator (formula as UnaryOperator);
+                VisitUnaryOperator (formula as IUnaryOperator);
                 
             } else if (formula is Finally) {
                 VisitFinally (formula as Finally);
-                VisitUnaryOperator (formula as UnaryOperator);
+                VisitUnaryOperator (formula as IUnaryOperator);
                 
             } else if (formula is Globally) {
                 VisitGlobally (formula as Globally);
-                VisitUnaryOperator (formula as UnaryOperator);
+                VisitUnaryOperator (formula as IUnaryOperator);
                 
             } else if (formula is Until) {
                 VisitUntil (formula as Until);
-                VisitBinaryOperator (formula as BinaryOperator);
+                VisitBinaryOperator (formula as IBinaryOperator);
                 
             } else if (formula is Release) {
                 VisitRelease (formula as Release);
-                VisitBinaryOperator (formula as BinaryOperator);
+                VisitBinaryOperator (formula as IBinaryOperator);
                 
             } else if (formula is Unless) {
                 VisitUnless (formula as Unless);
-                VisitBinaryOperator (formula as BinaryOperator);
+                VisitBinaryOperator (formula as IBinaryOperator);
                 
             } else if (formula is StrongEquivalence) {
                 VisitStrongEquivalence (formula as StrongEquivalence);
-                VisitBinaryOperator (formula as BinaryOperator);
+                VisitBinaryOperator (formula as IBinaryOperator);
                 
             } else if (formula is StrongImplication) {
                 VisitStrongImplication (formula as StrongImplication);
-                VisitBinaryOperator (formula as BinaryOperator);
+                VisitBinaryOperator (formula as IBinaryOperator);
                 
             } else if (formula is ParenthesedExpression) {
                 VisitParenthesedExpression (formula as ParenthesedExpression);
-                VisitUnaryOperator (formula as UnaryOperator);
+                VisitUnaryOperator (formula as IUnaryOperator);
                 
             }
         }
@@ -96,21 +94,15 @@ namespace LtlSharp
         protected virtual void VisitStrongImplication     (StrongImplication     strongImplication) {}
         protected virtual void VisitParenthesedExpression (ParenthesedExpression strongImplication) {}
         
-        protected virtual void VisitBinaryOperator    (BinaryOperator    binaryoperator)
+        protected virtual void VisitBinaryOperator    (IBinaryOperator    binaryoperator)
         {
             Visit (binaryoperator.Left);
             Visit (binaryoperator.Right);
         }
         
-        protected virtual void VisitUnaryOperator     (UnaryOperator     unaryoperator)
+        protected virtual void VisitUnaryOperator     (IUnaryOperator     unaryoperator)
         {
             Visit (unaryoperator.Enclosed);   
-        }
-        
-        protected virtual void VisitNaryOperator      (NaryOperator      naryoperator)
-        {
-            foreach (var expression in naryoperator.Expressions)
-                Visit (expression);
         }
     }
 }

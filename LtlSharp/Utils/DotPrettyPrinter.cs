@@ -8,10 +8,10 @@ namespace LtlSharp.Utils
 	public class DotPrettyPrinter : Traversal
 	{
 		private int i = 0;
-        private Dictionary<LTLFormula, string> mapping;
+        private Dictionary<ILTLFormula, string> mapping;
         private TextWriter writer;
 
-        public DotPrettyPrinter (LTLFormula formula, TextWriter writer)
+        public DotPrettyPrinter (ILTLFormula formula, TextWriter writer)
             : base (formula)
 		{
             this.writer = writer;
@@ -19,7 +19,7 @@ namespace LtlSharp.Utils
         
         public void PrettyPrint ()
         {
-            mapping = new Dictionary<LTLFormula, string> ();
+            mapping = new Dictionary<ILTLFormula, string> ();
             mapping.Add (formula, GetNextId ());
 
             writer.WriteLine ("digraph G {");
@@ -37,7 +37,7 @@ namespace LtlSharp.Utils
             return "node" + (++i);
         }
         
-        protected override void VisitBinaryOperator (BinaryOperator @operator)
+        protected override void VisitBinaryOperator (IBinaryOperator @operator)
         {
             mapping.Add (@operator.Left,  GetNextId ());
             mapping.Add (@operator.Right, GetNextId ());
@@ -49,24 +49,14 @@ namespace LtlSharp.Utils
             Visit (@operator.Right);
         }
         
-        protected override void VisitUnaryOperator (UnaryOperator @operator)
+        protected override void VisitUnaryOperator (IUnaryOperator @operator)
         {
             mapping.Add (@operator.Enclosed, GetNextId ());
             writer.WriteLine ("\t{0} -> {1};", mapping[@operator], mapping[@operator.Enclosed]);
             
             Visit (@operator.Enclosed);
         }
-        
-        protected override void VisitNaryOperator (NaryOperator @operator)
-        {
-            foreach (var expression in @operator.Expressions) {
-                mapping.Add (expression, GetNextId ());
-                writer.WriteLine ("\t{0} -> {1};", mapping[@operator], mapping[expression]);
-                Visit (expression);
-            }
-        }
-
-		private string GetNameFor (LTLFormula f)
+		private string GetNameFor (ILTLFormula f)
 		{
 			if (f is Proposition) {
 				return (f as Proposition).Name;
