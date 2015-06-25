@@ -12,13 +12,13 @@ namespace LtlSharp.Buchi
         }
         public new bool Add (ILTLFormula formula) {
             var neg = formula.Negate ();
-            if (this.Contains (neg)) {
+            if (base.Contains (neg)) {
                 return false;
             }
-            Add (formula);
+            base.Add (formula);
             return true;
         }
-        public new bool AddRange (IEnumerable<ILTLFormula> formulas) {
+        public bool AddRange (IEnumerable<ILTLFormula> formulas) {
             foreach (var v in formulas) {
                 if (!Add (v)) {
                     return false;
