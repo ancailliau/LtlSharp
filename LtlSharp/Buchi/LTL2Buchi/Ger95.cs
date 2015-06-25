@@ -79,10 +79,9 @@ namespace LtlSharp.Buchi.LTL2Buchi
                         return Expand (node, nodeSet);
                     }
                 } else if (eta is Until | eta is Release | eta is Disjunction) {
-                    var nlist1 = new List<ILTLFormula> (node.New);
-                    nlist1.AddRange (New1 (eta));
+                    node.New.AddRange (New1 (eta));
                     foreach (var old in node.Old) {
-                        nlist1.Remove (old);
+                        node.New.Remove (old);
                     }
                     
                     var nlist2 = new List<ILTLFormula> (node.New);
@@ -91,43 +90,27 @@ namespace LtlSharp.Buchi.LTL2Buchi
                         nlist2.Remove (old);
                     }
                     
-                    var olist1 = new List<ILTLFormula> (node.Old);
-                    olist1.Add (eta);
-                    
-                    var xlist1 = new List<ILTLFormula> (node.Next);
-                    xlist1.AddRange (Next1 (eta));
+                    node.Old.Add (eta);                    
+                    node.Next.AddRange (Next1 (eta));
                                         
-                    var node1 = new Node () {
-                        Incoming = new List<string> (node.Incoming),
-                        New = nlist1,
-                        Old = olist1,
-                        Next = xlist1
-                    };
-                    
                     var node2 = new Node () {
                         Incoming = new List<string> (node.Incoming),
                         New = nlist2,
-                        Old = new List<ILTLFormula> (olist1),
+                        Old = new List<ILTLFormula> (node.Old),
                         Next = new List<ILTLFormula> (node.Next)
                     };
                     
-                    return Expand (node2, Expand (node1, nodeSet));
+                    return Expand (node2, Expand (node, nodeSet));
                 } else if (eta is Conjunction) {
                     var ceta = (Conjunction)eta;
                     
-                    var list = new List<ILTLFormula> (node.New);
                     if (!node.Old.Contains (ceta.Left))
-                        list.Add (ceta.Left);
+                        node.New.Add (ceta.Left);
                     if (!node.Old.Contains (ceta.Right))
-                        list.Add (ceta.Right);
+                        node.New.Add (ceta.Right);
+                    node.Old.Add (eta);
                     
-                    var n = new Node (node.Name) {
-                        Incoming = new List<string> (node.Incoming),
-                        New = list,
-                        Old = new List<ILTLFormula> (node.Old.Union (new [] { eta })),
-                        Next = new List<ILTLFormula> (node.Next)
-                    };
-                    return Expand (n, nodeSet);  
+                    return Expand (node, nodeSet);  
                 } else if (eta is Next) {
                     
                     var n = new Node (node.Name) {
