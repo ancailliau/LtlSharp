@@ -84,6 +84,26 @@ namespace LtlSharp.Buchi.LTL2Buchi
                         }
                     }
                 } else if (eta is Until | eta is Release | eta is Disjunction) {
+                    
+                    // Optimization
+                    if (eta is Until) {
+                        var ueta = (Until)eta;
+                        if (node.Old.Contains(ueta.Right) | node.New.Contains (ueta.Right)) {
+                            node.Old.Add (eta);
+                            return Expand (node, nodeSet);
+                        }
+                    }
+                    
+                    // Optimization
+                    if (eta is Release) {
+                        var ueta = (Until)eta;
+                        if ((node.Old.Contains(ueta.Right) | node.New.Contains (ueta.Right))
+                            & (node.Old.Contains(ueta.Left) | node.New.Contains (ueta.Left))) {
+                            node.Old.Add (eta);
+                            return Expand (node, nodeSet);
+                        }
+                    }
+                    
                     node.New.AddRange (New1 (eta));
                     foreach (var old in node.Old) {
                         node.New.Remove (old);
