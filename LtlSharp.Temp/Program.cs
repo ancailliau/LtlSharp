@@ -16,7 +16,7 @@ namespace LtlSharp.Temp
             f = f.Normalize ();
             Console.WriteLine (f);
             
-            ILTL2Buchi t = new Dimitra ();
+            ILTL2Buchi t = new Gia01 ();
             var nset = t.CreateGraph (f.Normalize ());
             
             var buchi = new GeneralizedBuchiAutomaton (nset, f);

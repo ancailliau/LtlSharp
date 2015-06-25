@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
-    public class Dimitra : ILTL2Buchi
+    public class Gia01 : ILTL2Buchi
     {
-        public Dimitra ()
+        public Gia01 ()
         {
         }
 

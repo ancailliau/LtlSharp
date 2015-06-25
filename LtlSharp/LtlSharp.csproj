@@ -51,10 +51,10 @@
     <Compile Include="Buchi\Transition.cs" />
     <Compile Include="ILTLFormula.cs" />
     <Compile Include="Buchi\Node.cs" />
-    <Compile Include="Buchi\LTL2Buchi\Seminal.cs" />
     <Compile Include="Buchi\Automaton.cs" />
-    <Compile Include="Buchi\LTL2Buchi\Dimitra.cs" />
     <Compile Include="Buchi\LTL2Buchi\ILTL2Buchi.cs" />
+    <Compile Include="Buchi\LTL2Buchi\Gia01.cs" />
+    <Compile Include="Buchi\LTL2Buchi\Ger95.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

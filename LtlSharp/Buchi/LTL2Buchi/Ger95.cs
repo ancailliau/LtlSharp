@@ -5,9 +5,9 @@ using LtlSharp.Buchi;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
-    public class Seminal : ILTL2Buchi
+    public class Ger95 : ILTL2Buchi
     {
-        public Seminal ()
+        public Ger95 ()
         {
         }
         
@@ -52,7 +52,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             if (node.New.Count == 0) {
                 var nd = nodeSet.FirstOrDefault (x => 
                     new HashSet<ILTLFormula> (x.Old).SetEquals (node.Old)
-                        & new HashSet<ILTLFormula> (x.Next).SetEquals (node.Next));
+                         & new HashSet<ILTLFormula> (x.Next).SetEquals (node.Next));
                 if (nd != null) {
                     nd.Incoming.AddRange (node.Incoming);
                     return nodeSet;
@@ -71,7 +71,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 node.New.Remove (eta);
                 
                 if (eta is Proposition | eta is Negation | eta is True | eta is False) {
-                    if (eta is False | node.Old.Contains(eta.Negate())) {
+                    if (eta is False | node.Old.Contains (eta.Negate ())) {
                         // Current node contains a contradiction
                         return nodeSet;
                     } else {
@@ -80,13 +80,13 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     }
                 } else if (eta is Until | eta is Release | eta is Disjunction) {
                     var nlist1 = new List<ILTLFormula> (node.New);
-                    nlist1.AddRange (New1(eta));
+                    nlist1.AddRange (New1 (eta));
                     foreach (var old in node.Old) {
                         nlist1.Remove (old);
                     }
                     
                     var nlist2 = new List<ILTLFormula> (node.New);
-                    nlist2.AddRange (New2(eta));
+                    nlist2.AddRange (New2 (eta));
                     foreach (var old in node.Old) {
                         nlist2.Remove (old);
                     }
@@ -124,10 +124,21 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     var n = new Node (node.Name) {
                         Incoming = new List<string> (node.Incoming),
                         New = list,
-                        Old = new List<ILTLFormula> (node.Old.Union (new [] {eta})),
+                        Old = new List<ILTLFormula> (node.Old.Union (new [] { eta })),
                         Next = new List<ILTLFormula> (node.Next)
                     };
                     return Expand (n, nodeSet);  
+                } else if (eta is Next) {
+                    
+                    var n = new Node (node.Name) {
+                        Incoming = new List<string> (node.Incoming),
+                        New = new List<ILTLFormula> (node.New),
+                        Old = new List<ILTLFormula> (node.Old.Union (new [] { eta })),
+                        Next = new List<ILTLFormula> (node.Next.Union (new [] { ((Next) eta).Enclosed }))
+                    };
+                    
+                    return Expand (n, nodeSet);
+                    
                 } else {
                     throw new NotImplementedException ();
                 }
