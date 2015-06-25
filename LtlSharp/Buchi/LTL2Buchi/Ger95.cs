@@ -11,38 +11,38 @@ namespace LtlSharp.Buchi.LTL2Buchi
         {
         }
         
-        private List<ILTLFormula> New1 (ILTLFormula f)
+        private ConsistentSet New1 (ILTLFormula f)
         {
             if (f is Until) {
-                return new List<ILTLFormula> ( new [] { ((Until)f).Left });
+                return new ConsistentSet ( new [] { ((Until)f).Left });
             } else if (f is Release) {
-                return new List<ILTLFormula> ( new [] { ((Release)f).Right });
+                return new ConsistentSet ( new [] { ((Release)f).Right });
             } else if (f is Disjunction) {
-                return new List<ILTLFormula> ( new [] { ((Disjunction) f).Left });
+                return new ConsistentSet ( new [] { ((Disjunction) f).Left });
             }
             throw new NotImplementedException ();
         }
         
-        private List<ILTLFormula> New2 (ILTLFormula f)
+        private ConsistentSet New2 (ILTLFormula f)
         {
             if (f is Until) {
-                return new List<ILTLFormula> ( new [] { ((Until)f).Right });
+                return new ConsistentSet ( new [] { ((Until)f).Right });
             } else if (f is Release) {
-                return new List<ILTLFormula> ( new [] { ((Release)f).Left, ((Release)f).Right });
+                return new ConsistentSet ( new [] { ((Release)f).Left, ((Release)f).Right });
             } else if (f is Disjunction) {
-                return new List<ILTLFormula> ( new [] { ((Disjunction) f).Right });
+                return new ConsistentSet ( new [] { ((Disjunction) f).Right });
             }
             throw new NotImplementedException ();
         }
         
-        private List<ILTLFormula> Next1 (ILTLFormula f)
+        private ConsistentSet Next1 (ILTLFormula f)
         {
             if (f is Until) {
-                return new List<ILTLFormula> ( new [] { f });
+                return new ConsistentSet ( new [] { f });
             } else if (f is Release) {
-                return new List<ILTLFormula> ( new [] { f });
+                return new ConsistentSet ( new [] { f });
             } else if (f is Disjunction) {
-                return new List<ILTLFormula> ();
+                return new ConsistentSet ();
             }
             throw new NotImplementedException ();
         }
@@ -60,11 +60,13 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 
                 var new_node = new Node () {
                     Incoming = new List<string> (new[] { node.Name }),
-                    New = new List<ILTLFormula> (node.Next)
+                    New = new ConsistentSet (node.Next)
                 };
-                nodeSet.Add (node);
-                
-                return Expand (new_node, nodeSet);
+                if (nodeSet.Add (node)) {
+                    return Expand (new_node, nodeSet);   
+                } else {
+                    return nodeSet; // Semantically incoherent node
+                }
                 
             } else {
                 var eta = node.New.First ();
@@ -75,8 +77,11 @@ namespace LtlSharp.Buchi.LTL2Buchi
                         // Current node contains a contradiction
                         return nodeSet;
                     } else {
-                        node.Old.Add (eta);
-                        return Expand (node, nodeSet);
+                        if (node.Old.Add (eta)) {
+                            return Expand (node, nodeSet);
+                        } else {
+                            return nodeSet; // Semantically incoherent node
+                        }
                     }
                 } else if (eta is Until | eta is Release | eta is Disjunction) {
                     node.New.AddRange (New1 (eta));
@@ -84,41 +89,46 @@ namespace LtlSharp.Buchi.LTL2Buchi
                         node.New.Remove (old);
                     }
                     
-                    var nlist2 = new List<ILTLFormula> (node.New);
+                    var nlist2 = new ConsistentSet (node.New);
                     nlist2.AddRange (New2 (eta));
                     foreach (var old in node.Old) {
                         nlist2.Remove (old);
                     }
                     
-                    node.Old.Add (eta);                    
-                    node.Next.AddRange (Next1 (eta));
+                    if (!node.Old.Add (eta) | !node.Next.AddRange (Next1 (eta))) {
+                        return nodeSet; // Semantically incoherent node
+                    }
                                         
                     var node2 = new Node () {
                         Incoming = new List<string> (node.Incoming),
                         New = nlist2,
-                        Old = new List<ILTLFormula> (node.Old),
-                        Next = new List<ILTLFormula> (node.Next)
+                        Old = new ConsistentSet (node.Old),
+                        Next = new ConsistentSet (node.Next)
                     };
                     
                     return Expand (node2, Expand (node, nodeSet));
                 } else if (eta is Conjunction) {
                     var ceta = (Conjunction)eta;
                     
-                    if (!node.Old.Contains (ceta.Left))
-                        node.New.Add (ceta.Left);
-                    if (!node.Old.Contains (ceta.Right))
-                        node.New.Add (ceta.Right);
-                    node.Old.Add (eta);
+                    if (!node.Old.Contains (ceta.Left)) {
+                        if (!node.New.Add (ceta.Left)) { return nodeSet; }
+                    }
+                    if (!node.Old.Contains (ceta.Right)) {
+                        if (!node.New.Add (ceta.Right)) { return nodeSet; }
+                    }
+                    if (!node.Old.Add (eta)) { return nodeSet; }
                     
                     return Expand (node, nodeSet);  
                 } else if (eta is Next) {
                     
                     var n = new Node (node.Name) {
                         Incoming = new List<string> (node.Incoming),
-                        New = new List<ILTLFormula> (node.New),
-                        Old = new List<ILTLFormula> (node.Old.Union (new [] { eta })),
-                        Next = new List<ILTLFormula> (node.Next.Union (new [] { ((Next) eta).Enclosed }))
+                        New = new ConsistentSet (node.New),
+                        Old = new ConsistentSet (node.Old),
+                        Next = new ConsistentSet (node.Next)
                     };
+                    if (!node.Old.Add (eta)) { return nodeSet; }
+                    if (!node.Next.Add (((Next) eta).Enclosed)) { return nodeSet; }
                     
                     return Expand (n, nodeSet);
                     
@@ -132,7 +142,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         {
             var n = new Node () {
                 Incoming = new List<string> (new [] { "init" }),
-                New = new List<ILTLFormula> (new [] { phi }),
+                New = new ConsistentSet (new [] { phi }),
             };
             
             return Expand (n, new HashSet<Node> ());

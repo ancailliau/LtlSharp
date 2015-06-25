@@ -3,6 +3,31 @@ using System.Collections.Generic;
 
 namespace LtlSharp.Buchi
 {
+    public class ConsistentSet : HashSet<ILTLFormula> {
+        public ConsistentSet () : base()
+        {
+        }
+        public ConsistentSet (IEnumerable<ILTLFormula> set) : base(set)
+        {
+        }
+        public new bool Add (ILTLFormula formula) {
+            var neg = formula.Negate ();
+            if (this.Contains (neg)) {
+                return false;
+            }
+            Add (formula);
+            return true;
+        }
+        public new bool AddRange (IEnumerable<ILTLFormula> formulas) {
+            foreach (var v in formulas) {
+                if (!Add (v)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+    
     public class Node
     {
         public string Name {
@@ -15,17 +40,17 @@ namespace LtlSharp.Buchi
             set;
         }
         
-        public List<ILTLFormula> New {
+        public ConsistentSet New {
             get;
             set;
         }
         
-        public List<ILTLFormula> Old {
+        public ConsistentSet Old {
             get;
             set;
         }
         
-        public List<ILTLFormula> Next {
+        public ConsistentSet Next {
             get;
             set;
         }
@@ -37,9 +62,9 @@ namespace LtlSharp.Buchi
         {
             Name = name;
             Incoming = new List<string> ();
-            New = new List<ILTLFormula> ();
-            Old = new List<ILTLFormula> ();
-            Next = new List<ILTLFormula> ();
+            New = new ConsistentSet ();
+            Old = new ConsistentSet ();
+            Next = new ConsistentSet ();
         }
         
         public override bool Equals (object obj)
