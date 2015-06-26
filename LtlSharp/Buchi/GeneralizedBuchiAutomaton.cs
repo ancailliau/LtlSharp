@@ -69,15 +69,16 @@ namespace LittleSharp.Buchi
 			Nodes = new Dictionary<string, GBANode>();
             foreach (var n in nodesSet) {
                 if (n.New.Count == 0) {
-                    Nodes.Add (n.Name, new GBANode (n.Name, n.Incoming.Contains ("init")));
+                    Nodes.Add (n.Name, new GBANode (n.Name, false)); // n.Incoming.Contains ("init")
                 } else {
                     Console.WriteLine ("! Not fully expanded node");
                 }
             }
+            Nodes.Add ("init", new GBANode ("init", true)); 
 			
 			// Build the transitions
 			foreach (Node oldNode in nodesSet) {
-                foreach (var incomingNodeName in oldNode.Incoming.Except (new [] { "init" })) {
+                foreach (var incomingNodeName in oldNode.Incoming /*.Except (new [] { "init" })*/ ) {
 					Transition transition = new Transition()
 						{ From = Nodes[incomingNodeName], 
 						  To   = Nodes[oldNode.Name] };
