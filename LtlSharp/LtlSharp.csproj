@@ -55,6 +55,7 @@
     <Compile Include="Buchi\LTL2Buchi\ILTL2Buchi.cs" />
     <Compile Include="Buchi\LTL2Buchi\Gia01.cs" />
     <Compile Include="Buchi\LTL2Buchi\Ger95.cs" />
+    <Compile Include="Buchi\GBA2.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

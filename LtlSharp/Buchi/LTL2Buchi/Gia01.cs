@@ -17,13 +17,15 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     new HashSet<ILTLFormula> (x.Old).SetEquals (node.Old)
                     & new HashSet<ILTLFormula> (x.Next).SetEquals (node.Next));
                 if (nd != null) {
-                    nd.Incoming.AddRange (node.Incoming);
+                    foreach (var i in node.Incoming) {
+                        nd.Incoming.Add (i);
+                    }
                     return nodeSet;
                 }
 
                 var new_node = new Node () {
-                    Incoming = new List<string> (new[] { node.Name }),
-                    New = new ConsistentSet (node.Next)
+                    Incoming = new HashSet<string> (new[] { node.Name }),
+                    New = new HashSet<ILTLFormula> (node.Next)
                 };
                 nodeSet.Add (node);
 
@@ -45,16 +47,16 @@ namespace LtlSharp.Buchi.LTL2Buchi
 
                 } else if (eta is Until | eta is Release | eta is Disjunction) {
                     var n1 = new Node () {
-                        Incoming = new List<string> (node.Incoming),
-                        New = new ConsistentSet (node.New),
-                        Old = new ConsistentSet (node.Old),
-                        Next = new ConsistentSet (node.Next)
+                        Incoming = new HashSet<string> (node.Incoming),
+                        New = new HashSet<ILTLFormula> (node.New),
+                        Old = new HashSet<ILTLFormula> (node.Old),
+                        Next = new HashSet<ILTLFormula> (node.Next)
                     };
                     var n2 = new Node () {
-                        Incoming = new List<string> (node.Incoming),
-                        New = new ConsistentSet (node.New),
-                        Old = new ConsistentSet (node.Old),
-                        Next = new ConsistentSet (node.Next)
+                        Incoming = new HashSet<string> (node.Incoming),
+                        New = new HashSet<ILTLFormula> (node.New),
+                        Old = new HashSet<ILTLFormula> (node.Old),
+                        Next = new HashSet<ILTLFormula> (node.Next)
                     };
 
                     ILTLFormula new1 = null;
@@ -97,10 +99,10 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 } else if (eta is Conjunction) {
                     var andN = (Conjunction) eta;
                     var newNode = new Node () {
-                        Incoming = new List<string> (node.Incoming),
-                        New = new ConsistentSet (node.New),
-                        Old = new ConsistentSet (node.Old),
-                        Next = new ConsistentSet (node.Next)
+                        Incoming = new HashSet<string> (node.Incoming),
+                        New = new HashSet<ILTLFormula> (node.New),
+                        Old = new HashSet<ILTLFormula> (node.Old),
+                        Next = new HashSet<ILTLFormula> (node.Next)
                     };
                     if (!node.Old.Contains(andN.Left)) {
                         newNode.New.Add (andN.Left);
@@ -114,10 +116,10 @@ namespace LtlSharp.Buchi.LTL2Buchi
 
                 } else if (eta is Next) {
                     var newNode = new Node () {
-                        Incoming = new List<string> (node.Incoming),
-                        New = new ConsistentSet (node.New.Union (new [] {eta})),
-                        Old = new ConsistentSet (node.Old.Union (new [] {eta})),
-                        Next = new ConsistentSet (node.Next)
+                        Incoming = new HashSet<string> (node.Incoming),
+                        New = new HashSet<ILTLFormula> (node.New.Union (new [] {eta})),
+                        Old = new HashSet<ILTLFormula> (node.Old.Union (new [] {eta})),
+                        Next = new HashSet<ILTLFormula> (node.Next)
                     };
                     return Expand(newNode, nodeSet);
 
@@ -130,8 +132,8 @@ namespace LtlSharp.Buchi.LTL2Buchi
         public HashSet<Node> CreateGraph (ILTLFormula phi)
         {
             var n = new Node () {
-                Incoming = new List<string> (new [] { "init" }),
-                New = new ConsistentSet (new [] { phi }),
+                Incoming = new HashSet<string> (new [] { "init" }),
+                New = new HashSet<ILTLFormula> (new [] { phi }),
             };
 
             return Expand (n, new HashSet<Node> ());

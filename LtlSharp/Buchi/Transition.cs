@@ -41,7 +41,7 @@ namespace LittleSharp.Buchi
 		/// <value>
 		/// The literals attached to the transition.
 		/// </value>
-        public List<ILiteral> Literals {
+        public HashSet<ILiteral> Literals {
 			get;
 			private set;
 		}
@@ -79,7 +79,7 @@ namespace LittleSharp.Buchi
 		/// </summary>
 		public Transition ()
 		{
-			Literals = new List<ILiteral>();
+            Literals = new HashSet<ILiteral>();
 		}
 		
 		/// <summary>

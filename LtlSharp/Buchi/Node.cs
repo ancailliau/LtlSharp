@@ -3,31 +3,6 @@ using System.Collections.Generic;
 
 namespace LtlSharp.Buchi
 {
-    public class ConsistentSet : HashSet<ILTLFormula> {
-        public ConsistentSet () : base()
-        {
-        }
-        public ConsistentSet (IEnumerable<ILTLFormula> set) : base(set)
-        {
-        }
-        public new bool Add (ILTLFormula formula) {
-            var neg = formula.Negate ();
-            if (base.Contains (neg)) {
-                return false;
-            }
-            base.Add (formula);
-            return true;
-        }
-        public bool AddRange (IEnumerable<ILTLFormula> formulas) {
-            foreach (var v in formulas) {
-                if (!Add (v)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-    
     public class Node
     {
         public string Name {
@@ -35,22 +10,22 @@ namespace LtlSharp.Buchi
             set;
         }
         
-        public List<string> Incoming {
+        public HashSet<string> Incoming {
             get;
             set;
         }
         
-        public ConsistentSet New {
+        public HashSet<ILTLFormula> New {
             get;
             set;
         }
         
-        public ConsistentSet Old {
+        public HashSet<ILTLFormula> Old {
             get;
             set;
         }
         
-        public ConsistentSet Next {
+        public HashSet<ILTLFormula> Next {
             get;
             set;
         }
@@ -61,10 +36,10 @@ namespace LtlSharp.Buchi
         public Node (string name)
         {
             Name = name;
-            Incoming = new List<string> ();
-            New = new ConsistentSet ();
-            Old = new ConsistentSet ();
-            Next = new ConsistentSet ();
+            Incoming = new HashSet<string> ();
+            New = new HashSet<ILTLFormula> ();
+            Old = new HashSet<ILTLFormula> ();
+            Next = new HashSet<ILTLFormula> ();
         }
         
         public override bool Equals (object obj)
@@ -86,6 +61,13 @@ namespace LtlSharp.Buchi
                 return (Name != null ? Name.GetHashCode () : 0);
             }
         }
+        
+        public override string ToString ()
+        {
+            return string.Format ("[Node: Name={0}, New={{{1}}}, Old={{{2}}}, Next={{{3}}}]", 
+                Name.Substring(0, 5) + "...", string.Join(",", New), string.Join(",", Old), string.Join(",",Next));
+        }
+        
         
     }
 }
