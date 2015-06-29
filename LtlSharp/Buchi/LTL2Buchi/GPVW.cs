@@ -144,17 +144,17 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return Expand (n, new HashSet<Node> ());
         }
         
-        public GBA3 GetAutomaton (ILTLFormula phi) {
+        public GeneralizedBuchiAutomata GetAutomaton (ILTLFormula phi) {
             var formula = phi.Normalize ();
             
             var nodesSet = CreateGraph (formula);
             
-            var automaton = new GBA3 (nodesSet.Count);
+            var automaton = new GeneralizedBuchiAutomata (nodesSet.Count);
             
             int i = 0;
             var mapping = new Dictionary<string, int> ();
             foreach (var n in nodesSet) {
-                automaton.Nodes[i] = new GBA3Node (i, n.Name, n.Incoming.Contains ("init"));
+                automaton.Nodes[i] = new GBANode (i, n.Name, n.Incoming.Contains ("init"));
                 automaton.Transitions [i] = new List<int> ();
                 mapping.Add (n.Name, i);
                 i++;
@@ -183,7 +183,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             // The acceptance set contains a separate set of states for
             // each subformula of the form x U y. The set contains the
             // states n such that y in Old(n) or x U y not in Old(n).
-            var listAcceptanceSets = new LinkedList<AcceptanceSet>();
+            var listAcceptanceSets = new LinkedList<GBAAcceptanceSet>();
 
             // Subformulas are processed in a DFS-fashioned way
             Stack<ILTLFormula> formulasToProcess = new Stack<ILTLFormula>();
@@ -205,7 +205,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                         set.Add (mapping[q.Name]);        
                     }
 
-                    listAcceptanceSets.AddLast(new AcceptanceSet (setIndex, set.ToArray ()));
+                    listAcceptanceSets.AddLast(new GBAAcceptanceSet (setIndex, set.ToArray ()));
                     setIndex++;
 
                 } 

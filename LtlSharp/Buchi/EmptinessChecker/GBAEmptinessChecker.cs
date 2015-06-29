@@ -1,5 +1,4 @@
 ﻿using System;
-using LittleSharp.Buchi;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +20,7 @@ namespace LtlSharp.Buchi
             
         }
         
-        public bool EmptinessSearch (GBA3 a)
+        public bool EmptinessSearch (GeneralizedBuchiAutomata a)
         {
             if (a.AcceptanceSets.Length == 0) {
                 throw new NotImplementedException ("");
@@ -31,7 +30,7 @@ namespace LtlSharp.Buchi
             processed = new HashSet<int> ();
             label = new HashSet<int>[a.Nodes.Length];
             
-            foreach (var n in a.Nodes.Where (x => x.initial)) {
+            foreach (var n in a.Nodes.Where (x => x.Initial)) {
                 if (EmptinessSearch (a, n)) {
                     return true;
                 }
@@ -40,14 +39,14 @@ namespace LtlSharp.Buchi
             return false;
         }
         
-        public bool EmptinessSearch (GBA3 a, GBA3Node qi)
+        public bool EmptinessSearch (GeneralizedBuchiAutomata a, GBANode qi)
         {
             
             for (int i = 0, length = a.Nodes.Length; i < length; i++) {
                 label[i] = new HashSet<int> ();
             }
             
-            path.Push (qi.id);
+            path.Push (qi.Id);
             while (path.Count > 0) {
                 var q = path.Peek ();
                 var succToProcess = a.Transitions[q].Except (path.Union (processed));
@@ -57,12 +56,12 @@ namespace LtlSharp.Buchi
                     label [succ] = new HashSet<int> ();
                     q = succ;
                 }
-                if (label[q].Count == 0 | a.AcceptanceSets.Any (x => x.nodes.Contains (q))) {
+                if (label[q].Count == 0 | a.AcceptanceSets.Any (x => x.Nodes.Contains (q))) {
                     var labelsToPropagate = label [q].Union ((from x in a.AcceptanceSets
-                                                                             where x.nodes.Contains (q)
-                                                                             select x.id));
+                                                                             where x.Nodes.Contains (q)
+                                                                             select x.Id));
                     propagate (a, new [] { q }, labelsToPropagate);
-                    if (label[q].SetEquals (a.AcceptanceSets.Select (set => set.id))) {
+                    if (label[q].SetEquals (a.AcceptanceSets.Select (set => set.Id))) {
                         return true;
                     }
                 }
@@ -73,7 +72,7 @@ namespace LtlSharp.Buchi
         }
         
 
-        void propagate (GBA3 a, IEnumerable<int> nodes, IEnumerable<int> labelsToPropagate)
+        void propagate (GeneralizedBuchiAutomata a, IEnumerable<int> nodes, IEnumerable<int> labelsToPropagate)
         {
             var toProp = labelsToPropagate.ToArray ();
             Stack<int> nodesToProcess = new Stack<int> (nodes);
