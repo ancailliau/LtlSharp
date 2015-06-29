@@ -45,21 +45,22 @@
     <Compile Include="Utils\CanonicToString.cs" />
     <Compile Include="Utils\TexToString.cs" />
     <Compile Include="RabinAutomata.cs" />
-    <Compile Include="Buchi\EmptinessChecker.cs" />
     <Compile Include="Buchi\GBANode.cs" />
-    <Compile Include="Buchi\GeneralizedBuchiAutomaton.cs" />
     <Compile Include="Buchi\Transition.cs" />
     <Compile Include="ILTLFormula.cs" />
     <Compile Include="Buchi\Node.cs" />
     <Compile Include="Buchi\Automaton.cs" />
     <Compile Include="Buchi\LTL2Buchi\ILTL2Buchi.cs" />
-    <Compile Include="Buchi\LTL2Buchi\Gia01.cs" />
-    <Compile Include="Buchi\LTL2Buchi\Ger95.cs" />
+    <Compile Include="Buchi\GBAEmptinessChecker.cs" />
     <Compile Include="Buchi\GBA2.cs" />
+    <Compile Include="Buchi\GBA3.cs" />
+    <Compile Include="Buchi\LTL2Buchi\GPVW.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="LTL.g" />
+    <None Include="Buchi\EmptinessChecker.cs" />
+    <None Include="Buchi\LTL2Buchi\Gia01.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />

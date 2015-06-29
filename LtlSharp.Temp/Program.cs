@@ -3,6 +3,7 @@ using LittleSharp.Buchi;
 using LtlSharp.Buchi.LTL2Buchi;
 using System.Linq;
 using System.Collections.Generic;
+using LtlSharp.Buchi;
 
 namespace LtlSharp.Temp
 {
@@ -16,6 +17,7 @@ namespace LtlSharp.Temp
             var p2 = new Proposition ("p2");
             var p3 = new Proposition ("p3");
             
+            ILTLFormula f0 = new False ();
             ILTLFormula f1 = new Until (p1, p2);
             ILTLFormula f2 = new Until (p1, new Until (p2, p3));
             ILTLFormula f3 = new Negation (new Until (p1, new Until (p2, p3))); // problem
@@ -28,25 +30,27 @@ namespace LtlSharp.Temp
             ILTLFormula f9 = new Release (new Negation (p1), new Negation(p2));
             ILTLFormula f10 = new Release (p1, new Release (p2, p3));
             
-            var f = f1;
+            var f = f0;
             
             Console.WriteLine (f);
+            
+            ILTL2Buchi t = new GPVW ();
+            
+            /*
             var normalizedFormula = f.Normalize ();
             Console.WriteLine (normalizedFormula);
             
-            ILTL2Buchi t = new Ger95 ();
             var nset = t.CreateGraph (normalizedFormula.Normalize ());
             
             foreach (var nn in nset) {
                 Console.WriteLine (nn);
                 Console.WriteLine ("  " + string.Join (",", nn.Incoming));
             }
+            */
             
-            var buchi = new GBA2 (nset, normalizedFormula);
-            Console.WriteLine ("#States : " + buchi.Nodes.Count);
-            Console.WriteLine ("#Transitions : " + buchi.Nodes.SelectMany(n => n.Value.Outgoing).Distinct ().Count ());
-            Console.WriteLine ("#Acceptance : " + buchi.AcceptanceSet.Count);
+            var buchi = t.GetAutomaton (f);
             
+            /*
             var dict = new Dictionary<GBANode, string> ();
             int i = 0;
             Console.WriteLine ("digraph G {");
@@ -73,6 +77,10 @@ namespace LtlSharp.Temp
             foreach (var n in buchi.Nodes.Values) {
                 // Console.WriteLine (dict[n] + " --> {" + string.Join (",", n.) + "}");
             }
+            */
+            
+            var ec = new GBAEmptinessChecker ();
+            Console.WriteLine (ec.EmptinessSearch (buchi) ? "Empty" : "Not empty");
         }
     }
 }

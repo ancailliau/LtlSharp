@@ -35,7 +35,7 @@ namespace LittleSharp.Buchi
 	/// <summary>
 	/// A generalized buchi automaton.
 	/// </summary>
-	public class GeneralizedBuchiAutomaton
+    public class GBA2
 	{
 		
 		/// <summary>
@@ -49,7 +49,7 @@ namespace LittleSharp.Buchi
 			private set;
 		}
 		
-		public List<List<GBANode>> AcceptanceSet {
+        public HashSet<HashSet<GBANode>> AcceptanceSet {
 			get ;
 			private set ; 
 		}
@@ -64,37 +64,40 @@ namespace LittleSharp.Buchi
 		/// <param name='originalFormula'>
 		/// The original formula, corresponding to the automaton.
 		/// </param>
-        public GeneralizedBuchiAutomaton (HashSet<Node> nodesSet, ILTLFormula originalFormula)
+        public GBA2 (HashSet<Node> nodesSet, ILTLFormula originalFormula)
 		{
 			Nodes = new Dictionary<string, GBANode>();
-			
-			// Create an initial node
-			GBANode initialNode = new GBANode("init", true);
-			Nodes.Add("init", initialNode);
-			
-			// Build the nodes
-			foreach (Node oldNode in nodesSet) {
-				GBANode newNode = new GBANode(oldNode.Name);
-				Nodes.Add(newNode.Name, newNode);
-			}
+            foreach (var n in nodesSet) {
+                if (n.New.Count == 0) {
+                    Nodes.Add (n.Name, new GBANode (n.Name, n.Incoming.Contains ("init")));
+                } else {
+                    Console.WriteLine ("! Not fully expanded node");
+                }
+            }
 			
 			// Build the transitions
 			foreach (Node oldNode in nodesSet) {
-				foreach (var incomingNodeName in oldNode.Incoming) {
+                foreach (var incomingNodeName in oldNode.Incoming.Except (new [] { "init" })) {
 					Transition transition = new Transition()
 						{ From = Nodes[incomingNodeName], 
 						  To   = Nodes[oldNode.Name] };
 					
-                    foreach (var i in oldNode.Old.OfType<Proposition> ()) {
-                        transition.Literals.Add (i);
+                    foreach (var i in oldNode.Old) {
+                        if (i is Proposition | i is Negation) {
+                            transition.Literals.Add ((ILiteral) i);
+                        }
                     }
+                    
+                    // Easier to compare with GOAL
+                    if (transition.Literals.Count == 0)
+                        transition.Literals.Add (new True ());
 				}
 			}
 			
 			// The acceptance set contains a separate set of states for
 			// each subformula of the form x U y. The set contains the
 			// states n such that y in Old(n) or x U y not in Old(n).
-			AcceptanceSet = new List<List<GBANode>>();
+            AcceptanceSet = new HashSet<HashSet<GBANode>>();
 			
 			// Subformulas are processed in a DFS-fashioned way
 			Stack<ILTLFormula> formulasToProcess = new Stack<ILTLFormula>();
@@ -107,15 +110,15 @@ namespace LittleSharp.Buchi
 				
 				if (considered is Until) {
 					Until consideredUntil = considered as Until;
-					List<GBANode> set = new List<GBANode>();
+                    HashSet<GBANode> set = new HashSet<GBANode>();
 					
 					// Adds all nodes containing right member of until
 					// or not the until in their old set.
-					set.AddRange(nodesSet.Where(
-                        n => n.Old.Contains(consideredUntil.Right)
-							| !n.Old.Contains(consideredUntil)
-						).ToList().ConvertAll(n => Nodes[n.Name]));
-					
+                    foreach (var q in nodesSet.Where(n => n.Old.Contains(consideredUntil.Right) | !n.Old.Contains(consideredUntil))) 
+                    {
+                        set.Add (Nodes[q.Name]);        
+                    }
+                    
 					AcceptanceSet.Add(set);
 					
 					foreach (var node in set) {
@@ -123,18 +126,16 @@ namespace LittleSharp.Buchi
 					}
 					nextAcceptingSetIndex++;
 					
-				} else {
-					// Recursively continues to process the formula
+				} 
+                
+                if (considered is IBinaryOperator) {
+                    formulasToProcess.Push(((IBinaryOperator) considered).Left);
+                    formulasToProcess.Push(((IBinaryOperator) considered).Right);
 					
-                    if (considered is IBinaryOperator) {
-                        formulasToProcess.Push(((IBinaryOperator) considered).Left);
-                        formulasToProcess.Push(((IBinaryOperator) considered).Right);
-					
-					} else if (considered is IUnaryOperator) {
-                        formulasToProcess.Push(((IUnaryOperator) considered).Enclosed);
+				} else if (considered is IUnaryOperator) {
+                    formulasToProcess.Push(((IUnaryOperator) considered).Enclosed);
 						
-					}
-				}
+			    }
 			}
 		}
 	}

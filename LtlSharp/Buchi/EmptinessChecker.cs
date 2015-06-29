@@ -17,7 +17,7 @@ namespace LittleSharp.Buchi
 		/// <value>
 		/// The automaton.
 		/// </value>
-		public GeneralizedBuchiAutomaton Automaton {
+        public GBA2 Automaton {
 			get;
 			private set;
 		}
@@ -66,7 +66,7 @@ namespace LittleSharp.Buchi
 				return false;
 			
 			bool result = true;
-			foreach (List<GBANode> set in Automaton.AcceptanceSet) {
+            foreach (HashSet<GBANode> set in Automaton.AcceptanceSet) {
 				bool localResult = false;
 				
 				this.stackForFirstDFS = new Stack<GBANode>();
@@ -88,7 +88,7 @@ namespace LittleSharp.Buchi
 		/// <param name='n'>
 		/// The node to start with.
 		/// </param>
-		private bool dfs1(GBANode n, List<GBANode> set)
+        private bool dfs1(GBANode n, HashSet<GBANode> set)
 		{
 			this.stackForFirstDFS.Push(n);
 			foreach (Transition t in n.Outgoing) {

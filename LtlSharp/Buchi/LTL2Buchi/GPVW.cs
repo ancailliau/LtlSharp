@@ -5,9 +5,9 @@ using LtlSharp.Buchi;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
-    public class Ger95 : ILTL2Buchi
+    public class GPVW : ILTL2Buchi
     {
-        public Ger95 ()
+        public GPVW ()
         {
         }
         
@@ -142,6 +142,86 @@ namespace LtlSharp.Buchi.LTL2Buchi
             };
             
             return Expand (n, new HashSet<Node> ());
+        }
+        
+        public GBA3 GetAutomaton (ILTLFormula phi) {
+            var formula = phi.Normalize ();
+            
+            var nodesSet = CreateGraph (formula);
+            
+            var automaton = new GBA3 (nodesSet.Count);
+            
+            int i = 0;
+            var mapping = new Dictionary<string, int> ();
+            foreach (var n in nodesSet) {
+                automaton.Nodes[i] = new GBA3Node (i, n.Name, n.Incoming.Contains ("init"));
+                automaton.Transitions [i] = new List<int> ();
+                mapping.Add (n.Name, i);
+                i++;
+            }
+
+            // Build the transitions
+            var literals = new HashSet<ILiteral> ();
+            foreach (Node node in nodesSet) {
+                foreach (var incomingNodeName in node.Incoming.Except (new [] { "init" })) {
+                    literals.Clear ();
+                    automaton.Transitions[mapping[incomingNodeName]].Add (mapping[node.Name]);
+
+                    foreach (var f in node.Old) {
+                        if (f is Proposition | f is Negation) {
+                            literals.Add ((ILiteral) f);
+                        }
+                    }
+                    
+                    if (literals.Count == 0)
+                        literals.Add (new True ());
+                    
+                    automaton.Labels [mapping [incomingNodeName]] = literals.ToList ();
+                }
+            }
+
+            // The acceptance set contains a separate set of states for
+            // each subformula of the form x U y. The set contains the
+            // states n such that y in Old(n) or x U y not in Old(n).
+            var listAcceptanceSets = new LinkedList<AcceptanceSet>();
+
+            // Subformulas are processed in a DFS-fashioned way
+            Stack<ILTLFormula> formulasToProcess = new Stack<ILTLFormula>();
+            formulasToProcess.Push(formula);
+
+            int setIndex = 0;
+
+            while(formulasToProcess.Count > 0) {
+                ILTLFormula considered = formulasToProcess.Pop();
+
+                if (considered is Until) {
+                    Until consideredUntil = considered as Until;
+                    var set = new HashSet<int>();
+
+                    // Adds all nodes containing right member of until
+                    // or not the until in their old set.
+                    foreach (var q in nodesSet.Where(n => n.Old.Contains(consideredUntil.Right) | !n.Old.Contains(consideredUntil))) 
+                    {
+                        set.Add (mapping[q.Name]);        
+                    }
+
+                    listAcceptanceSets.AddLast(new AcceptanceSet (setIndex, set.ToArray ()));
+                    setIndex++;
+
+                } 
+
+                if (considered is IBinaryOperator) {
+                    formulasToProcess.Push(((IBinaryOperator) considered).Left);
+                    formulasToProcess.Push(((IBinaryOperator) considered).Right);
+
+                } else if (considered is IUnaryOperator) {
+                    formulasToProcess.Push(((IUnaryOperator) considered).Enclosed);
+
+                }
+            }
+            automaton.AcceptanceSets = listAcceptanceSets.ToArray ();
+            
+            return automaton;
         }
     }
 }
