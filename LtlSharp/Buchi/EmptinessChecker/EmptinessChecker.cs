@@ -26,6 +26,9 @@ namespace LittleSharp.Buchi
 		
 		public bool Emptiness()
 		{
+            if (Automaton.AcceptanceSet.Length == 0)
+                return false;
+            
             dfsStack1 = new HashSet<int> ();
             dfsStack2 = new HashSet<int>();
 				
