@@ -16,8 +16,8 @@ namespace LittleSharp.Buchi
 			private set;
 		}
 		
-        HashSet<int> dfsStack1;
-        HashSet<int> dfsStack2;
+        public Stack<int> dfsStack1;
+        public Stack<int> dfsStack2;
 		
         public EmptinessChecker (BuchiAutomata automaton)
 		{
@@ -29,24 +29,28 @@ namespace LittleSharp.Buchi
             if (Automaton.AcceptanceSet.Length == 0)
                 return false;
             
-            dfsStack1 = new HashSet<int> ();
-            dfsStack2 = new HashSet<int>();
-				
-			foreach (var node in Automaton.Nodes.Where(n => n.Initial)) {
+            
+            foreach (var node in Automaton.Nodes.Where(n => n.Initial)) {
+                dfsStack1 = new Stack<int> ();
+                dfsStack2 = new Stack<int>();
+                
 				if (dfs1(node)) {
 					return true;
-				}
+                }
 			}
+            
 			
 			return false;
 		}
         
         bool dfs1(BANode n)
 		{
-            dfsStack1.Add (n.Id);
+            dfsStack1.Push (n.Id);
             foreach (var succ in Automaton.Transitions[n.Id]) {
-                if (!dfsStack1.Contains (succ)) {
-                    dfs1 (Automaton.Nodes[succ]);
+                if (!dfsStack1.Contains (succ.To)) {
+                    if (dfs1 (Automaton.Nodes [succ.To])) {
+                        return true;
+                    }
                 }
             }
             if (Automaton.AcceptanceSet.Contains (n.Id)) {
@@ -57,15 +61,15 @@ namespace LittleSharp.Buchi
             return false;
 		}
         
-		bool dfs2(BANode n) {
-            dfsStack2.Add(n.Id);
+        bool dfs2(BANode n) {
+            dfsStack2.Push(n.Id);
             foreach (var succ in Automaton.Transitions[n.Id]) {
-                if (dfsStack1.Contains (succ)) {
+                if (dfsStack1.Contains (succ.To)) {
                     return true;
 					
                 }
-                if (!dfsStack2.Contains (succ)) {
-                    if (dfs2 (Automaton.Nodes [succ])) {
+                if (!dfsStack2.Contains (succ.To)) {
+                    if (dfs2 (Automaton.Nodes [succ.To])) {
                         return true;
                     }
                 }

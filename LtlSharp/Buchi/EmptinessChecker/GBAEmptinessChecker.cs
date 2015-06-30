@@ -49,7 +49,7 @@ namespace LtlSharp.Buchi
             path.Push (qi.Id);
             while (path.Count > 0) {
                 var q = path.Peek ();
-                var succToProcess = a.Transitions[q].Except (path.Union (processed));
+                var succToProcess = a.Transitions[q].Select (x => x.To).Except (path.Union (processed));
                 while (succToProcess.Count () > 0) {
                     var succ = succToProcess.First ();
                     path.Push (succ);
@@ -78,7 +78,7 @@ namespace LtlSharp.Buchi
             Stack<int> nodesToProcess = new Stack<int> (nodes);
             while (nodesToProcess.Count > 0) {
                 var q = nodesToProcess.Pop ();
-                var successors = a.Transitions [q].Except (path).Except (processed).ToArray ();
+                var successors = a.Transitions [q].Select (x => x.To).Except (path).Except (processed).ToArray ();
                 foreach (var succ in successors) {
                     if (!label[succ].IsSupersetOf (labelsToPropagate)) {
                         nodesToProcess.Push (succ);

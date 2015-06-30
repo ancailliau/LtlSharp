@@ -150,12 +150,13 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var nodesSet = CreateGraph (formula);
             
             var automaton = new GeneralizedBuchiAutomata (nodesSet.Count);
+            var transitions = new List<GBATransition>[nodesSet.Count];
             
             int i = 0;
             var mapping = new Dictionary<string, int> ();
             foreach (var n in nodesSet) {
-                automaton.Nodes[i] = new GBANode (i, n.Name, n.Incoming.Contains ("init"));
-                automaton.Transitions [i] = new List<int> ();
+                automaton.Nodes [i] = new GBANode (i, "s" + i, n.Incoming.Contains ("init"));
+                transitions [i] = new List<GBATransition> ();
                 mapping.Add (n.Name, i);
                 i++;
             }
@@ -165,8 +166,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             foreach (Node node in nodesSet) {
                 foreach (var incomingNodeName in node.Incoming.Except (new [] { "init" })) {
                     literals.Clear ();
-                    automaton.Transitions[mapping[incomingNodeName]].Add (mapping[node.Name]);
-
+                    
                     foreach (var f in node.Old) {
                         if (f is Proposition | f is Negation) {
                             literals.Add ((ILiteral) f);
@@ -176,9 +176,11 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     if (literals.Count == 0)
                         literals.Add (new True ());
                     
-                    automaton.Labels [mapping [incomingNodeName]] = literals.ToList ();
+                    transitions[mapping[incomingNodeName]].Add (new GBATransition (mapping[node.Name], literals.ToList ()));
                 }
             }
+            
+            automaton.Transitions = transitions.ToArray ();
 
             // The acceptance set contains a separate set of states for
             // each subformula of the form x U y. The set contains the

@@ -4,6 +4,7 @@ using LtlSharp.Buchi.LTL2Buchi;
 using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
+using LtlSharp.Buchi.Translators;
 
 namespace LtlSharp.Temp
 {
@@ -30,7 +31,7 @@ namespace LtlSharp.Temp
             ILTLFormula f9 = new Release (new Negation (p1), new Negation(p2));
             ILTLFormula f10 = new Release (p1, new Release (p2, p3));
             
-            var f = f0;
+            var f = f2;
             
             Console.WriteLine (f);
             
@@ -48,7 +49,22 @@ namespace LtlSharp.Temp
             }
             */
             
-            var buchi = t.GetAutomaton (f);
+            var gba = t.GetAutomaton (f);
+            Console.WriteLine (gba.AcceptanceSets.Length);
+            foreach (var aset in gba.AcceptanceSets) {
+                Console.WriteLine (aset.Id + " : " + string.Join (",", aset.Nodes));
+            }
+            
+            Console.WriteLine ("---");
+            
+            Console.WriteLine (gba.ToDot ());
+            
+            Console.WriteLine ("---");
+            
+            var ba = GBA2BA.Transform (gba);
+            
+            Console.WriteLine (ba.ToDot ());
+            
             
             /*
             var dict = new Dictionary<GBANode, string> ();
@@ -80,7 +96,20 @@ namespace LtlSharp.Temp
             */
             
             var ec = new GBAEmptinessChecker ();
-            Console.WriteLine (ec.EmptinessSearch (buchi) ? "Empty" : "Not empty");
+            Console.WriteLine (ec.EmptinessSearch (gba) ? "Empty" : "Not empty");
+            
+            
+            var ec2 = new EmptinessChecker (ba);
+            Console.WriteLine (ec2.Emptiness () ? "Empty" : "Not empty");
+            
+            foreach (var i in ec2.dfsStack1.Reverse ()) {
+                Console.WriteLine (ba.Nodes[i].Name);
+            }
+            Console.WriteLine ("-- loop starts here --");
+            foreach (var i in ec2.dfsStack2.Reverse ()) {
+                Console.WriteLine (ba.Nodes[i].Name);
+            }
+            Console.WriteLine ("-- loop starts here --");
         }
     }
 }

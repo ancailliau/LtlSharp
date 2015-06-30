@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace LtlSharp.Buchi
 {
@@ -9,9 +11,19 @@ namespace LtlSharp.Buchi
         public bool Initial;
         public GBANode (int id, string name, bool initial)
         {
-            this.Id = id;
-            this.Name = name;
-            this.Initial = initial;
+            Id = id;
+            Name = name;
+            Initial = initial;
+        }
+    }
+    
+    public class GBATransition {
+        public int To;
+        public List<ILiteral> Labels;
+        public GBATransition (int to, List<ILiteral> labels)
+        {
+            To = to;
+            Labels = labels;
         }
     }
     
@@ -20,8 +32,8 @@ namespace LtlSharp.Buchi
         public int[] Nodes;
         public GBAAcceptanceSet (int id, int[] acceptance_nodes)
         {
-            this.Id = id;
-            this.Nodes = acceptance_nodes;
+            Id = id;
+            Nodes = acceptance_nodes;
         }
         
     }
@@ -29,15 +41,37 @@ namespace LtlSharp.Buchi
     public class GeneralizedBuchiAutomata
     {
         public GBANode[] Nodes;
-        public List<int>[] Transitions; // probably better to use a sparse array instead.
-        public List<ILiteral>[] Labels;
+        public List<GBATransition>[] Transitions; // probably better to use a sparse array instead.
         public GBAAcceptanceSet[] AcceptanceSets;
         
         public GeneralizedBuchiAutomata (int n_nodes)
         {
             Nodes = new GBANode[n_nodes];
-            Transitions = new List<int>[n_nodes];
-            Labels = new List<ILiteral>[n_nodes];
+            Transitions = new List<GBATransition>[n_nodes];
+        }
+        
+        public string ToDot () 
+        {
+            var str = new StringWriter ();
+            var dict = new Dictionary<GBANode, string> ();
+            int i = 0;
+            str.WriteLine ("digraph G {");
+            foreach (var n in Nodes) {
+                dict.Add (n, "s" + (i++));
+                str.WriteLine ("\t" + dict[n] + "[label=\""+n.Name+"\""
+                    +(AcceptanceSets.Any(a => a.Nodes.Contains(n.Id)) ? ",shape=doublecircle" : "")
+                    +(n.Initial ? ",penwidth=3" : "")+
+                    "];");
+            } 
+            for (int j = 0; j < Transitions.Length; j++) {
+                var node = Transitions [j];
+                foreach (var t in node) {
+                    str.WriteLine ("\t" + dict [Nodes [j]] + " -> " + dict [Nodes [t.To]] + " [label=\"" + string.Join (",", t.Labels) + "\"];");
+                }
+            }
+            str.WriteLine ("}");
+            
+            return str.ToString ();
         }
     }
 }
