@@ -30,13 +30,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.framework" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Test.cs" />
-    <Compile Include="TestLAS.cs" />
-    <Compile Include="TestBugs.cs" />
-    <Compile Include="TestCanonicToString.cs" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -44,5 +40,15 @@
       <Project>{AA561918-B98E-40DA-93B1-A6BFE524AF42}</Project>
       <Name>LtlSharp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Test.cs" />
+    <None Include="TestLAS.cs" />
+    <None Include="TestBugs.cs" />
+    <None Include="TestCanonicToString.cs" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="TestEmptiness.cs" />
   </ItemGroup>
 </Project>

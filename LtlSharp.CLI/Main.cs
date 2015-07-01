@@ -10,6 +10,8 @@ namespace LtlSharp.CLI
 	{
 		public static void Main (string[] args)
         {
+            return;
+            /*
             bool show_help = false;
             bool dot       = false;
             bool alphabet  = false;
@@ -59,6 +61,7 @@ namespace LtlSharp.CLI
                     Console.WriteLine (string.Join (", ", alphabetExtractor.Alphabet.ToArray ()));
                 }
             }
+            */
         }
     
         static void ShowHelp (OptionSet p)

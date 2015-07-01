@@ -23,7 +23,7 @@ namespace LtlSharp.Buchi
         public bool EmptinessSearch (GeneralizedBuchiAutomata a)
         {
             if (a.AcceptanceSets.Length == 0) {
-                throw new NotImplementedException ("");
+                throw new NotImplementedException ("EmptinessSearch (GeneralizedBuchiAutomata a)");
             }
             
             path = new Stack<int> ();

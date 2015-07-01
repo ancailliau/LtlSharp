@@ -11,6 +11,20 @@ namespace LtlSharp.Buchi.Translators
         
         public static BuchiAutomata Transform (GeneralizedBuchiAutomata gba)
         {
+            if (gba.AcceptanceSets.Length == 0) {
+                gba.AcceptanceSets = new GBAAcceptanceSet[] { new GBAAcceptanceSet (0, gba.Nodes.Select (x => x.Id).ToArray ()) };
+            }
+            
+            if (gba.AcceptanceSets.Length == 1) {
+                
+                var ba2 = new BuchiAutomata (gba.Nodes.Length);
+                ba2.Nodes = gba.Nodes.Select (x => new BANode (x.Id, x.Name, x.Initial)).ToArray ();
+                ba2.Transitions = gba.Transitions.Select (x => x.Select (y => new BATransition (y.To, y.Labels)).ToList ()).ToArray ();
+                ba2.AcceptanceSet = gba.AcceptanceSets [0].Nodes;
+                
+                return ba2;
+            }
+            
             mapping = new BANode[gba.AcceptanceSets.Length,gba.Nodes.Length];
             var nodes = new List<BANode> ();
             var transitions = new Dictionary<int, List<BATransition>> ();
@@ -36,15 +50,23 @@ namespace LtlSharp.Buchi.Translators
                 ba.Transitions [transition.Key] = transition.Value;
             }
             
+            for (int i = 0; i < gba.AcceptanceSets.Length; i++) {
+                for (int j = 0; j < gba.Nodes.Length; j++) {
+                    Console.WriteLine ("Mapping [{0}, {1}] = {2}", i, j, mapping[i,j]);
+                }
+            }
+            
             var nodes2 = gba.AcceptanceSets [0].Nodes;
+            Console.WriteLine ("AcceptanceSets");
             ba.AcceptanceSet = new int[nodes2.Length];
             for (int i = 0; i < nodes2.Length; i++) {
-                Console.WriteLine (nodes2[i]);
-                var bANode = mapping [0, i];
+                var bANode = mapping [0, nodes2[i]];
+                Console.WriteLine (nodes2[i] + " --> " + bANode);
                 if (bANode != null) {
                     ba.AcceptanceSet [i] = bANode.Id;
                 }
             }
+            Console.WriteLine ("<---");
             
             return ba;
         }
@@ -60,6 +82,7 @@ namespace LtlSharp.Buchi.Translators
             
             var bANode = new BANode (nodes.Count (), root.Name + " x " + acceptanceIndex, root.Initial & acceptanceIndex == 0);
             mapping [acceptanceIndex, root.Id] = bANode;
+            Console.WriteLine ("Mapping [{0}, {1}] = {2}", acceptanceIndex, root.Id, bANode);
             nodes.Add (bANode);
             
             int newAI = acceptanceIndex;

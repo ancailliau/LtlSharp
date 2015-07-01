@@ -29,14 +29,14 @@ namespace LittleSharp.Buchi
             if (Automaton.AcceptanceSet.Length == 0)
                 return false;
             
-            
             foreach (var node in Automaton.Nodes.Where(n => n.Initial)) {
+                Console.WriteLine ("*****");
                 dfsStack1 = new Stack<int> ();
-                dfsStack2 = new Stack<int>();
                 
 				if (dfs1(node)) {
 					return true;
                 }
+                Console.WriteLine ("*****");
 			}
             
 			
@@ -45,6 +45,9 @@ namespace LittleSharp.Buchi
         
         bool dfs1(BANode n)
 		{
+            Console.WriteLine ("dfs1 n={0}", n);
+            
+            
             dfsStack1.Push (n.Id);
             foreach (var succ in Automaton.Transitions[n.Id]) {
                 if (!dfsStack1.Contains (succ.To)) {
@@ -53,27 +56,37 @@ namespace LittleSharp.Buchi
                     }
                 }
             }
+            
+            dfsStack2 = new Stack<int>();
             if (Automaton.AcceptanceSet.Contains (n.Id)) {
                 if (dfs2 (n)) {
                     return true;
                 }
             }
+            
+            dfsStack1.Pop ();
+            
             return false;
 		}
         
         bool dfs2(BANode n) {
+            Console.WriteLine ("dfs2 n={0}", n);
+            
             dfsStack2.Push(n.Id);
-            foreach (var succ in Automaton.Transitions[n.Id]) {
-                if (dfsStack1.Contains (succ.To)) {
+            foreach (var succ in Automaton.Transitions[n.Id].Select (w => w.To)) {
+                if (dfsStack1.Contains (succ)) {
+                    Console.WriteLine ("df2 : true (a)");
                     return true;
 					
-                }
-                if (!dfsStack2.Contains (succ.To)) {
-                    if (dfs2 (Automaton.Nodes [succ.To])) {
+                } else if (!dfsStack2.Contains (succ)) {
+                    if (dfs2 (Automaton.Nodes [succ])) {
+                        Console.WriteLine ("df2 : true (b)");
                         return true;
                     }
                 }
             }
+            
+            Console.WriteLine ("df2 : false");
 			return false;
 		}
 		
