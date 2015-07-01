@@ -90,31 +90,23 @@ namespace CheckMyModels.Tests
             
             lts.AcceptanceSet = lts.Nodes.Select (x => x.Id).ToArray ();
             
-            Console.WriteLine ("---");
-            Console.WriteLine (lts.ToDot ());
-            Console.WriteLine ("---");
-            
             var f = new StrongImplication (alloc, new Next (mob)).Negate ();
             
             ILTL2Buchi t = new GPVW ();
             var gba = t.GetAutomaton (f);
             var ba = GBA2BA.Transform (gba);
             
-            Console.WriteLine ("---");
-            Console.WriteLine (ba.ToDot ());
-            Console.WriteLine ("---");
-            
             var otfec = new OnTheFlyEmptinessChecker (ba, lts);
             var e1 = otfec.Emptiness ();
             
             if (e1) {
 
-                foreach (var i in otfec.dfsStack11.Reverse ()) {
-                    Console.WriteLine (lts.Nodes [i].Name);
+                foreach (var i in otfec.counterexample_prefix) {
+                    Console.WriteLine (i.Name);
                 }
                 Console.WriteLine ("-- loop starts here --");
-                foreach (var i in otfec.dfsStack12.Reverse ()) {
-                    Console.WriteLine (lts.Nodes [i].Name);
+                foreach (var i in otfec.counterexample_loop) {
+                    Console.WriteLine (i.Name);
                 }
                 Console.WriteLine ("-- loop ends here --");
             } else {
