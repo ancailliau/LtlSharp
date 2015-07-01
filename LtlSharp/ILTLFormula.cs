@@ -73,6 +73,17 @@ namespace LtlSharp
         {
             return "TRUE".GetHashCode ();
         }
+
+        public override bool Equals (object obj)
+        {
+            if (obj == null)
+                return false;
+            if (ReferenceEquals (this, obj))
+                return true;
+            if (obj.GetType () != typeof(True))
+                return false;
+            return true;
+        }
     }
     
     public class False : ILiteral {
@@ -91,6 +102,17 @@ namespace LtlSharp
         public override int GetHashCode ()
         {
             return "FALSE".GetHashCode ();
+        }
+
+        public override bool Equals (object obj)
+        {
+            if (obj == null)
+                return false;
+            if (ReferenceEquals (this, obj))
+                return true;
+            if (obj.GetType () != typeof(False))
+                return false;
+            return true;
         }
     }
         

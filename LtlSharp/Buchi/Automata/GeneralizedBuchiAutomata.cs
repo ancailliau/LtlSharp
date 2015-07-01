@@ -19,8 +19,8 @@ namespace LtlSharp.Buchi
     
     public class GBATransition {
         public int To;
-        public List<ILiteral> Labels;
-        public GBATransition (int to, List<ILiteral> labels)
+        public HashSet<ILiteral> Labels;
+        public GBATransition (int to, HashSet<ILiteral> labels)
         {
             To = to;
             Labels = labels;

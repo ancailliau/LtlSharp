@@ -176,7 +176,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     if (literals.Count == 0)
                         literals.Add (new True ());
                     
-                    transitions[mapping[incomingNodeName]].Add (new GBATransition (mapping[node.Name], literals.ToList ()));
+                    transitions[mapping[incomingNodeName]].Add (new GBATransition (mapping[node.Name], new HashSet<ILiteral> (literals)));
                 }
             }
             

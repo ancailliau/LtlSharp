@@ -54,6 +54,7 @@
     <Compile Include="Buchi\Automata\BuchiAutomata.cs" />
     <Compile Include="Buchi\EmptinessChecker\EmptinessChecker.cs" />
     <Compile Include="Buchi\Translators\GBA2BA.cs" />
+    <Compile Include="Buchi\EmptinessChecker\OnTheFlyEmptinessChecker.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

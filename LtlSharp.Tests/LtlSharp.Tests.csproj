@@ -50,5 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestEmptiness.cs" />
+    <Compile Include="TestOnTheFly.cs" />
   </ItemGroup>
 </Project>

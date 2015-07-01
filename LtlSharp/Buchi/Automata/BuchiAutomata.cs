@@ -23,8 +23,8 @@ namespace LtlSharp.Buchi
 
     public class BATransition {
         public int To;
-        public List<ILiteral> Labels;
-        public BATransition (int to, List<ILiteral> labels)
+        public HashSet<ILiteral> Labels;
+        public BATransition (int to, HashSet<ILiteral> labels)
         {
             To = to;
             Labels = labels;
