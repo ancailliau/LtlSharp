@@ -62,8 +62,7 @@ namespace LittleSharp.Buchi
             
             foreach (var succ in LTLAutomata.Transitions[n.Id]) {
                 foreach (var succ2 in LTS.Transitions[n2.Id]) {
-                    if (succ.Labels.SetEquals (new [] { new True() }) |
-                        succ.Labels.IsSubsetOf (succ2.Labels)) {
+                    if (succ.Labels.IsSubsetOf (succ2.Labels)) {
                         if (!dfsStack1.Contains (succ.To + succ2.To * offset)) {
                             if (dfs1 (LTLAutomata.Nodes [succ.To], LTS.Nodes [succ2.To])) {
                                 return true;
@@ -90,8 +89,7 @@ namespace LittleSharp.Buchi
             dfsStack2.Push(n.Id + n2.Id * offset);
             foreach (var succ in LTLAutomata.Transitions[n.Id]) {
                 foreach (var succ2 in LTS.Transitions[n2.Id]) {
-                    if (succ.Labels.Contains (new True()) |
-                        succ2.Labels.IsSubsetOf (succ.Labels)) {
+                    if (succ2.Labels.IsSubsetOf (succ.Labels)) {
                         if (dfsStack1.Contains (succ.To + succ2.To * offset)) {
                             dfsStack2.Push (succ.To + succ2.To * offset);
                             BuildCounterExample ();

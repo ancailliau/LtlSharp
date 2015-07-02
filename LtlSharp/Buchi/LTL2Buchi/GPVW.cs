@@ -167,16 +167,22 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 foreach (var incomingNodeName in node.Incoming.Except (new [] { "init" })) {
                     literals.Clear ();
                     
+                    bool contradiction = false;
                     foreach (var f in node.Old) {
                         if (f is Proposition | f is Negation) {
+                            if (f is Negation) {
+                                if (literals.Contains (((Negation) f).Enclosed)) {
+                                    contradiction = true;
+                                    break;
+                                }
+                            }
                             literals.Add ((ILiteral) f);
                         }
                     }
                     
-                    if (literals.Count == 0)
-                        literals.Add (new True ());
-                    
-                    transitions[mapping[incomingNodeName]].Add (new GBATransition (mapping[node.Name], new HashSet<ILiteral> (literals)));
+                    if (!contradiction)
+                        transitions[mapping[incomingNodeName]].Add (new GBATransition (mapping[node.Name], 
+                            new HashSet<ILiteral> (literals)));
                 }
             }
             
