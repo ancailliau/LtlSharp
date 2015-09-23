@@ -22,47 +22,53 @@ namespace LtlSharp.Buchi.Translators
             // A GBA without acceptance set the same than a GBA with one acceptance set containing all nodes.
             if (gba.AcceptanceSets.Length == 0) {
                 gba.AcceptanceSets = new GBAAcceptanceSet[] { 
-                    new GBAAcceptanceSet (0, gba.Nodes.Select (x => x.Id).ToArray ())
+                    new GBAAcceptanceSet (0, gba.Nodes.ToArray ())
                 };
             }
             
             // If the GBA contains only one acceptance set, then it is a BA.
             if (gba.AcceptanceSets.Length == 1) {
-                var automata = new BuchiAutomata (gba.Nodes.Length);
-                automata.Nodes = gba.Nodes.Select (x => new AutomataNode (x.Id, x.Name, x.Initial)).ToArray ();
-                automata.Transitions = gba.Transitions.Select (x => x.Select (y => new AutomataTransition (y.To, y.Labels)).ToList ()).ToArray ();
-                automata.AcceptanceSet = gba.AcceptanceSets [0].Nodes;
+                var automata = new BuchiAutomata (gba.Transitions.Count);
+                foreach (var n in gba.Nodes.Select (x => new AutomataNode (x.Id, x.Name, x.Initial))) {
+                    automata.Transitions.Add (n, new HashSet<AutomataTransition> (gba.Transitions[n].Select (
+                        (arg) => new AutomataTransition (arg.To, arg.Labels)))
+                                             );
+                    
+                }
+                //automata.Transitions = gba.Transitions.Select (x => x.Select (y => new AutomataTransition (y.To, y.Labels)).ToList ()).ToArray ();
+                automata.AcceptanceSet = new HashSet<AutomataNode> (gba.AcceptanceSets [0].Nodes);
                 return automata;
             }
             
-            mapping = new AutomataNode[gba.AcceptanceSets.Length, gba.Nodes.Length];
-            var nodes = new List<AutomataNode> ();
-            var transitions = new Dictionary<int, List<AutomataTransition>> ();
+            mapping = new AutomataNode[gba.AcceptanceSets.Length, gba.Transitions.Count];
+            var nodes = new HashSet<AutomataNode> ();
+            var transitions = new Dictionary<AutomataNode, HashSet<AutomataTransition>> ();
             foreach (var qi in gba.Nodes.Where (x => x.Initial)) {
                 Recur (qi, nodes, transitions, 0, gba);
             }
             
             var ba = new BuchiAutomata (nodes.Count);
-            foreach (var node in nodes) {
-                ba.Nodes [node.Id] = node;
-            }
-            foreach (var transition in transitions) {
-                ba.Transitions [transition.Key] = transition.Value;
-            }
-            
+            ba.Transitions = transitions;
+            //foreach (var node in nodes) {
+            //    ba.Nodes [node.Id] = node;
+            //}
+            //foreach (var transition in transitions) {
+            //    ba.Transitions [transition.Key] = transition.Value;
+            //}
+
             var nodes2 = gba.AcceptanceSets [0].Nodes;
-            ba.AcceptanceSet = new int[nodes2.Length];
+            ba.AcceptanceSet = new HashSet<AutomataNode> ();
             for (int i = 0; i < nodes2.Length; i++) {
-                var bANode = mapping [0, nodes2[i]];
+                var bANode = mapping [0, nodes2[i].Id];
                 if (bANode != null) {
-                    ba.AcceptanceSet [i] = bANode.Id;
+                    ba.AcceptanceSet.Add (bANode);
                 }
             }
             
             return ba;
         }
         
-        static AutomataNode Recur (GBANode root, List<AutomataNode> nodes, Dictionary<int, List<AutomataTransition>> transitions, int acceptanceIndex, GeneralizedBuchiAutomata gba)
+        static AutomataNode Recur (AutomataNode root, HashSet<AutomataNode> nodes, Dictionary<AutomataNode, HashSet<AutomataTransition>> transitions, int acceptanceIndex, GeneralizedBuchiAutomata gba)
         {
             if (mapping[acceptanceIndex,root.Id] != null) {
                 return mapping [acceptanceIndex, root.Id];
@@ -73,18 +79,18 @@ namespace LtlSharp.Buchi.Translators
             nodes.Add (bANode);
             
             int newAI = acceptanceIndex;
-            if (gba.AcceptanceSets[acceptanceIndex].Nodes.Contains (root.Id)) {
+            if (gba.AcceptanceSets[acceptanceIndex].Nodes.Contains (root)) {
                 newAI = (acceptanceIndex + 1) % gba.AcceptanceSets.Length;
             }
             
-            foreach (var t in gba.Transitions[root.Id]) {
-                var n2 = Recur (gba.Nodes [t.To], nodes, transitions, newAI, gba);
-                var t2 = new AutomataTransition (n2.Id, t.Labels);
+            foreach (var t in gba.Transitions[root]) {
+                var n2 = Recur (t.To, nodes, transitions, newAI, gba);
+                var t2 = new AutomataTransition (n2, t.Labels);
 
-                if (!transitions.ContainsKey (bANode.Id)) {
-                    transitions.Add (bANode.Id, new List<AutomataTransition> ());
+                if (!transitions.ContainsKey (bANode)) {
+                    transitions.Add (bANode, new HashSet<AutomataTransition> ());
                 }
-                transitions[bANode.Id].Add (t2);
+                transitions[bANode].Add (t2);
             }
             
             return bANode;

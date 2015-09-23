@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
+using LtlSharp.Buchi.Automata;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
@@ -150,14 +151,14 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var nodesSet = CreateGraph (formula);
             
             var automaton = new GeneralizedBuchiAutomata (nodesSet.Count);
-            var transitions = new List<GBATransition>[nodesSet.Count];
+            var transitions = new Dictionary<AutomataNode,HashSet<AutomataTransition>> ();
             
             int i = 0;
-            var mapping = new Dictionary<string, int> ();
+            var mapping = new Dictionary<string, AutomataNode> ();
             foreach (var n in nodesSet) {
-                automaton.Nodes [i] = new GBANode (i, "s" + i, n.Incoming.Contains ("init"));
-                transitions [i] = new List<GBATransition> ();
-                mapping.Add (n.Name, i);
+                var newNode = new AutomataNode (i, "s" + i, n.Incoming.Contains ("init"));
+                transitions.Add (newNode, new HashSet<AutomataTransition> ());
+                mapping.Add (n.Name, newNode);
                 i++;
             }
 
@@ -179,14 +180,16 @@ namespace LtlSharp.Buchi.LTL2Buchi
                             literals.Add ((ILiteral) f);
                         }
                     }
-                    
-                    if (!contradiction)
-                        transitions[mapping[incomingNodeName]].Add (new GBATransition (mapping[node.Name], 
+
+                    if (!contradiction) {
+                        Console.WriteLine (transitions.ContainsKey (mapping[incomingNodeName]));
+                        transitions [mapping [incomingNodeName]].Add (new AutomataTransition (mapping [node.Name],
                             new HashSet<ILiteral> (literals)));
+                    }
                 }
             }
             
-            automaton.Transitions = transitions.ToArray ();
+            automaton.Transitions = transitions;
 
             // The acceptance set contains a separate set of states for
             // each subformula of the form x U y. The set contains the
@@ -204,13 +207,13 @@ namespace LtlSharp.Buchi.LTL2Buchi
 
                 if (considered is Until) {
                     Until consideredUntil = considered as Until;
-                    var set = new HashSet<int>();
+                    var set = new HashSet<AutomataNode>();
 
                     // Adds all nodes containing right member of until
                     // or not the until in their old set.
                     foreach (var q in nodesSet.Where(n => n.Old.Contains(consideredUntil.Right) | !n.Old.Contains(consideredUntil))) 
                     {
-                        set.Add (mapping[q.Name]);        
+                        set.Add (mapping[q.Name]);
                     }
 
                     listAcceptanceSets.AddLast(new GBAAcceptanceSet (setIndex, set.ToArray ()));

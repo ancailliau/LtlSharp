@@ -23,8 +23,8 @@ namespace LittleSharp.Buchi
 			private set;
 		}
 		
-        Stack<int> dfsStack1;
-        Stack<int> dfsStack2;
+        Stack<Tuple<AutomataNode, AutomataNode>> dfsStack1;
+        Stack<Tuple<AutomataNode, AutomataNode>> dfsStack2;
         
         public List<AutomataNode> counterexample_prefix;
         public List<AutomataNode> counterexample_loop;
@@ -35,17 +35,17 @@ namespace LittleSharp.Buchi
 		{
             LTLAutomata = ltlAutomata;
             LTS = lts;
-            offset = Math.Max (LTLAutomata.Nodes.Length, LTS.Nodes.Length);
+            offset = Math.Max (LTLAutomata.Nodes.Count(), LTS.Nodes.Count());
 		}
 		
 		public bool Emptiness()
 		{
-            if (LTLAutomata.AcceptanceSet.Length == 0)
+            if (LTLAutomata.AcceptanceSet.Count == 0)
                 return false;
             
             foreach (var node in LTLAutomata.Nodes.Where(n => n.Initial)) {
                 foreach (var node2 in LTS.Nodes.Where (n => n.Initial)) {
-                    dfsStack1 = new Stack<int> ();
+                    dfsStack1 = new Stack<Tuple<AutomataNode, AutomataNode>> ();
                 
                     if (dfs1 (node, node2)) {
                         return true;
@@ -59,13 +59,13 @@ namespace LittleSharp.Buchi
         
         bool dfs1(AutomataNode n, AutomataNode n2)
 		{
-            dfsStack1.Push (n.Id + n2.Id * offset);
+            dfsStack1.Push (new Tuple<AutomataNode, AutomataNode>(n, n2));
             
-            foreach (var succ in LTLAutomata.Transitions[n.Id]) {
-                foreach (var succ2 in LTS.Transitions[n2.Id]) {
+            foreach (var succ in LTLAutomata.Transitions[n]) {
+                foreach (var succ2 in LTS.Transitions[n2]) {
                     if (succ.Labels.IsSubsetOf (succ2.Labels)) {
-                        if (!dfsStack1.Contains (succ.To + succ2.To * offset)) {
-                            if (dfs1 (LTLAutomata.Nodes [succ.To], LTS.Nodes [succ2.To])) {
+                        if (!dfsStack1.Contains (new Tuple<AutomataNode,AutomataNode> (succ.To, succ2.To))) {
+                            if (dfs1 (succ.To, succ2.To)) {
                                 return true;
                             }
                         }
@@ -74,8 +74,8 @@ namespace LittleSharp.Buchi
             }
 
             
-            dfsStack2 = new Stack<int>();
-            if (LTLAutomata.AcceptanceSet.Contains (n.Id)) {
+            dfsStack2 = new Stack<Tuple<AutomataNode, AutomataNode>>();
+            if (LTLAutomata.AcceptanceSet.Contains (n)) {
                 if (dfs2 (n, n2)) {
                     return true;
                 }
@@ -87,17 +87,18 @@ namespace LittleSharp.Buchi
 		}
         
         bool dfs2(AutomataNode n, AutomataNode n2) {
-            dfsStack2.Push(n.Id + n2.Id * offset);
-            foreach (var succ in LTLAutomata.Transitions[n.Id]) {
-                foreach (var succ2 in LTS.Transitions[n2.Id]) {
+            dfsStack2.Push(new Tuple<AutomataNode, AutomataNode> (n, n2));
+            foreach (var succ in LTLAutomata.Transitions[n]) {
+                foreach (var succ2 in LTS.Transitions[n2]) {
                     if (succ2.Labels.IsSubsetOf (succ.Labels)) {
-                        if (dfsStack1.Contains (succ.To + succ2.To * offset)) {
-                            dfsStack2.Push (succ.To + succ2.To * offset);
+                        var tuple = new Tuple<AutomataNode, AutomataNode> (succ.To, succ2.To);
+                        if (dfsStack1.Contains (tuple)) {
+                            dfsStack2.Push (tuple);
                             BuildCounterExample ();
                             return true;
         					
-                        } else if (!dfsStack2.Contains (succ.To + succ2.To * offset)) {
-                            if (dfs2 (LTLAutomata.Nodes [succ.To], LTS.Nodes[succ2.To])) {
+                        } else if (!dfsStack2.Contains (tuple)) {
+                            if (dfs2 (succ.To, succ2.To)) {
                                 return true;
                             }
                         }
@@ -120,14 +121,14 @@ namespace LittleSharp.Buchi
                     toggle = !toggle;
                 }
                 if (toggle) {
-                    counterexample_prefix.Add (LTS.Nodes [n / offset]);
+                    counterexample_prefix.Add (n.Item1);
                 } else {
-                    counterexample_loop.Add (LTS.Nodes [n / offset]);
+                    counterexample_loop.Add (n.Item1);
                 }
             }
             dfsStack2.Pop ();
             foreach (var n in dfsStack2) {
-                counterexample_loop.Add (LTS.Nodes [n / offset]);
+                counterexample_loop.Add (n.Item1);
             }
         }
 		

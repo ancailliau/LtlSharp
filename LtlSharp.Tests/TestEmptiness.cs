@@ -6,6 +6,7 @@ using LtlSharp.Buchi.Translators;
 using LtlSharp.Buchi;
 using LittleSharp.Buchi;
 using System.Linq;
+using LtlSharp.Buchi.Automata;
 
 namespace CheckMyModels.Tests
 {
@@ -24,32 +25,39 @@ namespace CheckMyModels.Tests
 //            Console.WriteLine (e1 ? "Empty" : "Not empty");
 
             var ec2 = new EmptinessChecker (ba);
+            
+            Console.WriteLine ("////////");
             var e2 = ec2.Emptiness ();
+            Console.WriteLine ("////////");
+            
 //            Console.WriteLine (e2 ? "Empty" : "Not empty");
             
             Console.WriteLine (gba.AcceptanceSets.Length);
             foreach (var aset in gba.AcceptanceSets) {
-                Console.WriteLine (aset.Id + " : " + string.Join (",", aset.Nodes));
+                Console.WriteLine (aset.Id + " : " + string.Join(",", aset.Nodes.Select (x => x.Id)));
             }
             
-            Console.WriteLine ("---");
-            Console.WriteLine (gba.ToDot ());
-            Console.WriteLine ("---");
-            Console.WriteLine (ba.ToDot ());
-            Console.WriteLine ("---");
+            //Console.WriteLine ("---");
+            //Console.WriteLine (gba.ToDot ());
+            //Console.WriteLine ("---");
+            //Console.WriteLine (ba.ToDot ());
+            //Console.WriteLine ("---");
             
             if (e1) {
             
                 foreach (var i in ec2.dfsStack1.Reverse ()) {
-                    Console.WriteLine (ba.Nodes [i].Name);
+                    Console.WriteLine (i.Name);
                 }
                 Console.WriteLine ("-- loop starts here --");
                 foreach (var i in ec2.dfsStack2.Reverse ()) {
-                    Console.WriteLine (ba.Nodes [i].Name);
+                    Console.WriteLine (i.Name);
                 }
                 Console.WriteLine ("-- loop ends here --");
             }
                 
+            Console.WriteLine (e1);
+            Console.WriteLine (e2);
+            
             Assert.That (e1 == e2);
         }
         

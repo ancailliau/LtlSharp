@@ -29,28 +29,28 @@ namespace CheckMyModels.Tests
             var e2 = ec2.Emptiness ();
 //            Console.WriteLine (e2 ? "Empty" : "Not empty");
             
-            Console.WriteLine (gba.AcceptanceSets.Length);
-            foreach (var aset in gba.AcceptanceSets) {
-                Console.WriteLine (aset.Id + " : " + string.Join (",", aset.Nodes));
-            }
+            //Console.WriteLine (gba.AcceptanceSets.Length);
+            //foreach (var aset in gba.AcceptanceSets) {
+            //    Console.WriteLine (aset.Id + " : " + string.Join (",", aset.Nodes));
+            //}
             
-            Console.WriteLine ("---");
-            Console.WriteLine (gba.ToDot ());
-            Console.WriteLine ("---");
-            Console.WriteLine (ba.ToDot ());
-            Console.WriteLine ("---");
+            //Console.WriteLine ("---");
+            //Console.WriteLine (gba.ToDot ());
+            //Console.WriteLine ("---");
+            //Console.WriteLine (ba.ToDot ());
+            //Console.WriteLine ("---");
             
-            if (e1) {
+            //if (e1) {
             
-                foreach (var i in ec2.dfsStack1.Reverse ()) {
-                    Console.WriteLine (ba.Nodes [i].Name);
-                }
-                Console.WriteLine ("-- loop starts here --");
-                foreach (var i in ec2.dfsStack2.Reverse ()) {
-                    Console.WriteLine (ba.Nodes [i].Name);
-                }
-                Console.WriteLine ("-- loop ends here --");
-            }
+            //    foreach (var i in ec2.dfsStack1.Reverse ()) {
+            //        Console.WriteLine (ba.Nodes [i].Name);
+            //    }
+            //    Console.WriteLine ("-- loop starts here --");
+            //    foreach (var i in ec2.dfsStack2.Reverse ()) {
+            //        Console.WriteLine (ba.Nodes [i].Name);
+            //    }
+            //    Console.WriteLine ("-- loop ends here --");
+            //}
                 
             Assert.That (e1 == e2);
         }
@@ -68,28 +68,28 @@ namespace CheckMyModels.Tests
             ILiteral nmob = new Negation (mob);
             
             var lts = new BuchiAutomata (4);
-            lts.Nodes [0] = new AutomataNode (0, "i", true);
-            lts.Nodes [1] = new AutomataNode (1, "s0", false);
-            lts.Nodes [2] = new AutomataNode (2, "s1", false);
-            lts.Nodes [3] = new AutomataNode (3, "s2", false);
+            var n0 = new AutomataNode (0, "i", true);
+            var n1 = new AutomataNode (1, "s0", false);
+            var n2 = new AutomataNode (2, "s1", false);
+            var n3 = new AutomataNode (3, "s2", false);
             
-            lts.Transitions [0] = new List<AutomataTransition> (new [] {
-                new AutomataTransition (1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
-            });
+            lts.Transitions.Add (n0, new HashSet<AutomataTransition> (new [] {
+                new AutomataTransition (n1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
+            }));
             
-            lts.Transitions [1] = new List<AutomataTransition> (new [] {
-                new AutomataTransition (2, new HashSet<ILiteral> (new ILiteral[] { alloc, nmob }))
-            });
+            lts.Transitions.Add (n1, new HashSet<AutomataTransition> (new [] {
+                new AutomataTransition (n2, new HashSet<ILiteral> (new ILiteral[] { alloc, nmob }))
+            }));
             
-            lts.Transitions [2] = new List<AutomataTransition> (new [] {
-                new AutomataTransition (3, new HashSet<ILiteral> (new ILiteral[] { alloc, mob }))
-            });
+            lts.Transitions.Add (n2, new HashSet<AutomataTransition> (new [] {
+                new AutomataTransition (n3, new HashSet<ILiteral> (new ILiteral[] { alloc, mob }))
+            }));
             
-            lts.Transitions [3] = new List<AutomataTransition> (new [] {
-                new AutomataTransition (1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
-            });
+            lts.Transitions.Add (n3, new HashSet<AutomataTransition> (new [] {
+                new AutomataTransition (n0, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
+            }));
             
-            lts.AcceptanceSet = lts.Nodes.Select (x => x.Id).ToArray ();
+            lts.AcceptanceSet = new HashSet<AutomataNode> (lts.Nodes);
             
             var f = new StrongImplication (alloc, new Next (mob)).Negate ();
             
@@ -125,28 +125,28 @@ namespace CheckMyModels.Tests
             ILiteral nmob = new Negation (mob);
 
             var lts = new BuchiAutomata (4);
-            lts.Nodes [0] = new AutomataNode (0, "i", true);
-            lts.Nodes [1] = new AutomataNode (1, "s0", false);
-            lts.Nodes [2] = new AutomataNode (2, "s1", false);
-            lts.Nodes [3] = new AutomataNode (3, "s2", false);
+            var n0 = new AutomataNode (0, "i", true);
+            var n1 = new AutomataNode (1, "s0", false);
+            var n2 = new AutomataNode (2, "s1", false);
+            var n3 = new AutomataNode (3, "s2", false);
 
-            lts.Transitions [0] = new List<AutomataTransition> (new [] {
-                new AutomataTransition (1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
-            });
+            lts.Transitions.Add (n0, new HashSet<AutomataTransition> (new [] {
+                new AutomataTransition (n1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
+            }));
 
-            lts.Transitions [1] = new List<AutomataTransition> (new [] {
-                new AutomataTransition (2, new HashSet<ILiteral> (new ILiteral[] { alloc, nmob }))
-            });
+            lts.Transitions.Add (n1, new HashSet<AutomataTransition> (new [] {
+                new AutomataTransition (n2, new HashSet<ILiteral> (new ILiteral[] { alloc, nmob }))
+            }));
 
-            lts.Transitions [2] = new List<AutomataTransition> (new [] {
-                new AutomataTransition (3, new HashSet<ILiteral> (new ILiteral[] { alloc, mob }))
-            });
+            lts.Transitions.Add (n2, new HashSet<AutomataTransition> (new [] {
+                new AutomataTransition (n3, new HashSet<ILiteral> (new ILiteral[] { alloc, mob }))
+            }));
 
-            lts.Transitions [3] = new List<AutomataTransition> (new [] {
-                new AutomataTransition (1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
-            });
+            lts.Transitions.Add (n3, new HashSet<AutomataTransition> (new [] {
+                new AutomataTransition (n0, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
+            }));
 
-            lts.AcceptanceSet = lts.Nodes.Select (x => x.Id).ToArray ();
+            lts.AcceptanceSet = new HashSet<AutomataNode> (lts.Nodes);
 
             var f = new StrongImplication (alloc, new Next (mob)).Negate ();
 
