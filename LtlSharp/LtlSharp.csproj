@@ -59,6 +59,7 @@
     <Compile Include="Buchi\Automata\NFA.cs" />
     <Compile Include="Buchi\Automata\AutomataNode.cs" />
     <Compile Include="Buchi\Automata\AutomataTransition.cs" />
+    <Compile Include="Buchi\Translators\BA2NFA.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
