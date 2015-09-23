@@ -31,7 +31,7 @@ namespace LtlSharp.Buchi
             processed = new HashSet<AutomataNode> ();
             label = new Dictionary<AutomataNode, HashSet<int>> ();
             
-            foreach (var n in a.Vertices.Where (x => x.Initial)) {
+            foreach (var n in a.InitialNodes) {
                 Console.WriteLine ("******");
                 if (EmptinessSearch (a, n)) {
                     return true;

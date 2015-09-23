@@ -34,7 +34,7 @@ namespace CheckMyModels.Tests
             
             Console.WriteLine (gba.AcceptanceSets.Length);
             foreach (var aset in gba.AcceptanceSets) {
-                Console.WriteLine (aset.Id + " : " + string.Join(",", aset.Nodes.Select (x => x.Id)));
+                Console.WriteLine (aset.Id + " : " + string.Join(",", aset.Nodes.Select (x => x.Name)));
             }
             
             //Console.WriteLine ("---");

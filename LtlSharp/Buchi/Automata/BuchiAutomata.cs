@@ -9,11 +9,12 @@ namespace LtlSharp.Buchi
 {
     public class BuchiAutomata : AdjacencyGraph<AutomataNode, AutomataTransition> 
     {
-        
+        public HashSet<AutomataNode> InitialNodes;
         public HashSet<AutomataNode> AcceptanceSet;
         
         public BuchiAutomata () : base ()
         {
+            InitialNodes = new HashSet<AutomataNode> ();
             AcceptanceSet = new HashSet<AutomataNode> ();
         }
     }

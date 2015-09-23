@@ -11,7 +11,8 @@ namespace LtlSharp.Buchi.Translators
     /// </summary>
     public static class GBA2BA
     {
-        private static AutomataNode[,] mapping;
+        // Cache for acceptance condition set x node
+        private static Dictionary<int, Dictionary<AutomataNode,AutomataNode>> mapping;
         
         /// <summary>
         /// Returns the Büchi Automata corresponding to the specified GBA.
@@ -29,29 +30,27 @@ namespace LtlSharp.Buchi.Translators
             // If the GBA contains only one acceptance set, then it is a BA.
             if (gba.AcceptanceSets.Length == 1) {
                 var automata = new BuchiAutomata ();
-                foreach (var n in gba.Vertices.Select (x => new AutomataNode (x.Id, x.Name, x.Initial))) {
-                    automata.AddVertex (n);
-                    foreach (var t in gba.OutEdges (n)) {
-                        automata.AddEdge (new AutomataTransition (n, t.Target, t.Labels));
-                    }
-                }
+                automata.AddVertexRange (gba.Vertices);
+                automata.AddEdgeRange (gba.Edges);
                 automata.AcceptanceSet = new HashSet<AutomataNode> (gba.AcceptanceSets [0].Nodes);
+                automata.InitialNodes = new HashSet<AutomataNode> (gba.InitialNodes);
                 return automata;
             }
-            
-            mapping = new AutomataNode[gba.AcceptanceSets.Length, gba.Edges.Count()];
+
+            mapping = new Dictionary<int, Dictionary<AutomataNode,AutomataNode>> ();
+            for (int i = 0; i < gba.AcceptanceSets.Length; i++) {
+                mapping [i] = new Dictionary<AutomataNode, AutomataNode> ();
+            }
             
             var ba = new BuchiAutomata ();
-            foreach (var qi in gba.Vertices.Where (x => x.Initial)) {
+            foreach (var qi in gba.InitialNodes) {
                 Recur (qi, ba, 0, gba);
             }
             
-            var nodes2 = gba.AcceptanceSets [0].Nodes;
-            ba.AcceptanceSet = new HashSet<AutomataNode> ();
-            for (int i = 0; i < nodes2.Length; i++) {
-                var bANode = mapping [0, nodes2[i].Id];
-                if (bANode != null) {
-                    ba.AcceptanceSet.Add (bANode);
+            foreach (var acceptingNode in gba.AcceptanceSets [0].Nodes) {
+                AutomataNode n;
+                if (mapping[0].TryGetValue (acceptingNode, out n)) {
+                    ba.AcceptanceSet.Add (n);
                 }
             }
             
@@ -60,13 +59,16 @@ namespace LtlSharp.Buchi.Translators
         
         static AutomataNode Recur (AutomataNode root, BuchiAutomata ba, int acceptanceIndex, GeneralizedBuchiAutomata gba)
         {
-            if (mapping[acceptanceIndex,root.Id] != null) {
-                return mapping [acceptanceIndex, root.Id];
+            if (mapping[acceptanceIndex].ContainsKey(root)) {
+                return mapping [acceptanceIndex][root];
             }
             
-            var bANode = new AutomataNode (0, root.Name + " x " + acceptanceIndex, root.Initial & acceptanceIndex == 0);
-            mapping [acceptanceIndex, root.Id] = bANode;
+            var bANode = new AutomataNode (root.Name + " x " + acceptanceIndex);
+            mapping [acceptanceIndex].Add(root, bANode);
             ba.AddVertex (bANode);
+            if (gba.InitialNodes.Contains (root) & acceptanceIndex == 0) {
+                ba.InitialNodes.Add (bANode);
+            }
             
             int newAI = acceptanceIndex;
             if (gba.AcceptanceSets[acceptanceIndex].Nodes.Contains (root)) {

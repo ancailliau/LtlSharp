@@ -68,11 +68,13 @@ namespace CheckMyModels.Tests
             ILiteral nmob = new Negation (mob);
             
             var lts = new BuchiAutomata ();
-            var n0 = new AutomataNode (0, "i", true); lts.AddVertex (n0);
-            var n1 = new AutomataNode (1, "s0", false);lts.AddVertex (n1);
-            var n2 = new AutomataNode (2, "s1", false);lts.AddVertex (n2);
-            var n3 = new AutomataNode (3, "s2", false);lts.AddVertex (n3);
+            var n0 = new AutomataNode ("i"); lts.AddVertex (n0);
+            var n1 = new AutomataNode ("s0");lts.AddVertex (n1);
+            var n2 = new AutomataNode ("s1");lts.AddVertex (n2);
+            var n3 = new AutomataNode ("s2");lts.AddVertex (n3);
 
+            lts.InitialNodes.Add (n0);
+               
             lts.AddEdge (new AutomataTransition (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
             lts.AddEdge (new AutomataTransition (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
             lts.AddEdge (new AutomataTransition (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
@@ -114,10 +116,12 @@ namespace CheckMyModels.Tests
             ILiteral nmob = new Negation (mob);
             
             var lts = new BuchiAutomata ();
-            var n0 = new AutomataNode (0, "i", true); lts.AddVertex (n0);
-            var n1 = new AutomataNode (1, "s0", false);lts.AddVertex (n1);
-            var n2 = new AutomataNode (2, "s1", false);lts.AddVertex (n2);
-            var n3 = new AutomataNode (3, "s2", false);lts.AddVertex (n3);
+            var n0 = new AutomataNode ("i"); lts.AddVertex (n0);
+            var n1 = new AutomataNode ("s0");lts.AddVertex (n1);
+            var n2 = new AutomataNode ("s1");lts.AddVertex (n2);
+            var n3 = new AutomataNode ("s2");lts.AddVertex (n3);
+
+            lts.InitialNodes.Add (n0);
 
             lts.AddEdge (new AutomataTransition (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
             lts.AddEdge (new AutomataTransition (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));

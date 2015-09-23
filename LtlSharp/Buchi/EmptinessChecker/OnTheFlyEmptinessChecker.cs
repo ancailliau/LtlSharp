@@ -40,8 +40,8 @@ namespace LittleSharp.Buchi
             if (LTLAutomata.AcceptanceSet.Count == 0)
                 return false;
             
-            foreach (var node in LTLAutomata.Vertices.Where(n => n.Initial)) {
-                foreach (var node2 in LTS.Vertices.Where (n => n.Initial)) {
+            foreach (var node in LTLAutomata.InitialNodes) {
+                foreach (var node2 in LTS.InitialNodes) {
                     dfsStack1 = new Stack<Tuple<AutomataNode, AutomataNode>> ();
                 
                     if (dfs1 (node, node2)) {

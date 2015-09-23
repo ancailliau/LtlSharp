@@ -31,14 +31,13 @@ namespace LittleSharp.Buchi
             if (Automaton.AcceptanceSet.Count == 0)
                 return false;
             
-            foreach (var node in Automaton.Vertices.Where(n => n.Initial)) {
+            foreach (var node in Automaton.InitialNodes) {
                 dfsStack1 = new Stack<AutomataNode> ();
 				if (dfs1(node)) {
 					return true;
                 }
 			}
             
-			
 			return false;
 		}
         
@@ -49,10 +48,10 @@ namespace LittleSharp.Buchi
         
         bool dfs1(AutomataNode n)
 		{
-            Console.WriteLine ("Push DFS1 " + n);
+            //Console.WriteLine ("Push DFS1 " + n);
             dfsStack1.Push (n);
             foreach (var succ in Automaton.OutEdges(n)) {
-                Console.WriteLine ("Contains " + succ.Target + " in DFS1 ? " + dfsStack1.Contains (succ.Target));
+                //Console.WriteLine ("Contains " + succ.Target + " in DFS1 ? " + dfsStack1.Contains (succ.Target));
                 if (!dfsStack1.Contains (succ.Target)) {
                     if (dfs1 (succ.Target)) {
                         return true;
@@ -60,7 +59,7 @@ namespace LittleSharp.Buchi
                 }
             }
             
-            Console.WriteLine (n + " in " + string.Join (",", Automaton.AcceptanceSet.Select (x => x) ) + " - " + Automaton.AcceptanceSet.Contains (n));
+            //Console.WriteLine (n + " in " + string.Join (",", Automaton.AcceptanceSet.Select (x => x) ) + " - " + Automaton.AcceptanceSet.Contains (n));
             
             dfsStack2 = new Stack<AutomataNode>();
             if (Automaton.AcceptanceSet.Contains (n)) {
@@ -75,11 +74,10 @@ namespace LittleSharp.Buchi
 		}
         
         bool dfs2(AutomataNode n) {
-            Console.WriteLine ("Push DFS2 " + n);
+            //Console.WriteLine ("Push DFS2 " + n);
             dfsStack2.Push(n);
             foreach (var succ in Automaton.OutEdges (n).Select (w => w.Target)) {
-                Console.WriteLine ("Contains " + succ + " in DFS1 ? " + dfsStack1.Contains (succ));
-                Console.WriteLine ("Contains " + succ + " in DFS2 ? " + dfsStack2.Contains (succ));
+                //Console.WriteLine ("Contains " + succ + " in DFS2 ? " + dfsStack2.Contains (succ));
                 if (dfsStack1.Contains (succ)) {
                     return true;
 					

@@ -35,8 +35,8 @@ namespace LtlSharp.Buchi
             processed = new HashSet<Tuple<AutomataNode,AutomataNode>> ();
             path = new Stack<Tuple<AutomataNode,AutomataNode>> ();
             
-            foreach (var n1 in a.Vertices.Where (x => x.Initial)) {
-                foreach (var n2 in ba.Vertices.Where (x => x.Initial)) {
+            foreach (var n1 in a.InitialNodes) {
+                foreach (var n2 in ba.InitialNodes) {
                     if (EmptinessSearch (n1, n2)) {
                         return true;
                     }

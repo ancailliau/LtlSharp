@@ -4,20 +4,16 @@ namespace LtlSharp.Buchi.Automata
 {
     public class AutomataNode
     {
-        public int Id;
         public string Name;
-        public bool Initial;
         
-        public AutomataNode (int id, string name, bool initial)
+        public AutomataNode (string name)
         {
-            Id = id;
             Name = name;
-            Initial = initial;
         }
         
         public override string ToString ()
         {
-            return string.Format ("[BANode: Id={0}, Name=\"{1}\", Initial={2}]", Id, Name, Initial);
+            return string.Format ("[BANode: Name=\"{0}\"]", Name);
         }
         
         public override bool Equals (object obj)
@@ -29,12 +25,12 @@ namespace LtlSharp.Buchi.Automata
             if (obj.GetType () != typeof(AutomataNode))
                 return false;
             var node = (AutomataNode)obj;
-            return Id == node.Id && Name == node.Name && Initial == node.Initial;
+            return Name == node.Name;
         }
 
         public override int GetHashCode ()
         {
-            return Id.GetHashCode () ^ Name.GetHashCode () ^ Initial.GetHashCode ();
+            return Name.GetHashCode ();
         }
     }
 }

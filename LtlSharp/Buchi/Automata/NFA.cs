@@ -15,31 +15,45 @@ namespace LtlSharp.Buchi.Automata
     public class NFA : AdjacencyGraph<AutomataNode, AutomataTransition>
     {
         public HashSet<AutomataNode> AcceptanceSet;
-
+        public HashSet<AutomataNode> InitialNodes;
+        
         public NFA ()
         {
             AcceptanceSet = new HashSet<AutomataNode> ();
+            InitialNodes = new HashSet<AutomataNode> ();
         }
         
         public void ToSingleInitialState ()
         {
-            if (Vertices.Count (a => a.Initial) == 1)
+            if (InitialNodes.Count == 1)
                 return;
             
-            var newInitialState = new AutomataNode (-1, "init", true);
+            var newInitialState = new AutomataNode ("init");
             this.AddVertex (newInitialState);
             
-            foreach (var initialState in Vertices.Where (a => a.Initial & a != newInitialState).ToList ()) {
+            foreach (var initialState in InitialNodes.ToList ()) {
+                Console.WriteLine ("*>" + this.Edges.All (e => this.ContainsVertex(e.Target)));
+                Console.WriteLine (initialState);
+                Console.WriteLine (string.Join("\n", OutEdges(initialState)));
                 foreach (var otransition in OutEdges (initialState)) {
-                    this.AddEdge (new AutomataTransition (newInitialState, otransition.Target, otransition.Labels));
+                    var newTransition = new AutomataTransition (
+                        newInitialState, 
+                        otransition.Target, 
+                        otransition.Labels
+                    );
+                    this.AddEdge (newTransition);
                 }
-                initialState.Initial = false;
+                InitialNodes.Remove (initialState);
+                Console.WriteLine ("*>" + this.Edges.All (e => this.ContainsVertex(e.Target)));
             }
+
+            InitialNodes.Add (newInitialState);
+            Console.WriteLine ("^^^^^^^^^^^^");
         }
         
         public bool IsDeterministic ()
         {
-            var pending = new Stack<AutomataNode> (Vertices.Where (x => x.Initial));
+            var pending = new Stack<AutomataNode> (InitialNodes);
             var visited = new HashSet<AutomataNode> ();
             
             while (pending.Count > 0) {
@@ -47,6 +61,7 @@ namespace LtlSharp.Buchi.Automata
                 visited.Add (s0);
                 
                 Console.WriteLine ("*" + s0);
+                Console.WriteLine (string.Join("\n--", Edges));
                 
                 var transitions = OutEdges (s0);
                 
@@ -56,6 +71,7 @@ namespace LtlSharp.Buchi.Automata
                         return false;
                     } else {
                         foreach (var s in succ.Where (node => !visited.Contains (node))) {
+                            Console.WriteLine (ContainsVertex (s));
                             pending.Push (s);
                         }
                     }

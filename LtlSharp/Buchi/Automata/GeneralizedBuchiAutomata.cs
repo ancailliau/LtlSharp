@@ -21,9 +21,11 @@ namespace LtlSharp.Buchi
     public class GeneralizedBuchiAutomata : AdjacencyGraph<AutomataNode, AutomataTransition>
     {
         public GBAAcceptanceSet[] AcceptanceSets;
+        public HashSet<AutomataNode> InitialNodes;
         
         public GeneralizedBuchiAutomata (int n_nodes)
         {
+            InitialNodes = new HashSet<AutomataNode> ();
         }
     }
 }
