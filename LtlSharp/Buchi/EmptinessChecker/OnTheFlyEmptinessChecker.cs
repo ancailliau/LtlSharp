@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
 using LtlSharp;
+using LtlSharp.Buchi.Automata;
 
 namespace LittleSharp.Buchi
 {
@@ -25,8 +26,8 @@ namespace LittleSharp.Buchi
         Stack<int> dfsStack1;
         Stack<int> dfsStack2;
         
-        public List<BANode> counterexample_prefix;
-        public List<BANode> counterexample_loop;
+        public List<AutomataNode> counterexample_prefix;
+        public List<AutomataNode> counterexample_loop;
         
         int offset;
 		
@@ -56,7 +57,7 @@ namespace LittleSharp.Buchi
 			return false;
 		}
         
-        bool dfs1(BANode n, BANode n2)
+        bool dfs1(AutomataNode n, AutomataNode n2)
 		{
             dfsStack1.Push (n.Id + n2.Id * offset);
             
@@ -85,7 +86,7 @@ namespace LittleSharp.Buchi
             return false;
 		}
         
-        bool dfs2(BANode n, BANode n2) {
+        bool dfs2(AutomataNode n, AutomataNode n2) {
             dfsStack2.Push(n.Id + n2.Id * offset);
             foreach (var succ in LTLAutomata.Transitions[n.Id]) {
                 foreach (var succ2 in LTS.Transitions[n2.Id]) {
@@ -109,8 +110,8 @@ namespace LittleSharp.Buchi
         
         void BuildCounterExample ()
         {
-            counterexample_prefix = new List<BANode> ();
-            counterexample_loop = new List<BANode> ();
+            counterexample_prefix = new List<AutomataNode> ();
+            counterexample_loop = new List<AutomataNode> ();
                         
             var last_pair = dfsStack2.Pop ();
             bool toggle = true;

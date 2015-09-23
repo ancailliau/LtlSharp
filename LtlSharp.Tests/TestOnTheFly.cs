@@ -7,6 +7,7 @@ using LtlSharp.Buchi;
 using LittleSharp.Buchi;
 using System.Linq;
 using System.Collections.Generic;
+using LtlSharp.Buchi.Automata;
 
 namespace CheckMyModels.Tests
 {
@@ -67,25 +68,25 @@ namespace CheckMyModels.Tests
             ILiteral nmob = new Negation (mob);
             
             var lts = new BuchiAutomata (4);
-            lts.Nodes [0] = new BANode (0, "i", true);
-            lts.Nodes [1] = new BANode (1, "s0", false);
-            lts.Nodes [2] = new BANode (2, "s1", false);
-            lts.Nodes [3] = new BANode (3, "s2", false);
+            lts.Nodes [0] = new AutomataNode (0, "i", true);
+            lts.Nodes [1] = new AutomataNode (1, "s0", false);
+            lts.Nodes [2] = new AutomataNode (2, "s1", false);
+            lts.Nodes [3] = new AutomataNode (3, "s2", false);
             
-            lts.Transitions [0] = new List<BATransition> (new [] {
-                new BATransition (1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
+            lts.Transitions [0] = new List<AutomataTransition> (new [] {
+                new AutomataTransition (1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
             });
             
-            lts.Transitions [1] = new List<BATransition> (new [] {
-                new BATransition (2, new HashSet<ILiteral> (new ILiteral[] { alloc, nmob }))
+            lts.Transitions [1] = new List<AutomataTransition> (new [] {
+                new AutomataTransition (2, new HashSet<ILiteral> (new ILiteral[] { alloc, nmob }))
             });
             
-            lts.Transitions [2] = new List<BATransition> (new [] {
-                new BATransition (3, new HashSet<ILiteral> (new ILiteral[] { alloc, mob }))
+            lts.Transitions [2] = new List<AutomataTransition> (new [] {
+                new AutomataTransition (3, new HashSet<ILiteral> (new ILiteral[] { alloc, mob }))
             });
             
-            lts.Transitions [3] = new List<BATransition> (new [] {
-                new BATransition (1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
+            lts.Transitions [3] = new List<AutomataTransition> (new [] {
+                new AutomataTransition (1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
             });
             
             lts.AcceptanceSet = lts.Nodes.Select (x => x.Id).ToArray ();
@@ -112,6 +113,50 @@ namespace CheckMyModels.Tests
             } else {
                 Console.WriteLine ("No trace found");
             }
+        }
+        
+        
+        [Test()]
+        public void TestMobilizedWhenAllocGBA ()
+        {
+            ILiteral alloc = new Proposition ("allocated");
+            ILiteral mob = new Proposition ("mobilized");
+            ILiteral nalloc = new Negation (alloc);
+            ILiteral nmob = new Negation (mob);
+
+            var lts = new BuchiAutomata (4);
+            lts.Nodes [0] = new AutomataNode (0, "i", true);
+            lts.Nodes [1] = new AutomataNode (1, "s0", false);
+            lts.Nodes [2] = new AutomataNode (2, "s1", false);
+            lts.Nodes [3] = new AutomataNode (3, "s2", false);
+
+            lts.Transitions [0] = new List<AutomataTransition> (new [] {
+                new AutomataTransition (1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
+            });
+
+            lts.Transitions [1] = new List<AutomataTransition> (new [] {
+                new AutomataTransition (2, new HashSet<ILiteral> (new ILiteral[] { alloc, nmob }))
+            });
+
+            lts.Transitions [2] = new List<AutomataTransition> (new [] {
+                new AutomataTransition (3, new HashSet<ILiteral> (new ILiteral[] { alloc, mob }))
+            });
+
+            lts.Transitions [3] = new List<AutomataTransition> (new [] {
+                new AutomataTransition (1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
+            });
+
+            lts.AcceptanceSet = lts.Nodes.Select (x => x.Id).ToArray ();
+
+            var f = new StrongImplication (alloc, new Next (mob)).Negate ();
+
+            ILTL2Buchi t = new GPVW ();
+            var gba = t.GetAutomaton (f);
+
+            var otfec = new OnTheFlyGBAEmptinessChecker (gba, lts);
+            var e1 = otfec.EmptinessSearch ();
+
+            Console.WriteLine (e1);
         }
         
     }

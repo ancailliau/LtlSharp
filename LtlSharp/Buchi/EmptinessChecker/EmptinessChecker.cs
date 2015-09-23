@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
+using LtlSharp.Buchi.Automata;
 
 namespace LittleSharp.Buchi
 {
@@ -20,7 +21,8 @@ namespace LittleSharp.Buchi
         public Stack<int> dfsStack2;
 		
         public EmptinessChecker (BuchiAutomata automaton)
-		{
+        {
+            dfsStack1 = new Stack<int> ();
 			Automaton = automaton;
 		}
 		
@@ -43,11 +45,13 @@ namespace LittleSharp.Buchi
 			return false;
 		}
         
-        bool dfs1(BANode n)
+        public bool Emptiness (AutomataNode n)
+        {
+            return dfs1 (n);
+        }
+        
+        bool dfs1(AutomataNode n)
 		{
-            Console.WriteLine ("dfs1 n={0}", n);
-            
-            
             dfsStack1.Push (n.Id);
             foreach (var succ in Automaton.Transitions[n.Id]) {
                 if (!dfsStack1.Contains (succ.To)) {
@@ -69,24 +73,18 @@ namespace LittleSharp.Buchi
             return false;
 		}
         
-        bool dfs2(BANode n) {
-            Console.WriteLine ("dfs2 n={0}", n);
-            
+        bool dfs2(AutomataNode n) {
             dfsStack2.Push(n.Id);
             foreach (var succ in Automaton.Transitions[n.Id].Select (w => w.To)) {
                 if (dfsStack1.Contains (succ)) {
-                    Console.WriteLine ("df2 : true (a)");
                     return true;
 					
                 } else if (!dfsStack2.Contains (succ)) {
                     if (dfs2 (Automaton.Nodes [succ])) {
-                        Console.WriteLine ("df2 : true (b)");
                         return true;
                     }
                 }
             }
-            
-            Console.WriteLine ("df2 : false");
 			return false;
 		}
 		
