@@ -28,14 +28,11 @@ namespace LittleSharp.Buchi
         
         public List<AutomataNode> counterexample_prefix;
         public List<AutomataNode> counterexample_loop;
-        
-        int offset;
-		
+        		
         public OnTheFlyEmptinessChecker (BuchiAutomata ltlAutomata, BuchiAutomata lts)
 		{
             LTLAutomata = ltlAutomata;
             LTS = lts;
-            offset = Math.Max (LTLAutomata.Nodes.Count(), LTS.Nodes.Count());
 		}
 		
 		public bool Emptiness()
@@ -43,8 +40,8 @@ namespace LittleSharp.Buchi
             if (LTLAutomata.AcceptanceSet.Count == 0)
                 return false;
             
-            foreach (var node in LTLAutomata.Nodes.Where(n => n.Initial)) {
-                foreach (var node2 in LTS.Nodes.Where (n => n.Initial)) {
+            foreach (var node in LTLAutomata.Vertices.Where(n => n.Initial)) {
+                foreach (var node2 in LTS.Vertices.Where (n => n.Initial)) {
                     dfsStack1 = new Stack<Tuple<AutomataNode, AutomataNode>> ();
                 
                     if (dfs1 (node, node2)) {
@@ -61,11 +58,11 @@ namespace LittleSharp.Buchi
 		{
             dfsStack1.Push (new Tuple<AutomataNode, AutomataNode>(n, n2));
             
-            foreach (var succ in LTLAutomata.Transitions[n]) {
-                foreach (var succ2 in LTS.Transitions[n2]) {
+            foreach (var succ in LTLAutomata.OutEdges (n)) {
+                foreach (var succ2 in LTS.OutEdges (n2)) {
                     if (succ.Labels.IsSubsetOf (succ2.Labels)) {
-                        if (!dfsStack1.Contains (new Tuple<AutomataNode,AutomataNode> (succ.To, succ2.To))) {
-                            if (dfs1 (succ.To, succ2.To)) {
+                        if (!dfsStack1.Contains (new Tuple<AutomataNode,AutomataNode> (succ.Target, succ2.Target))) {
+                            if (dfs1 (succ.Target, succ2.Target)) {
                                 return true;
                             }
                         }
@@ -88,17 +85,17 @@ namespace LittleSharp.Buchi
         
         bool dfs2(AutomataNode n, AutomataNode n2) {
             dfsStack2.Push(new Tuple<AutomataNode, AutomataNode> (n, n2));
-            foreach (var succ in LTLAutomata.Transitions[n]) {
-                foreach (var succ2 in LTS.Transitions[n2]) {
+            foreach (var succ in LTLAutomata.OutEdges (n)) {
+                foreach (var succ2 in LTS.OutEdges (n2)) {
                     if (succ2.Labels.IsSubsetOf (succ.Labels)) {
-                        var tuple = new Tuple<AutomataNode, AutomataNode> (succ.To, succ2.To);
+                        var tuple = new Tuple<AutomataNode, AutomataNode> (succ.Target, succ2.Target);
                         if (dfsStack1.Contains (tuple)) {
                             dfsStack2.Push (tuple);
                             BuildCounterExample ();
                             return true;
         					
                         } else if (!dfsStack2.Contains (tuple)) {
-                            if (dfs2 (succ.To, succ2.To)) {
+                            if (dfs2 (succ.Target, succ2.Target)) {
                                 return true;
                             }
                         }

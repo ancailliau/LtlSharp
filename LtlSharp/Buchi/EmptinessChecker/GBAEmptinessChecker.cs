@@ -31,7 +31,7 @@ namespace LtlSharp.Buchi
             processed = new HashSet<AutomataNode> ();
             label = new Dictionary<AutomataNode, HashSet<int>> ();
             
-            foreach (var n in a.Nodes.Where (x => x.Initial)) {
+            foreach (var n in a.Vertices.Where (x => x.Initial)) {
                 Console.WriteLine ("******");
                 if (EmptinessSearch (a, n)) {
                     return true;
@@ -45,7 +45,7 @@ namespace LtlSharp.Buchi
         public bool EmptinessSearch (GeneralizedBuchiAutomata a, AutomataNode qi)
         {
             label = new Dictionary<AutomataNode, HashSet<int>> ();
-            foreach (var n in a.Nodes) {
+            foreach (var n in a.Vertices) {
                 label.Add (n, new HashSet<int> ());
             }
             //for (int i = 0, length = a.Transitions.Count; i < length; i++) {
@@ -57,13 +57,13 @@ namespace LtlSharp.Buchi
                 var q = path.Peek ();
                 Console.WriteLine ("q={0}", q.Name);
             
-                var succToProcess = a.Transitions[q].Select (x => x.To).Except (path.Union (processed));
+                var succToProcess = a.OutEdges(q).Select (x => x.Target).Except (path.Union (processed));
                 while (succToProcess.Count () > 0) {
                     var succ = succToProcess.First ();
                     path.Push (succ);
                     label [succ] = new HashSet<int> ();
                     q = succ;
-                    succToProcess = a.Transitions[q].Select (x => x.To).Except (path.Union (processed));
+                    succToProcess = a.OutEdges(q).Select (x => x.Target).Except (path.Union (processed));
                     Console.WriteLine ("q={0}", q.Name);
                 }
                 Console.WriteLine ("----");
@@ -99,8 +99,8 @@ namespace LtlSharp.Buchi
             var nodesToProcess = new Stack<AutomataNode> (nodes);
             while (nodesToProcess.Count > 0) {
                 var q = nodesToProcess.Pop ();
-                var successors = a.Transitions [q].Select (x => x.To).Intersect (path.Union (processed));
-                Console.WriteLine ("successors : " + string.Join(",", a.Transitions [q].Select (x => x.To.Name)));
+                var successors = a.OutEdges (q).Select (x => x.Target).Intersect (path.Union (processed));
+                Console.WriteLine ("successors : " + string.Join(",", a.OutEdges (q).Select (x => x.Target.Name)));
                 Console.WriteLine ("successors : " + string.Join(",", successors));
                 foreach (var succ in successors) {
                     if (!label[succ].IsSupersetOf (labelsToPropagate)) {

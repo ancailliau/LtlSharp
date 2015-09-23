@@ -157,7 +157,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var mapping = new Dictionary<string, AutomataNode> ();
             foreach (var n in nodesSet) {
                 var newNode = new AutomataNode (i, "s" + i, n.Incoming.Contains ("init"));
-                transitions.Add (newNode, new HashSet<AutomataTransition> ());
+                automaton.AddVertex (newNode);
                 mapping.Add (n.Name, newNode);
                 i++;
             }
@@ -182,14 +182,27 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     }
 
                     if (!contradiction) {
-                        Console.WriteLine (transitions.ContainsKey (mapping[incomingNodeName]));
-                        transitions [mapping [incomingNodeName]].Add (new AutomataTransition (mapping [node.Name],
-                            new HashSet<ILiteral> (literals)));
+                        //Console.WriteLine (transitions.ContainsKey (mapping[incomingNodeName]));
+                        automaton.AddEdge (
+                                new AutomataTransition (
+                                            mapping [incomingNodeName],
+                                            mapping [node.Name],
+                                            new HashSet<ILiteral> (literals)
+                                        )
+
+                        );
+                        //transitions [mapping [incomingNodeName]].Add (
+                        //    new AutomataTransition (
+                        //        mapping [incomingNodeName], 
+                        //        mapping [node.Name],
+                        //        new HashSet<ILiteral> (literals)
+                        //    )
+                        //);
                     }
                 }
             }
             
-            automaton.Transitions = transitions;
+            // automaton.Edges = transitions;
 
             // The acceptance set contains a separate set of states for
             // each subformula of the form x U y. The set contains the

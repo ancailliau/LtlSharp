@@ -12,13 +12,14 @@ namespace LtlSharp.Buchi.Translators
             var emptinessChecker = new EmptinessChecker (automata);
             
             var newAcceptanceSet = new HashSet<AutomataNode> ();
-            foreach (var n in automata.Nodes) {
+            foreach (var n in automata.Vertices) {
                 if (emptinessChecker.Emptiness (n))
                     newAcceptanceSet.Add (n);
             }
 
-            var nfa = new NFA (0);
-            nfa.Transitions = automata.Transitions;
+            var nfa = new NFA ();
+            nfa.AddVertexRange (automata.Vertices);
+            nfa.AddEdgeRange (automata.Edges);
             nfa.AcceptanceSet = newAcceptanceSet;
             return nfa;
         }

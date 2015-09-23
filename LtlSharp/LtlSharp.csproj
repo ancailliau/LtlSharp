@@ -36,6 +36,18 @@
       <HintPath>..\Libraries\Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="QuickGraph">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Serialization">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Data">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz">
+      <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Graphviz.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -60,11 +72,13 @@
     <Compile Include="Buchi\Automata\AutomataNode.cs" />
     <Compile Include="Buchi\Automata\AutomataTransition.cs" />
     <Compile Include="Buchi\Translators\BA2NFA.cs" />
+    <Compile Include="Monitors\LTLMonitor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="LTL.g" />
     <None Include="Buchi\LTL2Buchi\Gia01.cs" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />
@@ -73,5 +87,6 @@
     <Folder Include="Buchi\EmptinessChecker\" />
     <Folder Include="Buchi\Automata\" />
     <Folder Include="Buchi\Translators\" />
+    <Folder Include="New Folder\" />
   </ItemGroup>
 </Project>

@@ -67,29 +67,18 @@ namespace CheckMyModels.Tests
             ILiteral nalloc = new Negation (alloc);
             ILiteral nmob = new Negation (mob);
             
-            var lts = new BuchiAutomata (4);
-            var n0 = new AutomataNode (0, "i", true);
-            var n1 = new AutomataNode (1, "s0", false);
-            var n2 = new AutomataNode (2, "s1", false);
-            var n3 = new AutomataNode (3, "s2", false);
+            var lts = new BuchiAutomata ();
+            var n0 = new AutomataNode (0, "i", true); lts.AddVertex (n0);
+            var n1 = new AutomataNode (1, "s0", false);lts.AddVertex (n1);
+            var n2 = new AutomataNode (2, "s1", false);lts.AddVertex (n2);
+            var n3 = new AutomataNode (3, "s2", false);lts.AddVertex (n3);
+
+            lts.AddEdge (new AutomataTransition (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddEdge (new AutomataTransition (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
+            lts.AddEdge (new AutomataTransition (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
+            lts.AddEdge (new AutomataTransition (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
             
-            lts.Transitions.Add (n0, new HashSet<AutomataTransition> (new [] {
-                new AutomataTransition (n1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
-            }));
-            
-            lts.Transitions.Add (n1, new HashSet<AutomataTransition> (new [] {
-                new AutomataTransition (n2, new HashSet<ILiteral> (new ILiteral[] { alloc, nmob }))
-            }));
-            
-            lts.Transitions.Add (n2, new HashSet<AutomataTransition> (new [] {
-                new AutomataTransition (n3, new HashSet<ILiteral> (new ILiteral[] { alloc, mob }))
-            }));
-            
-            lts.Transitions.Add (n3, new HashSet<AutomataTransition> (new [] {
-                new AutomataTransition (n0, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
-            }));
-            
-            lts.AcceptanceSet = new HashSet<AutomataNode> (lts.Nodes);
+            lts.AcceptanceSet = new HashSet<AutomataNode> (lts.Vertices);
             
             var f = new StrongImplication (alloc, new Next (mob)).Negate ();
             
@@ -123,30 +112,19 @@ namespace CheckMyModels.Tests
             ILiteral mob = new Proposition ("mobilized");
             ILiteral nalloc = new Negation (alloc);
             ILiteral nmob = new Negation (mob);
+            
+            var lts = new BuchiAutomata ();
+            var n0 = new AutomataNode (0, "i", true); lts.AddVertex (n0);
+            var n1 = new AutomataNode (1, "s0", false);lts.AddVertex (n1);
+            var n2 = new AutomataNode (2, "s1", false);lts.AddVertex (n2);
+            var n3 = new AutomataNode (3, "s2", false);lts.AddVertex (n3);
 
-            var lts = new BuchiAutomata (4);
-            var n0 = new AutomataNode (0, "i", true);
-            var n1 = new AutomataNode (1, "s0", false);
-            var n2 = new AutomataNode (2, "s1", false);
-            var n3 = new AutomataNode (3, "s2", false);
+            lts.AddEdge (new AutomataTransition (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddEdge (new AutomataTransition (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
+            lts.AddEdge (new AutomataTransition (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
+            lts.AddEdge (new AutomataTransition (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
 
-            lts.Transitions.Add (n0, new HashSet<AutomataTransition> (new [] {
-                new AutomataTransition (n1, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
-            }));
-
-            lts.Transitions.Add (n1, new HashSet<AutomataTransition> (new [] {
-                new AutomataTransition (n2, new HashSet<ILiteral> (new ILiteral[] { alloc, nmob }))
-            }));
-
-            lts.Transitions.Add (n2, new HashSet<AutomataTransition> (new [] {
-                new AutomataTransition (n3, new HashSet<ILiteral> (new ILiteral[] { alloc, mob }))
-            }));
-
-            lts.Transitions.Add (n3, new HashSet<AutomataTransition> (new [] {
-                new AutomataTransition (n0, new HashSet<ILiteral> (new ILiteral[] { nalloc, nmob }))
-            }));
-
-            lts.AcceptanceSet = new HashSet<AutomataNode> (lts.Nodes);
+            lts.AcceptanceSet = new HashSet<AutomataNode> (lts.Vertices);
 
             var f = new StrongImplication (alloc, new Next (mob)).Negate ();
 

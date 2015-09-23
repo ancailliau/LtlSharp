@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LtlSharp.Buchi.Automata;
+using QuickGraph;
 
 namespace LtlSharp.Buchi
 {
@@ -17,21 +18,12 @@ namespace LtlSharp.Buchi
         
     }
     
-    public class GeneralizedBuchiAutomata
+    public class GeneralizedBuchiAutomata : AdjacencyGraph<AutomataNode, AutomataTransition>
     {
-        public IEnumerable<AutomataNode> Nodes {
-            get {
-                return Transitions.Keys;
-            }
-        }
-        
-        public Dictionary<AutomataNode, HashSet<AutomataTransition>> Transitions; // probably better to use a sparse array instead.
         public GBAAcceptanceSet[] AcceptanceSets;
         
         public GeneralizedBuchiAutomata (int n_nodes)
         {
-            //Nodes = new AutomataNode[n_nodes];
-            Transitions = new Dictionary<AutomataNode, HashSet<AutomataTransition>> ();
         }
     }
 }

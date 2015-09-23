@@ -1,23 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using QuickGraph;
 
 namespace LtlSharp.Buchi.Automata
 {
-    public class AutomataTransition
+    public class AutomataTransition : Edge<AutomataNode>
     {
-        public AutomataNode To;
         public HashSet<ILiteral> Labels;
-        
-        public AutomataTransition (AutomataNode to, HashSet<ILiteral> labels)
+
+        public AutomataTransition (AutomataTransition transition) 
+            : base (transition.Source, transition.Target)
         {
-            To = to;
+            Labels = new HashSet<ILiteral> (transition.Labels);
+        }
+        
+        public AutomataTransition (AutomataNode source, AutomataNode target, HashSet<ILiteral> labels)
+            : base (source, target)
+        {
             Labels = labels;
         }
         
         public override string ToString ()
         {
-            return string.Format ("[AutomataTransition: To={0}, Labels={1}]", To, string.Join (",", Labels));
+            return string.Format ("[AutomataTransition: Source={0}, Target={1}, Labels={2}]", 
+                                  Source, Target, string.Join (",", Labels));
         }
         
         public override bool Equals (object obj)
@@ -29,13 +36,13 @@ namespace LtlSharp.Buchi.Automata
             if (obj.GetType () != typeof(AutomataTransition))
                 return false;
             var transition = (AutomataTransition)obj;
-            return To.Equals (transition.To) && Labels.All (l => transition.Labels.Contains (l))
+            return base.Equals(obj) && Labels.All (l => transition.Labels.Contains (l))
                      && transition.Labels.All (l => Labels.Contains (l));
         }
 
         public override int GetHashCode ()
         {
-            return To.GetHashCode () ^ Labels.GetHashCode ();
+            return base.GetHashCode () ^ Labels.GetHashCode ();
         }
     }
 }
