@@ -7,6 +7,8 @@ using LtlSharp.Buchi;
 using LittleSharp.Buchi;
 using System.Linq;
 using LtlSharp.Buchi.Automata;
+using QuickGraph.Graphviz;
+using QuickGraph.Graphviz.Dot;
 
 namespace CheckMyModels.Tests
 {
@@ -15,56 +17,53 @@ namespace CheckMyModels.Tests
     {
         private void AssertEquivalentEmptiness (ILTLFormula f)
         {
-            ILTL2Buchi t = new GPVW ();
+            var gpvw = new GPVW ();
+            var ltl2buchi = new Gia02 ();
 
-            var gba = t.GetAutomaton (f);
+            var gba = gpvw.GetGBA (f);
             var ba = GBA2BA.Transform (gba);
+            var ba2 = ltl2buchi.GetAutomaton (f);
 
             var ec = new GBAEmptinessChecker ();
-            var e1 = ec.EmptinessSearch (gba);
-//            Console.WriteLine (e1 ? "Empty" : "Not empty");
-
             var ec2 = new EmptinessChecker (ba);
+            var ec3 = new EmptinessChecker (ba2);
             
-            Console.WriteLine ("////////");
+            var e1 = ec.EmptinessSearch (gba);
             var e2 = ec2.Emptiness ();
-            Console.WriteLine ("////////");
+            var e3 = ec3.Emptiness ();
+
+            // Display Buchi Automata
             
-//            Console.WriteLine (e2 ? "Empty" : "Not empty");
+            var graphviz = new GraphvizAlgorithm<AutomataNode, LabeledAutomataTransition<AutomataNode>> (ba);
+            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
+                e.VertexFormatter.Label = e.Vertex.Name;
+                if (ba.InitialNodes.Contains (e.Vertex))
+                    e.VertexFormatter.Style = GraphvizVertexStyle.Bold;
+                if (ba.AcceptanceSet.Contains (e.Vertex))
+                    e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.DoubleCircle;
+            };
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, LabeledAutomataTransition<AutomataNode>> e) => {
+                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
+            };
+            Console.WriteLine (graphviz.Generate ());
             
-            Console.WriteLine (gba.AcceptanceSets.Length);
-            foreach (var aset in gba.AcceptanceSets) {
-                Console.WriteLine (aset.Id + " : " + string.Join(",", aset.Nodes.Select (x => x.Name)));
-            }
-            
-            //Console.WriteLine ("---");
-            //Console.WriteLine (gba.ToDot ());
-            //Console.WriteLine ("---");
-            //Console.WriteLine (ba.ToDot ());
-            //Console.WriteLine ("---");
-            
-            if (e1) {
-            
-                foreach (var i in ec2.dfsStack1.Reverse ()) {
-                    Console.WriteLine (i.Name);
-                }
-                Console.WriteLine ("-- loop starts here --");
-                foreach (var i in ec2.dfsStack2.Reverse ()) {
-                    Console.WriteLine (i.Name);
-                }
-                Console.WriteLine ("-- loop ends here --");
-            }
-                
-            Console.WriteLine (e1);
-            Console.WriteLine (e2);
             
             Assert.That (e1 == e2);
+            Assert.That (e2 == e3);
+            Assert.That (e1 == e3);
         }
         
         
         Proposition p1 = new Proposition ("p1");
         Proposition p2 = new Proposition ("p2");
         Proposition p3 = new Proposition ("p3");
+        
+        [Test()]
+        public void TestNoSpawnUntilInit ()
+        {
+            ILTLFormula f0 = new Until (new Proposition ("spawn").Negate (), new Proposition ("init"));
+            AssertEquivalentEmptiness (f0.Negate ());
+        }
         
         [Test()]
         public void TestMobilizedWhenAlloc ()
@@ -104,6 +103,7 @@ namespace CheckMyModels.Tests
         [Test()]
         public void TestF4 ()
         {
+            // (G (F (p1))) -> (G (F (p2)))
             ILTLFormula f = new Implication (new Globally (new Finally (p1)), new Globally (new Finally (p2))); // problem
             AssertEquivalentEmptiness (f);
         }

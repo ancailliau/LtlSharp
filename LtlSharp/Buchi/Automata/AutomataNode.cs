@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace LtlSharp.Buchi.Automata
 {
@@ -31,6 +32,16 @@ namespace LtlSharp.Buchi.Automata
         public override int GetHashCode ()
         {
             return Name.GetHashCode ();
+        }
+    }
+    
+    public class LabelledAutomataNode : AutomataNode 
+    {   
+        public HashSet<ILiteral> Labels;
+
+        public LabelledAutomataNode (string name) : base (name)
+        {
+            Labels = new HashSet<ILiteral> ();
         }
     }
 }

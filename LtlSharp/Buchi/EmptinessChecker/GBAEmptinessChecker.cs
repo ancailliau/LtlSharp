@@ -21,7 +21,7 @@ namespace LtlSharp.Buchi
             
         }
         
-        public bool EmptinessSearch (GeneralizedBuchiAutomata a)
+        public bool EmptinessSearch (TransitionGeneralizedBuchiAutomata a)
         {
             if (a.AcceptanceSets.Length == 0) {
                 throw new NotImplementedException ("EmptinessSearch (GeneralizedBuchiAutomata a)");
@@ -32,17 +32,17 @@ namespace LtlSharp.Buchi
             label = new Dictionary<AutomataNode, HashSet<int>> ();
             
             foreach (var n in a.InitialNodes) {
-                Console.WriteLine ("******");
+                //Console.WriteLine ("******");
                 if (EmptinessSearch (a, n)) {
                     return true;
                 }
-                Console.WriteLine ("******");
+                //Console.WriteLine ("******");
             }
             
             return false;
         }
         
-        public bool EmptinessSearch (GeneralizedBuchiAutomata a, AutomataNode qi)
+        public bool EmptinessSearch (TransitionGeneralizedBuchiAutomata a, AutomataNode qi)
         {
             label = new Dictionary<AutomataNode, HashSet<int>> ();
             foreach (var n in a.Vertices) {
@@ -55,7 +55,7 @@ namespace LtlSharp.Buchi
             path.Push (qi);
             while (path.Count > 0) {
                 var q = path.Peek ();
-                Console.WriteLine ("q={0}", q.Name);
+                //Console.WriteLine ("q={0}", q.Name);
             
                 var succToProcess = a.OutEdges(q).Select (x => x.Target).Except (path.Union (processed));
                 while (succToProcess.Count () > 0) {
@@ -64,14 +64,14 @@ namespace LtlSharp.Buchi
                     label [succ] = new HashSet<int> ();
                     q = succ;
                     succToProcess = a.OutEdges(q).Select (x => x.Target).Except (path.Union (processed));
-                    Console.WriteLine ("q={0}", q.Name);
+                    //Console.WriteLine ("q={0}", q.Name);
                 }
-                Console.WriteLine ("----");
+                //Console.WriteLine ("----");
                 if (label[q].Count == 0 | a.AcceptanceSets.Any (x => x.Nodes.Contains (q))) {
                     var labelsToPropagate = label [q].Union ((from x in a.AcceptanceSets
                                                                              where x.Nodes.Contains (q)
                                                                              select x.Id));
-                    Console.WriteLine ("labelsToPropagate={0}", string.Join (",", labelsToPropagate));
+                    //Console.WriteLine ("labelsToPropagate={0}", string.Join (",", labelsToPropagate));
             
                     propagate (a, new [] { q }, labelsToPropagate);
                     if (label[q].SetEquals (a.AcceptanceSets.Select (set => set.Id))) {
@@ -89,19 +89,19 @@ namespace LtlSharp.Buchi
         }
         
 
-        void propagate (GeneralizedBuchiAutomata a, IEnumerable<AutomataNode> nodes, IEnumerable<int> labelsToPropagate)
+        void propagate (TransitionGeneralizedBuchiAutomata a, IEnumerable<AutomataNode> nodes, IEnumerable<int> labelsToPropagate)
         {
             
-            Console.WriteLine ("path : " + string.Join(",", path));
-            Console.WriteLine ("processed : " + string.Join(",", processed));
+            //Console.WriteLine ("path : " + string.Join(",", path));
+            //Console.WriteLine ("processed : " + string.Join(",", processed));
             
             var toProp = labelsToPropagate.ToArray ();
             var nodesToProcess = new Stack<AutomataNode> (nodes);
             while (nodesToProcess.Count > 0) {
                 var q = nodesToProcess.Pop ();
                 var successors = a.OutEdges (q).Select (x => x.Target).Intersect (path.Union (processed));
-                Console.WriteLine ("successors : " + string.Join(",", a.OutEdges (q).Select (x => x.Target.Name)));
-                Console.WriteLine ("successors : " + string.Join(",", successors));
+                //Console.WriteLine ("successors : " + string.Join(",", a.OutEdges (q).Select (x => x.Target.Name)));
+                //Console.WriteLine ("successors : " + string.Join(",", successors));
                 foreach (var succ in successors) {
                     if (!label[succ].IsSupersetOf (labelsToPropagate)) {
                         nodesToProcess.Push (succ);

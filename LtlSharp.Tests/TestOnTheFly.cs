@@ -16,9 +16,9 @@ namespace CheckMyModels.Tests
     {
         private void AssertEquivalentEmptiness (ILTLFormula f)
         {
-            ILTL2Buchi t = new GPVW ();
+            var t = new GPVW ();
 
-            var gba = t.GetAutomaton (f);
+            var gba = t.GetGBA (f);
             var ba = GBA2BA.Transform (gba);
 
             var ec = new GBAEmptinessChecker ();
@@ -75,17 +75,17 @@ namespace CheckMyModels.Tests
 
             lts.InitialNodes.Add (n0);
                
-            lts.AddEdge (new AutomataTransition (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
-            lts.AddEdge (new AutomataTransition (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
-            lts.AddEdge (new AutomataTransition (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
-            lts.AddEdge (new AutomataTransition (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
+            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
+            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
             
             lts.AcceptanceSet = new HashSet<AutomataNode> (lts.Vertices);
             
             var f = new StrongImplication (alloc, new Next (mob)).Negate ();
             
-            ILTL2Buchi t = new GPVW ();
-            var gba = t.GetAutomaton (f);
+            var t = new GPVW ();
+            var gba = t.GetGBA (f);
             var ba = GBA2BA.Transform (gba);
             
             var otfec = new OnTheFlyEmptinessChecker (ba, lts);
@@ -123,17 +123,17 @@ namespace CheckMyModels.Tests
 
             lts.InitialNodes.Add (n0);
 
-            lts.AddEdge (new AutomataTransition (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
-            lts.AddEdge (new AutomataTransition (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
-            lts.AddEdge (new AutomataTransition (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
-            lts.AddEdge (new AutomataTransition (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
+            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
+            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
 
             lts.AcceptanceSet = new HashSet<AutomataNode> (lts.Vertices);
 
             var f = new StrongImplication (alloc, new Next (mob)).Negate ();
 
-            ILTL2Buchi t = new GPVW ();
-            var gba = t.GetAutomaton (f);
+            var t = new GPVW ();
+            var gba = t.GetGBA (f);
 
             var otfec = new OnTheFlyGBAEmptinessChecker (gba, lts);
             var e1 = otfec.EmptinessSearch ();

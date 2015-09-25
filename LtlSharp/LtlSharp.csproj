@@ -72,12 +72,13 @@
     <Compile Include="Buchi\Automata\AutomataNode.cs" />
     <Compile Include="Buchi\Automata\AutomataTransition.cs" />
     <Compile Include="Buchi\Translators\BA2NFA.cs" />
-    <Compile Include="Monitors\LTLMonitor.cs" />
+    <Compile Include="Monitoring\LTLMonitor.cs" />
+    <Compile Include="Monitoring\MonitoredState.cs" />
+    <Compile Include="Buchi\LTL2Buchi\Gia02.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="LTL.g" />
-    <None Include="Buchi\LTL2Buchi\Gia01.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -87,6 +88,5 @@
     <Folder Include="Buchi\EmptinessChecker\" />
     <Folder Include="Buchi\Automata\" />
     <Folder Include="Buchi\Translators\" />
-    <Folder Include="New Folder\" />
   </ItemGroup>
 </Project>

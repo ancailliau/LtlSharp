@@ -18,7 +18,7 @@ namespace LtlSharp.Buchi.Translators
         /// Returns the Büchi Automata corresponding to the specified GBA.
         /// </summary>
         /// <param name="gba">A Generalized Büchi Automata.</param>
-        public static BuchiAutomata Transform (GeneralizedBuchiAutomata gba)
+        public static BuchiAutomata Transform (TransitionGeneralizedBuchiAutomata gba)
         {
             // A GBA without acceptance set the same than a GBA with one acceptance set containing all nodes.
             if (gba.AcceptanceSets.Length == 0) {
@@ -57,7 +57,7 @@ namespace LtlSharp.Buchi.Translators
             return ba;
         }
         
-        static AutomataNode Recur (AutomataNode root, BuchiAutomata ba, int acceptanceIndex, GeneralizedBuchiAutomata gba)
+        static AutomataNode Recur (AutomataNode root, BuchiAutomata ba, int acceptanceIndex, TransitionGeneralizedBuchiAutomata gba)
         {
             if (mapping[acceptanceIndex].ContainsKey(root)) {
                 return mapping [acceptanceIndex][root];
@@ -77,7 +77,7 @@ namespace LtlSharp.Buchi.Translators
             
             foreach (var t in gba.OutEdges (root)) {
                 var n2 = Recur (t.Target, ba, newAI, gba);
-                var t2 = new AutomataTransition (bANode, n2, t.Labels);
+                var t2 = new LabeledAutomataTransition<AutomataNode> (bANode, n2, t.Labels);
                 ba.AddEdge (t2);
             }
             

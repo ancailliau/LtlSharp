@@ -16,10 +16,10 @@ namespace LtlSharp.Buchi
         public Dictionary<AutomataNode, HashSet<int>> label; 
         // index of the node, index of the acceptance set
         
-        GeneralizedBuchiAutomata a;
+        TransitionGeneralizedBuchiAutomata a;
         BuchiAutomata ba;
         
-        public OnTheFlyGBAEmptinessChecker (GeneralizedBuchiAutomata a, BuchiAutomata ba)
+        public OnTheFlyGBAEmptinessChecker (TransitionGeneralizedBuchiAutomata a, BuchiAutomata ba)
         {
             this.a = a;
             this.ba = ba;
@@ -64,7 +64,7 @@ namespace LtlSharp.Buchi
                         if (t1.Labels.IsSubsetOf (t2.Labels)) {
                             var nt = new Tuple<AutomataNode, AutomataNode> (t1.Target, t2.Target);
                             if (!pup.Contains (nt)) {
-                                //Console.WriteLine ("pushing from (" + a.Nodes[q.Item1].Name + ", " + q.Item2.Name + ") to (" + a.Nodes[nt.Item1].Name + ", " + nt.Item2.Name + ")");
+                                ////Console.WriteLine ("pushing from (" + a.Nodes[q.Item1].Name + ", " + q.Item2.Name + ") to (" + a.Nodes[nt.Item1].Name + ", " + nt.Item2.Name + ")");
                                 succToProcess.Push (nt);
                             }
                         }
@@ -84,7 +84,7 @@ namespace LtlSharp.Buchi
                             if (t1.Labels.IsSubsetOf (t2.Labels)) {
                                 var nt = new Tuple<AutomataNode,AutomataNode> (t1.Target, t2.Target);
                                 if (!pup.Contains (nt)) {
-                                    //Console.WriteLine ("pushing from (" + a.Nodes[q.Item1].Name + ", " + ba.Nodes[q.Item2].Name + ") to (" + a.Nodes[nt.Item1].Name + ", " + ba.Nodes[nt.Item2].Name + ")");
+                                    ////Console.WriteLine ("pushing from (" + a.Nodes[q.Item1].Name + ", " + ba.Nodes[q.Item2].Name + ") to (" + a.Nodes[nt.Item1].Name + ", " + ba.Nodes[nt.Item2].Name + ")");
                                     succToProcess.Push (nt);
                                 }
                             }
@@ -92,12 +92,12 @@ namespace LtlSharp.Buchi
                     }
                     
                 }
-                //Console.WriteLine ("----");
+                ////Console.WriteLine ("----");
                 if (label[q.Item1].Count == 0 | a.AcceptanceSets.Any (x => x.Nodes.Contains (q.Item1))) {
                     var labelsToPropagate = label [q.Item1].Union ((from x in a.AcceptanceSets
                         where x.Nodes.Contains (q.Item1)
                                                                              select x.Id));
-                    //Console.WriteLine ("labelsToPropagate={0}", string.Join (",", labelsToPropagate));
+                    ////Console.WriteLine ("labelsToPropagate={0}", string.Join (",", labelsToPropagate));
             
                     propagate (new [] { q }, labelsToPropagate);
                     if (label[q.Item1].SetEquals (a.AcceptanceSets.Select (set => set.Id))) {
@@ -118,8 +118,8 @@ namespace LtlSharp.Buchi
         void propagate (IEnumerable<Tuple<AutomataNode, AutomataNode>> nodes, IEnumerable<int> labelsToPropagate)
         {
             
-            Console.WriteLine ("path : " + string.Join(",", path));
-            Console.WriteLine ("processed : " + string.Join(",", processed));
+            //Console.WriteLine ("path : " + string.Join(",", path));
+            //Console.WriteLine ("processed : " + string.Join(",", processed));
             
             var toProp = labelsToPropagate.ToArray ();
             var nodesToProcess = new Stack<Tuple<AutomataNode,AutomataNode>> (nodes);
@@ -141,8 +141,8 @@ namespace LtlSharp.Buchi
                     }
                 }
                 
-//                Console.WriteLine ("successors : " + string.Join(",", a.Transitions [q].Select (x => a.Nodes[x.To].Name)));
-//                Console.WriteLine ("successors : " + string.Join(",", successors));
+//                //Console.WriteLine ("successors : " + string.Join(",", a.Transitions [q].Select (x => a.Nodes[x.To].Name)));
+//                //Console.WriteLine ("successors : " + string.Join(",", successors));
                 foreach (var succ in successors) {
                     if (!label[succ.Item1].IsSupersetOf (labelsToPropagate)) {
                         nodesToProcess.Push (succ);

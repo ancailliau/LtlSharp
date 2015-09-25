@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
 using LtlSharp.Buchi.Automata;
+using LtlSharp.Buchi.Translators;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
@@ -135,31 +136,44 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        public HashSet<Node> CreateGraph (ILTLFormula phi)
+        public BuchiAutomata GetAutomaton (ILTLFormula phi) {
+            return GBA2BA.Transform (GetGBA (phi));
+        }
+        
+        HashSet<Node> CreateGraph (ILTLFormula phi)
         {
             var n = new Node () {
                 Incoming = new HashSet<string> (new [] { "init" }),
                 New = new HashSet<ILTLFormula> (new [] { phi }),
             };
             
-            return Expand (n, new HashSet<Node> ());
+            var set = Expand (n, new HashSet<Node> ());
+            
+            var init = new Node () {
+                Name = "init"
+            };
+            set.Add (init);
+            
+            return set;
         }
         
-        public GeneralizedBuchiAutomata GetAutomaton (ILTLFormula phi) {
+        public TransitionGeneralizedBuchiAutomata GetGBA (ILTLFormula phi) {
             var formula = phi.Normalize ();
-            
+
             var nodesSet = CreateGraph (formula);
+
+            var automaton = new TransitionGeneralizedBuchiAutomata ();
             
-            var automaton = new GeneralizedBuchiAutomata (nodesSet.Count);
-            
+
             int i = 0;
             var mapping = new Dictionary<string, AutomataNode> ();
             foreach (var n in nodesSet) {
                 var newNode = new AutomataNode ("s" + i);
                 automaton.AddVertex (newNode);
-                if (n.Incoming.Contains ("init"))
+                if (n.Name == "init") {
                     automaton.InitialNodes.Add (newNode);
-                
+                }
+
                 mapping.Add (n.Name, newNode);
                 i++;
             }
@@ -167,9 +181,13 @@ namespace LtlSharp.Buchi.LTL2Buchi
             // Build the transitions
             var literals = new HashSet<ILiteral> ();
             foreach (Node node in nodesSet) {
-                foreach (var incomingNodeName in node.Incoming.Except (new [] { "init" })) {
-                    literals.Clear ();
+                foreach (var incomingNodeName in node.Incoming) {
+                    var transition = new LabeledAutomataTransition<AutomataNode> (
+                        mapping [incomingNodeName],
+                        mapping [node.Name]
+                    );
                     
+                    literals.Clear ();
                     bool contradiction = false;
                     foreach (var f in node.Old) {
                         if (f is Proposition | f is Negation) {
@@ -182,17 +200,108 @@ namespace LtlSharp.Buchi.LTL2Buchi
                             literals.Add ((ILiteral) f);
                         }
                     }
-
+                    
                     if (!contradiction) {
-                        Console.WriteLine ("**** " + automaton.ContainsVertex (mapping[node.Name]));
-                        automaton.AddEdge (
-                            new AutomataTransition (
-                                mapping [incomingNodeName],
-                                mapping [node.Name],
-                                new HashSet<ILiteral> (literals)
-                            )
-                        );
+                        transition.Labels = new HashSet<ILiteral> (literals);
                     }
+                    
+                    automaton.AddEdge (transition);
+                }
+            }
+
+            // The acceptance set contains a separate set of states for
+            // each subformula of the form x U y. The set contains the
+            // states n such that y in Old(n) or x U y not in Old(n).
+            var listAcceptanceSets = new LinkedList<GBAAcceptanceSet>();
+
+            // Subformulas are processed in a DFS-fashioned way
+            Stack<ILTLFormula> formulasToProcess = new Stack<ILTLFormula>();
+            formulasToProcess.Push(formula);
+
+            int setIndex = 0;
+
+            while(formulasToProcess.Count > 0) {
+                ILTLFormula considered = formulasToProcess.Pop();
+
+                if (considered is Until) {
+                    Until consideredUntil = considered as Until;
+                    var set = new HashSet<AutomataNode>();
+
+                    // Adds all nodes containing right member of until
+                    // or not the until in their old set.
+                    foreach (var q in nodesSet.Where(n => n.Old.Contains(consideredUntil.Right) 
+                                                     | !n.Old.Contains(consideredUntil))) 
+                    {
+                        set.Add (mapping[q.Name]);
+                    }
+
+                    listAcceptanceSets.AddLast(new GBAAcceptanceSet (setIndex, set.ToArray ()));
+                    setIndex++;
+
+                } 
+
+                if (considered is IBinaryOperator) {
+                    formulasToProcess.Push(((IBinaryOperator) considered).Left);
+                    formulasToProcess.Push(((IBinaryOperator) considered).Right);
+
+                } else if (considered is IUnaryOperator) {
+                    formulasToProcess.Push(((IUnaryOperator) considered).Enclosed);
+
+                }
+            }
+            automaton.AcceptanceSets = listAcceptanceSets.ToArray ();
+
+            return automaton;
+        }
+            
+        /*
+        public GeneralizedBuchiAutomata GetAutomaton (ILTLFormula phi) {
+            var formula = phi.Normalize ();
+            
+            var nodesSet = CreateGraph (formula);
+            
+            var automaton = new GeneralizedBuchiAutomata (nodesSet.Count);
+            
+            int i = 0;
+            var mapping = new Dictionary<string, LabelledAutomataNode> ();
+            var literals = new HashSet<ILiteral> ();
+            foreach (var n in nodesSet) {
+                var newNode = new LabelledAutomataNode ("s" + i);
+                automaton.AddVertex (newNode);
+                if (n.Incoming.Contains ("init"))
+                    automaton.InitialNodes.Add (newNode);
+                
+                
+                literals.Clear ();
+                bool contradiction = false;
+                foreach (var f in n.Old) {
+                    if (f is Proposition | f is Negation) {
+                        if (f is Negation) {
+                            if (literals.Contains (((Negation) f).Enclosed)) {
+                                contradiction = true;
+                                break;
+                            }
+                        }
+                        literals.Add ((ILiteral) f);
+                    }
+                }
+                if (!contradiction) {
+                    newNode.Labels = literals;
+                }
+                
+                mapping.Add (n.Name, newNode);
+                i++;
+            }
+
+            // Build the transitions
+            foreach (Node node in nodesSet) {
+                foreach (var incomingNodeName in node.Incoming.Except (new [] { "init" })) {
+                    automaton.AddEdge (
+                        new AutomataTransition<LabelledAutomataNode> (
+                            mapping [incomingNodeName],
+                            mapping [node.Name]
+                        )
+                    );
                 }
             }
             
@@ -241,6 +350,8 @@ namespace LtlSharp.Buchi.LTL2Buchi
             
             return automaton;
         }
+        */
+    
     }
 }
 

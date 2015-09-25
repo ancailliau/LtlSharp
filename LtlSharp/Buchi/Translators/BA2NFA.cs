@@ -21,6 +21,7 @@ namespace LtlSharp.Buchi.Translators
             nfa.AddVertexRange (automata.Vertices);
             nfa.AddEdgeRange (automata.Edges);
             nfa.AcceptanceSet = newAcceptanceSet;
+            nfa.InitialNodes = new HashSet<AutomataNode> (automata.InitialNodes);
             return nfa;
         }
     }

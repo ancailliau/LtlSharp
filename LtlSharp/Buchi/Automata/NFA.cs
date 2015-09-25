@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LtlSharp.Buchi.Automata;
 using QuickGraph;
 
 namespace LtlSharp.Buchi.Automata
@@ -12,7 +13,7 @@ namespace LtlSharp.Buchi.Automata
     /// <description>
     /// See Andreas Bauer et al, Runtime Verification for LTL and TLTL, TOSEM.
     /// </description>
-    public class NFA : AdjacencyGraph<AutomataNode, AutomataTransition>
+    public class NFA : AdjacencyGraph<AutomataNode, LabeledAutomataTransition<AutomataNode>>
     {
         public HashSet<AutomataNode> AcceptanceSet;
         public HashSet<AutomataNode> InitialNodes;
@@ -25,6 +26,7 @@ namespace LtlSharp.Buchi.Automata
         
         public void ToSingleInitialState ()
         {
+            Console.WriteLine (InitialNodes.Count);
             if (InitialNodes.Count == 1)
                 return;
             
@@ -32,23 +34,22 @@ namespace LtlSharp.Buchi.Automata
             this.AddVertex (newInitialState);
             
             foreach (var initialState in InitialNodes.ToList ()) {
-                Console.WriteLine ("*>" + this.Edges.All (e => this.ContainsVertex(e.Target)));
-                Console.WriteLine (initialState);
-                Console.WriteLine (string.Join("\n", OutEdges(initialState)));
+                //Console.WriteLine (OutDegree (initialState));
                 foreach (var otransition in OutEdges (initialState)) {
-                    var newTransition = new AutomataTransition (
+                    var newTransition = new LabeledAutomataTransition<AutomataNode> (
                         newInitialState, 
                         otransition.Target, 
                         otransition.Labels
                     );
+                    //Console.WriteLine (newTransition);
                     this.AddEdge (newTransition);
                 }
                 InitialNodes.Remove (initialState);
-                Console.WriteLine ("*>" + this.Edges.All (e => this.ContainsVertex(e.Target)));
+                //Console.WriteLine ("*>" + this.Edges.All (e => this.ContainsVertex(e.Target)));
             }
 
             InitialNodes.Add (newInitialState);
-            Console.WriteLine ("^^^^^^^^^^^^");
+            //Console.WriteLine ("^^^^^^^^^^^^");
         }
         
         public bool IsDeterministic ()
@@ -60,8 +61,8 @@ namespace LtlSharp.Buchi.Automata
                 var s0 = pending.Pop ();
                 visited.Add (s0);
                 
-                Console.WriteLine ("*" + s0);
-                Console.WriteLine (string.Join("\n--", Edges));
+                //Console.WriteLine ("*" + s0);
+                //Console.WriteLine (string.Join("\n--", Edges));
                 
                 var transitions = OutEdges (s0);
                 
@@ -71,7 +72,7 @@ namespace LtlSharp.Buchi.Automata
                         return false;
                     } else {
                         foreach (var s in succ.Where (node => !visited.Contains (node))) {
-                            Console.WriteLine (ContainsVertex (s));
+                            //Console.WriteLine (ContainsVertex (s));
                             pending.Push (s);
                         }
                     }
