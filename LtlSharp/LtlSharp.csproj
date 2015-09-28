@@ -56,25 +56,24 @@
     <Compile Include="Utils\ExtractAlphabet.cs" />
     <Compile Include="Utils\CanonicToString.cs" />
     <Compile Include="Utils\TexToString.cs" />
-    <Compile Include="RabinAutomata.cs" />
     <Compile Include="ILTLFormula.cs" />
-    <Compile Include="Buchi\Node.cs" />
-    <Compile Include="Buchi\LTL2Buchi\ILTL2Buchi.cs" />
-    <Compile Include="Buchi\LTL2Buchi\GPVW.cs" />
-    <Compile Include="Buchi\EmptinessChecker\GBAEmptinessChecker.cs" />
-    <Compile Include="Buchi\Automata\GeneralizedBuchiAutomata.cs" />
-    <Compile Include="Buchi\Automata\BuchiAutomata.cs" />
-    <Compile Include="Buchi\EmptinessChecker\EmptinessChecker.cs" />
-    <Compile Include="Buchi\Translators\GBA2BA.cs" />
-    <Compile Include="Buchi\EmptinessChecker\OnTheFlyEmptinessChecker.cs" />
-    <Compile Include="Buchi\EmptinessChecker\OnTheFlyGBAEmptinessChecker.cs" />
-    <Compile Include="Buchi\Automata\NFA.cs" />
-    <Compile Include="Buchi\Automata\AutomataNode.cs" />
-    <Compile Include="Buchi\Automata\AutomataTransition.cs" />
-    <Compile Include="Buchi\Translators\BA2NFA.cs" />
+    <Compile Include="Automata\Node.cs" />
+    <Compile Include="LTL2Buchi\ILTL2Buchi.cs" />
+    <Compile Include="LTL2Buchi\GPVW.cs" />
+    <Compile Include="EmptinessChecker\GBAEmptinessChecker.cs" />
+    <Compile Include="Automata\GeneralizedBuchiAutomata.cs" />
+    <Compile Include="Automata\BuchiAutomata.cs" />
+    <Compile Include="EmptinessChecker\EmptinessChecker.cs" />
+    <Compile Include="Translators\GBA2BA.cs" />
+    <Compile Include="EmptinessChecker\OnTheFlyEmptinessChecker.cs" />
+    <Compile Include="EmptinessChecker\OnTheFlyGBAEmptinessChecker.cs" />
+    <Compile Include="Automata\NFA.cs" />
+    <Compile Include="Automata\AutomataNode.cs" />
+    <Compile Include="Automata\AutomataTransition.cs" />
+    <Compile Include="Translators\BA2NFA.cs" />
     <Compile Include="Monitoring\LTLMonitor.cs" />
     <Compile Include="Monitoring\MonitoredState.cs" />
-    <Compile Include="Buchi\LTL2Buchi\Gia02.cs" />
+    <Compile Include="LTL2Buchi\Gia02.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -83,10 +82,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />
-    <Folder Include="Buchi\" />
-    <Folder Include="Buchi\LTL2Buchi\" />
-    <Folder Include="Buchi\EmptinessChecker\" />
-    <Folder Include="Buchi\Automata\" />
-    <Folder Include="Buchi\Translators\" />
+    <Folder Include="Automata\" />
+    <Folder Include="EmptinessChecker\" />
+    <Folder Include="LTL2Buchi\" />
+    <Folder Include="Translators\" />
   </ItemGroup>
 </Project>
