@@ -39,6 +39,11 @@ namespace LtlSharp.Monitoring
                 state.Add (proposition, value);
             }
         }
+        
+        public override string ToString ()
+        {
+            return string.Format ("[MonitoredState: state={0}]", string.Join (";", state.Select ((kv) => "(" + kv.Key + "," + kv.Value + ")")));
+        }
     }
 }
 

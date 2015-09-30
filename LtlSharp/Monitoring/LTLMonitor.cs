@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LtlSharp.Buchi;
 using LtlSharp.Buchi.Automata;
 using LtlSharp.Buchi.LTL2Buchi;
 using LtlSharp.Buchi.Translators;
@@ -14,102 +15,106 @@ namespace LtlSharp.Monitoring
     
     public class LTLMonitor
     {
-        HashSet<AutomataNode> currentPositive;
-        HashSet<AutomataNode> currentNegative;
+        public AutomataNode currentNegative;
+        public AutomataNode currentPositive;
+        public NFA negativeNFA;
+        public NFA positiveNFA;
+        ILTLTranslator translator = new Gia02 ();
+
+        public MonitorStatus Status { get; private set; }
         
-        NFA positiveNFA;
-        NFA negativeNFA;
-
-        public MonitorStatus Status;
-
         public LTLMonitor (ILTLFormula formula)
         {
-            /*
-            var ltl2buchi = new GPVW ();
-            var positiveGBA = ltl2buchi.GetAutomaton (formula);
-            var negativeGBA = ltl2buchi.GetAutomaton (formula.Negate ());
-            
-            var positiveBA = GBA2BA.Transform (positiveGBA);
-            var negativeBA = GBA2BA.Transform (negativeGBA);
+            positiveNFA = BA2NFA.Transform (translator.GetAutomaton (formula));
+            negativeNFA = BA2NFA.Transform (translator.GetAutomaton (formula.Negate ()));
 
-            positiveNFA = BA2NFA.Transform (positiveBA);
-            negativeNFA = BA2NFA.Transform (negativeBA);
-
-            positiveNFA.ToSingleInitialState ();
-            negativeNFA.ToSingleInitialState ();
-
-            currentNegative = new HashSet<AutomataNode> (negativeNFA.InitialNodes);
-            currentPositive = new HashSet<AutomataNode> (positiveNFA.InitialNodes);
+            positiveNFA = positiveNFA.Determinize ();
+            negativeNFA = negativeNFA.Determinize ();
             
-            var graphviz = new GraphvizAlgorithm<AutomataNode,AutomataTransition>(positiveNFA);
-            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
-                e.VertexFormatter.Label = e.Vertex.Name + "(" + string.Join (",", e.Vertex.Labels) + ")";;
-                if (positiveNFA.InitialNodes.Contains (e.Vertex)) {
-                    e.VertexFormatter.FillColor = QuickGraph.Graphviz.Dot.GraphvizColor.LightYellow;
-                }
-            };
-            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, AutomataTransition> e) => {
-                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
-            };
-            string output = graphviz.Generate();
-            Console.WriteLine (output);
+            currentNegative = negativeNFA.InitialNodes.Single ();
+            currentPositive = positiveNFA.InitialNodes.Single ();
             
-            
-            graphviz = new GraphvizAlgorithm<AutomataNode,AutomataTransition>(negativeNFA);
-            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
-                e.VertexFormatter.Label = e.Vertex.Name + "(" + string.Join (",", e.Vertex.Labels) + ")";
-                if (positiveNFA.InitialNodes.Contains (e.Vertex)) {
-                    e.VertexFormatter.FillColor = QuickGraph.Graphviz.Dot.GraphvizColor.LightYellow;
-                }
-            };
-            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, AutomataTransition> e) => {
-                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
-            };
-            output = graphviz.Generate();
-            Console.WriteLine (output);
-            
-            Console.WriteLine (string.Join ("/", positiveNFA.AcceptanceSet.Select (x => x.Name)));
-            Console.WriteLine (string.Join ("/", negativeNFA.AcceptanceSet.Select (x => x.Name)));
-            
-            var negativeAcceptance = currentNegative.All (t => !negativeNFA.AcceptanceSet.Contains (t));
-            var positiveAcceptance = currentPositive.All (t => !positiveNFA.AcceptanceSet.Contains (t));
-            Status = MonitorStatus.Inconclusive;
-            if (negativeAcceptance)
-                Status = MonitorStatus.False;
-            if (positiveAcceptance)
-                Status = MonitorStatus.True;
-                */
+            UpdateStatus ();
         }
-        
-        public void Consume (MonitoredState state)
+
+        public void Step (MonitoredState state)
         {
-            foreach (var current in currentPositive.ToList ()) {
-                var transitions = positiveNFA.OutEdges (current).Where (t => state.Evaluate (t.Labels));
-                currentPositive.Remove (current);
-                foreach (var nt in transitions.Select (t => t.Target)) {
-                    currentPositive.Add (nt);
-                }
-            }
-            Console.WriteLine ("Positive: " + string.Join (",", currentPositive.Select (t => t.Name)));
-            
-            foreach (var current in currentNegative.ToList ()) {
-                var transitions = negativeNFA.OutEdges (current).Where (t => state.Evaluate (t.Labels));
-                currentNegative.Remove (current);
-                foreach (var nt in transitions.Select (t => t.Target)) {
-                    currentNegative.Add (nt);
-                }
-            }
-            Console.WriteLine ("Negative: " + string.Join (",", currentNegative.Select (t => t.Name)));
-            
-            
-            var negativeAcceptance = currentNegative.All (t => !negativeNFA.AcceptanceSet.Contains (t));
-            var positiveAcceptance = currentPositive.All (t => !positiveNFA.AcceptanceSet.Contains (t));
-            
-            Status = MonitorStatus.Inconclusive;
-            if (negativeAcceptance | currentPositive.Count == 0)
+            if (currentNegative == null | currentPositive == null)
+                return;
+
+            var transitions = positiveNFA.OutEdges (currentPositive).Where (t => state.Evaluate (t.Labels));
+            //Console.WriteLine ("--> " + state);
+            //Console.WriteLine (string.Join ("\n", transitions));
+            //Console.WriteLine ("<--");
+            if (transitions.Count () == 1) {
+                currentPositive = transitions.Single ().Target;
+
+            } else if (transitions.Count () == 0) {
+                // There is no way to satisfy the formula
+                Console.WriteLine ("No out transition in positive NFA");
+                currentPositive = null;
                 Status = MonitorStatus.False;
-            if (positiveAcceptance | currentNegative.Count == 0)
-                Status = MonitorStatus.True;   
+                return;
+
+            } else {
+                throw new NotImplementedException ("Non deterministic automata not supported.");
+            }
+
+            transitions = negativeNFA.OutEdges (currentNegative).Where (t => state.Evaluate (t.Labels));
+            if (transitions.Count () == 1) {
+                currentNegative = transitions.Single ().Target;
+
+            } else if (transitions.Count () == 0) {
+                Console.WriteLine ("No out transition in negative NFA");
+                // There is no way to dissatisfy the formula
+                currentNegative = null;
+                Status = MonitorStatus.True;
+                return;
+
+            } else {
+                throw new NotImplementedException ("Non deterministic automata not supported.");
+            }
+
+            UpdateStatus ();
+        }
+
+        void UpdateStatus ()
+        {
+            var negativeAcceptance = negativeNFA.AcceptanceSet.Contains (currentNegative);
+            var positiveAcceptance = positiveNFA.AcceptanceSet.Contains (currentPositive);
+            if (negativeAcceptance & positiveAcceptance) {
+                Status = MonitorStatus.Inconclusive;
+            } else if (!negativeAcceptance) {
+                Status = MonitorStatus.True;
+            } else if (!positiveAcceptance) {
+                Status = MonitorStatus.False;
+            } else {
+                throw new NotImplementedException ();
+            }
+        }
+
+        public void PrintDot ()
+        {
+            var product = NFA.Product (positiveNFA, negativeNFA);
+
+            var graphviz = GetEngine (product);
+            var output = graphviz.Generate ();
+            Console.WriteLine (output);
+        }
+
+        GraphvizAlgorithm<MonitorNode, LabeledAutomataTransition<MonitorNode>> GetEngine (NFAProduct automata)
+        {
+            var graphviz = new GraphvizAlgorithm<MonitorNode, LabeledAutomataTransition<MonitorNode>> (automata);
+            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<MonitorNode> e) => {
+                e.VertexFormatter.Label = e.Vertex.Status.ToString ();
+                if (automata.InitialNodes.Contains (e.Vertex)) {
+                    e.VertexFormatter.Style = QuickGraph.Graphviz.Dot.GraphvizVertexStyle.Bold;
+                }
+            };
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<MonitorNode, LabeledAutomataTransition<MonitorNode>> e) => {
+                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
+            };
+            return graphviz;
         }
     }
 }
