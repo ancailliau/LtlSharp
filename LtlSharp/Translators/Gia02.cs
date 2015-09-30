@@ -98,8 +98,20 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
             
             var node = new InternalNode (0, numberOfUntils);
-            node.Next.Add (phi);
+            node.DecomposeAndForNext (phi);
             return node;
+        }
+        
+        void DecomposeAndForNext (ILTLFormula f)
+        {
+            if (f is Conjunction) {
+                var conj = (Conjunction)f;
+                DecomposeAndForNext (conj.Left);
+                DecomposeAndForNext (conj.Right);
+                
+            } else if (!SI(f, null, Next)) {
+                Next.Add (f);
+            }
         }
 
         public HashSet<InternalState> Expand (HashSet<InternalState> states)
@@ -147,8 +159,11 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 
                 if (!(nextFormula is ILiteral)) {
                     if (nextFormula is Until | nextFormula is Release | nextFormula is Disjunction) {
-                        var node2 = Split(nextFormula);
+                        var node2 = Split (nextFormula);
                         return node2.Expand (Expand (states));
+                    } else if (nextFormula is Next) {
+                        DecomposeAndForNext (((Next)nextFormula).Enclosed);
+                        return Expand (states);
                         
                     } else if (nextFormula is Conjunction) {
                         var nextConjunction = (Conjunction) nextFormula;
@@ -189,7 +204,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             if (f is True) 
                 return true;
 
-            if (f is ILiteral && A.Contains ((ILiteral)f)) {
+            if (f is ILiteral && A != null && A.Contains ((ILiteral)f)) {
                 return true;
             }
             
@@ -294,7 +309,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             
             ToBeDone = toBeDone;
             if ((tempFormula = GetNext (form)) != null) {
-                Next.Add (tempFormula);
+                DecomposeAndForNext (tempFormula);
             }
             
             return newNode;
