@@ -422,7 +422,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         }
     }
     
-    public class Gia02 : ILTL2Buchi
+    public class Gia02 : ILTLTranslator
     {
         public Gia02 ()
         {

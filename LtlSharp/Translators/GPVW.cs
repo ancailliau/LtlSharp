@@ -7,7 +7,7 @@ using LtlSharp.Buchi.Translators;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
-    public class GPVW : ILTL2Buchi
+    public class GPVW : ILTLTranslator
     {
         public GPVW ()
         {

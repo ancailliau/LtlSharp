@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
-    public interface ILTL2Buchi
+    public interface ILTLTranslator
     {
         BuchiAutomata GetAutomaton (ILTLFormula phi);
     }

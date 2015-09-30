@@ -17,6 +17,7 @@ namespace LtlSharp.Buchi
             InitialNodes = new HashSet<AutomataNode> ();
             AcceptanceSet = new HashSet<AutomataNode> ();
         }
+        
     }
     
     public class DegeneralizerBuchiAutomata : AdjacencyGraph<AutomataNode, DegeneralizerAutomataTransition<AutomataNode>> 

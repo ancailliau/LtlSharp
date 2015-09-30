@@ -44,6 +44,7 @@ namespace LittleSharp.Buchi
         
         public bool Emptiness (AutomataNode n)
         {
+            dfsStack1 = new Stack<AutomataNode> ();
             return dfs1 (n);
         }
         

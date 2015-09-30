@@ -8,6 +8,7 @@ using LtlSharp.Buchi.Translators;
 using LtlSharp.Buchi.Automata;
 using LtlSharp.Monitoring;
 using QuickGraph.Graphviz;
+using QuickGraph.Graphviz.Dot;
 
 namespace LtlSharp.Temp
 {
@@ -15,61 +16,67 @@ namespace LtlSharp.Temp
     {
         public static void Main (string[] args)
         {
-            var spawn = new Proposition ("spawn");
+            var c = new Proposition ("C");
+            var t = new Proposition ("T");
+            ILTLFormula f = new Globally (new Implication (c, new Finally (t)));
+            
+            var nspawn = new Negation (new Proposition ("spawn"));
             var init = new Proposition ("init");
-            ILTLFormula f = new Until (spawn.Negate (), init);
+            f = new Until (nspawn, init);
 
-            //var ap = new Proposition ("a");
-            //var b = new Proposition ("b");
-            //var c = new Proposition ("c");
-            //f = new Until (ap, new Until (b, c)); // .Negate ();
-            
-            var translator = new Gia02 ();
-            var a = translator.GetAutomaton (f);
-            
-            
-            //Console.WriteLine ("-----");
-            //var graphviz = new GraphvizAlgorithm<AutomataNode,LabeledAutomataTransition<AutomataNode>>(a);
-            //graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
-            //    e.VertexFormatter.Label = e.Vertex.Name;
-            //    if (a.InitialNodes.Contains (e.Vertex)) {
-            //        e.VertexFormatter.FillColor = QuickGraph.Graphviz.Dot.GraphvizColor.LightYellow;
-            //    }
-            //};
-            //graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, LabeledAutomataTransition<AutomataNode>> e) => {
-            //    e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
-            //    if (a.AcceptanceSets.Any (acc => acc.Transitions.Contains (e.Edge))) {
-            //        e.EdgeFormatter.Style = QuickGraph.Graphviz.Dot.GraphvizEdgeStyle.Dashed;
-            //    }
-            //};
-            //string output = graphviz.Generate();
-            //Console.WriteLine (output);
-            
-            
-            /*
-            var spawn = new Proposition ("spawn");
-            var init = new Proposition ("init");
-            
-            var f = new Until (spawn.Negate (), init);
-            var m = new LTLMonitor (f);
+            var ba = BA2NFA.Transform (new Gia02 ().GetAutomaton (f));
 
-            var state = new MonitoredState ();
-            state.Set (spawn, false);
-            state.Set (init, false);
+            //ba = ba.Unfold ();
+            //ba = ba.Determinize ();
             
-            Console.WriteLine (m.Status);
-            m.Consume (state);
-            Console.WriteLine (m.Status);
+            //Console.WriteLine ("s****");
             
-            state.Set (spawn, true);
-            m.Consume (state);
-            Console.WriteLine (m.Status);
+            //ba.Fold ();
+
+
+            var monitor = new LTLMonitor (f);
             
-            state.Set (init, true);
-            m.Consume (state);
-            Console.WriteLine (m.Status);
-            */
+
+            //return;
             
+            monitor.PrintDot ();
+            
+            
+            
+//
+//            var s0 = new MonitoredState ();
+//            s0.Set (c, true);
+//            s0.Set (t, false);
+//            
+//            var s1 = new MonitoredState ();
+//            s1.Set (c, false);
+//            s1.Set (t, true);
+//            
+//            Console.WriteLine ("({0}) x ({1}) : {2}", monitor.currentPositive, monitor.currentNegative, monitor.Status);
+//            
+//            monitor.Step (s0);
+//            Console.WriteLine ("({0}) x ({1}) : {2}", monitor.currentPositive, monitor.currentNegative, monitor.Status);
+//
+//            monitor.Step (s0);
+//            Console.WriteLine ("({0}) x ({1}) : {2}", monitor.currentPositive, monitor.currentNegative, monitor.Status);
+//
+//            monitor.Step (s1);
+//            Console.WriteLine ("({0}) x ({1}) : {2}", monitor.currentPositive, monitor.currentNegative, monitor.Status);
+//
+//            monitor.Step (s0);
+//            Console.WriteLine ("({0}) x ({1}) : {2}", monitor.currentPositive, monitor.currentNegative, monitor.Status);
+//
+//            monitor.Step (s1);
+//            Console.WriteLine ("({0}) x ({1}) : {2}", monitor.currentPositive, monitor.currentNegative, monitor.Status);
+//
+//            monitor.Step (s0);
+//            Console.WriteLine ("({0}) x ({1}) : {2}", monitor.currentPositive, monitor.currentNegative, monitor.Status);
+//
+//            monitor.Step (s0);
+//            Console.WriteLine ("({0}) x ({1}) : {2}", monitor.currentPositive, monitor.currentNegative, monitor.Status);
+//
+//            monitor.Step (s0);
+//            Console.WriteLine ("({0}) x ({1}) : {2}", monitor.currentPositive, monitor.currentNegative, monitor.Status);
         }
     }
 }

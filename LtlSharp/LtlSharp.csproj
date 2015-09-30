@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>LtlSharp</RootNamespace>
     <AssemblyName>LtlSharp</AssemblyName>
+    <UseMSBuildEngine>False</UseMSBuildEngine>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -51,15 +52,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Traversal.cs" />
+    <Compile Include="Utils\Traversal.cs" />
     <Compile Include="Utils\DotPrettyPrinter.cs" />
     <Compile Include="Utils\ExtractAlphabet.cs" />
     <Compile Include="Utils\CanonicToString.cs" />
     <Compile Include="Utils\TexToString.cs" />
-    <Compile Include="ILTLFormula.cs" />
+    <Compile Include="Language\ILTLFormula.cs" />
     <Compile Include="Automata\Node.cs" />
-    <Compile Include="LTL2Buchi\ILTL2Buchi.cs" />
-    <Compile Include="LTL2Buchi\GPVW.cs" />
+    <Compile Include="Translators\GPVW.cs" />
     <Compile Include="EmptinessChecker\GBAEmptinessChecker.cs" />
     <Compile Include="Automata\GeneralizedBuchiAutomata.cs" />
     <Compile Include="Automata\BuchiAutomata.cs" />
@@ -71,20 +71,23 @@
     <Compile Include="Automata\AutomataNode.cs" />
     <Compile Include="Automata\AutomataTransition.cs" />
     <Compile Include="Translators\BA2NFA.cs" />
-    <Compile Include="Monitoring\LTLMonitor.cs" />
+    <Compile Include="Monitoring\LTLMonitorHard.cs" />
     <Compile Include="Monitoring\MonitoredState.cs" />
-    <Compile Include="LTL2Buchi\Gia02.cs" />
+    <Compile Include="Translators\Gia02.cs" />
+    <Compile Include="Monitoring\LTLMonitor.cs" />
+    <Compile Include="Language\LiteralSimplifier.cs" />
+    <Compile Include="Translators\ILTLTranslator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <None Include="LTL.g" />
+    <None Include="Language\LTL.g" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utils\" />
     <Folder Include="Automata\" />
     <Folder Include="EmptinessChecker\" />
-    <Folder Include="LTL2Buchi\" />
     <Folder Include="Translators\" />
+    <Folder Include="Language\" />
   </ItemGroup>
 </Project>

@@ -13,8 +13,9 @@ namespace LtlSharp.Buchi.Translators
             
             var newAcceptanceSet = new HashSet<AutomataNode> ();
             foreach (var n in automata.Vertices) {
-                if (emptinessChecker.Emptiness (n))
+                if (emptinessChecker.Emptiness (n)) {
                     newAcceptanceSet.Add (n);
+                }
             }
 
             var nfa = new NFA ();

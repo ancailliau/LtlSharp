@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LtlSharp.Monitoring;
 
 namespace LtlSharp.Buchi.Automata
 {
@@ -14,7 +15,7 @@ namespace LtlSharp.Buchi.Automata
         
         public override string ToString ()
         {
-            return string.Format ("[BANode: Name=\"{0}\"]", Name);
+            return string.Format ("[AutomataNode: Name=\"{0}\"]", Name);
         }
         
         public override bool Equals (object obj)
@@ -42,6 +43,16 @@ namespace LtlSharp.Buchi.Automata
         public LabelledAutomataNode (string name) : base (name)
         {
             Labels = new HashSet<ILiteral> ();
+        }
+    }
+
+    public class MonitorNode : AutomataNode 
+    {   
+        public MonitorStatus Status;
+
+        public MonitorNode (string name, MonitorStatus status) : base (name)
+        {
+            Status = status;
         }
     }
 }

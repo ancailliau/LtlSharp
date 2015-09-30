@@ -20,7 +20,7 @@ namespace LtlSharp.Buchi.Automata
         
         public override string ToString ()
         {
-            return string.Format ("[AutomataTransition: Source={0}, Target={1}]", Source, Target);
+            return string.Format ("[AutomataTransition: Source={0}, Target={1}]", Source.Name, Target.Name);
         }
         
         public override bool Equals (object obj)
