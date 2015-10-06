@@ -268,6 +268,51 @@ namespace LtlSharp.Models
             
             return sucessors;
         }
+        
+        
+        /// <summary>
+        /// Returns the predecessors of the specified node <c>v</c>.
+        /// </summary>
+        /// <returns>The predecessors.</returns>
+        /// <param name="v">The node.</param>
+        public IEnumerable<MarkovNode> Pre (MarkovNode v) 
+        {
+            return Edges.Where (e => e.Probability > 0 & e.Target.Equals (v)).Select (e => e.Source).Distinct ();
+        }
+
+        /// <summary>
+        /// Returns all the predecessors of the specified node <c>v</c>, i.e. all the nodes that can reach the
+        /// specified node.
+        /// </summary>
+        /// <returns>The predecessors.</returns>
+        /// <param name="v">The node.</param>
+        public IEnumerable<MarkovNode> AllPre (MarkovNode v) 
+        {
+            var pending = new Stack<MarkovNode> (new [] { v });
+            var predecessors = new HashSet<MarkovNode> ();
+
+            while (pending.Count > 0) {
+                var current = pending.Pop ();
+                foreach (var v2 in GetInEdges(current).Where (e => e.Probability > 0).Select (e => e.Source)) {
+                    if (!predecessors.Contains (v2)) {
+                        predecessors.Add (v2);
+                        pending.Push (v2);
+                    }
+                }
+            }
+
+            return predecessors;
+        }
+        
+        /// <summary>
+        /// Returns the incoming edges to the specified node
+        /// </summary>
+        /// <returns>The in edges.</returns>
+        /// <param name="v">The target node.</param>
+        IEnumerable<MarkovTransition> GetInEdges (MarkovNode v)
+        {
+            return Edges.Where (e => e.Target.Equals (v));
+        }
     }
 }
 

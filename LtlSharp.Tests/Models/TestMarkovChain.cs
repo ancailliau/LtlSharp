@@ -133,8 +133,63 @@ namespace CheckMyModels.Tests.Models
             var post = mc.AllPost (start);
             var expectedPost = expected.Select (v => mc.GetVertex (v));
             
-            Console.WriteLine (string.Join (", ", expectedPost.Select (v => v.Name)));
-            Console.WriteLine (string.Join (", ", post.Select (v => v.Name)));
+            Assert.That (post.All (v => expectedPost.Contains (v)), "Not all nodes were expected.");
+            Assert.That (expectedPost.All (v => post.Contains (v)), "All expected nodes not contained in post.");
+        }
+        
+        [TestCase (@"101", "start",     new [] { "start", "delivered", "lost", "try" })]
+        [TestCase (@"101", "try",       new [] { "start", "delivered", "lost", "try" })]
+        [TestCase (@"101", "delivered", new [] { "start", "delivered", "lost", "try" })]
+        [TestCase (@"101", "lost",      new [] { "start", "delivered", "lost", "try" })]
+        [TestCase (@"102", "s0",        new string[] { })]
+        [TestCase (@"102", "s123",      new [] { "s0", "s'123", "s123" })]
+        [TestCase (@"102", "s456",      new [] { "s0", "s'456", "s456" })]
+        [TestCase (@"102", "s'123",     new [] { "s123", "s0", "s'123" })]
+        [TestCase (@"102", "s23",       new [] { "s123", "s0", "s'123" })]
+        [TestCase (@"102", "s45",       new [] { "s456", "s'456", "s0" })]
+        [TestCase (@"102", "s'456",     new [] { "s456", "s'456", "s0" })]
+        [TestCase (@"102", "1",         new [] { "1", "s'123", "s123", "s0" })]
+        [TestCase (@"102", "2",         new [] { "2", "s23", "s123", "s'123", "s0" })]
+        [TestCase (@"102", "3",         new [] { "3", "s23", "s123", "s'123", "s0" })]
+        [TestCase (@"102", "4",         new [] { "4", "s45", "s456", "s'456", "s0" })]
+        [TestCase (@"102", "5",         new [] { "5", "s45", "s456", "s'456", "s0" })]
+        [TestCase (@"102", "6",         new [] { "6", "s'456", "s456", "s0" })]
+        public void TestPred (string example, string source, string[] expected)
+        {
+            var mc = GetExample (example);
+            var start = mc.GetVertex (source);
+
+            var post = mc.AllPre (start);
+            var expectedPost = expected.Select (v => mc.GetVertex (v));
+            
+            Assert.That (post.All (v => expectedPost.Contains (v)), "Not all nodes were expected.");
+            Assert.That (expectedPost.All (v => post.Contains (v)), "All expected nodes not contained in post.");
+        }
+
+        [TestCase (@"101", "start",     new [] { "delivered" })]
+        [TestCase (@"101", "try",       new [] { "start", "lost" })]
+        [TestCase (@"101", "delivered", new [] { "try" })]
+        [TestCase (@"101", "lost",      new [] { "try" })]
+        [TestCase (@"102", "s0",        new string[] { })]
+        [TestCase (@"102", "s123",      new [] { "s0", "s'123" })]
+        [TestCase (@"102", "s456",      new [] { "s0", "s'456" })]
+        [TestCase (@"102", "s'123",     new [] { "s123" })]
+        [TestCase (@"102", "s23",       new [] { "s123" })]
+        [TestCase (@"102", "s45",       new [] { "s456" })]
+        [TestCase (@"102", "s'456",     new [] { "s456" })]
+        [TestCase (@"102", "1",         new [] { "1", "s'123" })]
+        [TestCase (@"102", "2",         new [] { "2", "s23" })]
+        [TestCase (@"102", "3",         new [] { "3", "s23" })]
+        [TestCase (@"102", "4",         new [] { "4", "s45" })]
+        [TestCase (@"102", "5",         new [] { "5", "s45" })]
+        [TestCase (@"102", "6",         new [] { "6", "s'456" })]
+        public void TestAllPred (string example, string source, string[] expected)
+        {
+            var mc = GetExample (example);
+            var start = mc.GetVertex (source);
+
+            var post = mc.Pre (start);
+            var expectedPost = expected.Select (v => mc.GetVertex (v));
 
             Assert.That (post.All (v => expectedPost.Contains (v)), "Not all nodes were expected.");
             Assert.That (expectedPost.All (v => post.Contains (v)), "All expected nodes not contained in post.");
