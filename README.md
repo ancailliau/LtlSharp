@@ -2,13 +2,26 @@
 
 * [Project Source](http://github.com/ancailliau/ltlsharp)
 
-## Description
+LtlSharp aims at providing model checking feature as a library for easy integration with external tools.
+
+The current implementation does not focus on efficiency (both in time and in space) but rather on providing basic features for proof-of-concept prototypes.
+
+Any contribution is welcome.
+
+## Features
 	
-Library for parsing and manipulating LTL formulae in C#.
+* Transformations from LTL to Generalized Buchï Automata
+  * GPVW Algorithm (Gerth, R., Peled, D., Vardi, M. Y., & Wolper, P. (1995). Simple on-the-fly automatic verification of linear temporal logic. In International Symposium on Protocol Specification, Testing and Verification. IFIP.)
+  * LTL2Buchï Algorithm (Giannakopoulou, D., & Lerda, F. (2001). Efficient translation of LTL formulae into Büchi automata. Research Institute for Advanced Computer Science (RIACS), Technical Report, 1.)
+* Transformation from Generalized Buchi Automata to Buchi Automata
+* Generation of LTL Monitors (Bauer, A., Leucker, M., & Schallhart, C. (2011). Runtime verification for LTL and TLTL. ACM Transactions on Software Engineering and Methodology (TOSEM), 20(4), 14.)
+* Emptiness Checkers
+  * (not on-the-fly) Emptiness checker for BA and GBA
+  * On-the-fly emptiness checker for BA and GBA
 
 ## Requirements
 
-* Mono >= 2.8.1
+* Mono/.NET >= 4.0
 
 ## Licence
 
