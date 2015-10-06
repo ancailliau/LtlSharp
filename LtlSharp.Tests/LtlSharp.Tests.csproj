@@ -67,7 +67,7 @@
     <Compile Include="TestEmptiness.cs" />
     <Compile Include="TestOnTheFly.cs" />
     <Compile Include="Models\TestMarkovChain.cs" />
-    <Compile Include="TestProbabilisticSystems\TestMarkovChain.cs" />
+    <Compile Include="TestProbabilisticSystems\TestReachability.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
