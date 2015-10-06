@@ -6,6 +6,8 @@ using LtlSharp.Buchi.Automata;
 using LtlSharp.Buchi.LTL2Buchi;
 using LtlSharp.Buchi.Translators;
 using QuickGraph.Graphviz;
+using QuickGraph;
+using LtlSharp.Language;
 
 namespace LtlSharp.Monitoring
 {
@@ -15,6 +17,38 @@ namespace LtlSharp.Monitoring
     
     public class LTLMonitor
     {
+        
+        private class NFAProduct : AdjacencyGraph<MonitorNode, LabeledAutomataTransition<MonitorNode>>
+        {
+            public HashSet<MonitorNode> InitialNodes;
+
+            public NFAProduct () : base ()
+            {
+                InitialNodes = new HashSet<MonitorNode> ();
+            }
+
+            public NFAProduct Fold ()
+            {
+                foreach (var node in Vertices) {
+                    var transitions = OutEdges (node);
+                    foreach (var trans in transitions.ToList ()) {
+                        var sameTarget = transitions.Where (t => t.Target.Equals (trans.Target)).ToList ();
+                        var labels = sameTarget.Select (x => x.Labels);
+                        var lf = new LiteralFormula (labels);
+                        var newLabels = lf.Simplify ();
+                        foreach (var e in sameTarget) {
+                            RemoveEdge (e);
+                        }
+                        foreach (var nl in newLabels) {
+                            AddEdge (new LabeledAutomataTransition<MonitorNode> (trans.Source, trans.Target, nl));
+                        }
+                    }
+                }
+
+                return this;
+            }
+        }
+        
         public AutomataNode currentNegative;
         public AutomataNode currentPositive;
         public NFA negativeNFA;
@@ -95,7 +129,7 @@ namespace LtlSharp.Monitoring
 
         public void PrintDot ()
         {
-            var product = NFA.Product (positiveNFA, negativeNFA);
+            var product = Product (positiveNFA, negativeNFA);
 
             var graphviz = GetEngine (product);
             var output = graphviz.Generate ();
@@ -115,6 +149,124 @@ namespace LtlSharp.Monitoring
                 e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
             };
             return graphviz;
+        }
+        
+        
+        // TODO This should not be in that fucking class!
+
+        static MonitorStatus GetStatus (NFA positive, NFA negative, AutomataNode s0, AutomataNode s1)
+        {
+            var positiveAcceptance = positive.AcceptanceSet.Contains (s0);
+            var negativeAcceptance = negative.AcceptanceSet.Contains (s1);
+
+            if (negativeAcceptance & positiveAcceptance) {
+                return MonitorStatus.Inconclusive;
+            } else if (!negativeAcceptance) {
+                return MonitorStatus.True;
+            } else if (!positiveAcceptance) {
+                return MonitorStatus.False;
+            } else {
+                throw new NotImplementedException ();
+            }
+        }
+
+        static NFAProduct Product (NFA positive, NFA negative) {
+            var product = new NFAProduct ();
+
+            positive = positive.Unfold ();
+            negative = negative.Unfold ();
+
+            //            var graphviz = new GraphvizAlgorithm<AutomataNode, LabeledAutomataTransition<AutomataNode>> (positive);
+            //            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
+            //                e.VertexFormatter.Label = e.Vertex.Name;
+            //                if (positive.InitialNodes.Contains (e.Vertex))
+            //                    e.VertexFormatter.Style = GraphvizVertexStyle.Bold;
+            //                if (positive.AcceptanceSet.Contains (e.Vertex))
+            //                    e.VertexFormatter.Shape = GraphvizVertexShape.DoubleCircle;
+            //            };
+            //            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, LabeledAutomataTransition<AutomataNode>> e) => {
+            //                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
+            //            };
+            //            Console.WriteLine (graphviz.Generate ());
+            //
+            //            graphviz = new GraphvizAlgorithm<AutomataNode, LabeledAutomataTransition<AutomataNode>> (negative);
+            //            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
+            //                e.VertexFormatter.Label = e.Vertex.Name;
+            //                if (negative.InitialNodes.Contains (e.Vertex))
+            //                    e.VertexFormatter.Style = GraphvizVertexStyle.Bold;
+            //                if (negative.AcceptanceSet.Contains (e.Vertex))
+            //                    e.VertexFormatter.Shape = GraphvizVertexShape.DoubleCircle;
+            //            };
+            //            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, LabeledAutomataTransition<AutomataNode>> e) => {
+            //                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
+            //            };
+            //            Console.WriteLine (graphviz.Generate ());
+
+            var initA = positive.InitialNodes.Single ();
+            var initB = negative.InitialNodes.Single ();
+
+            var init = new MonitorNode ("init", GetStatus (positive, negative, initA, initB));
+            product.AddVertex (init);
+            product.InitialNodes.Add (init);
+
+            var pending = new Stack<Tuple<AutomataNode, AutomataNode>> ();
+
+            var tuple = new Tuple<AutomataNode, AutomataNode> (initA, initB);
+            pending.Push (tuple);
+
+            var mapping = new Dictionary<Tuple<AutomataNode, AutomataNode>, MonitorNode> ();
+            mapping.Add (tuple, init);
+
+            var acceptingNode = new MonitorNode ("accept", MonitorStatus.True);
+            var rejectingNode = new MonitorNode ("reject", MonitorStatus.False);
+            product.AddVertex (acceptingNode);
+            product.AddVertex (rejectingNode);
+
+            int i = 0;
+            while (pending.Count > 0) 
+            {
+                var current = pending.Pop ();
+                var commonTransitions = from t1 in positive.OutEdges (current.Item1)
+                    from t2 in negative.OutEdges (current.Item2)
+                        where t1.Labels.SetEquals (t2.Labels)
+                    select new Tuple<LabeledAutomataTransition<AutomataNode>, LabeledAutomataTransition<AutomataNode>> (t1, t2);
+
+                foreach (var t in commonTransitions) {
+                    //                    Console.WriteLine ("Transition : " + t);
+                    tuple = new Tuple<AutomataNode, AutomataNode> (t.Item1.Target, t.Item2.Target);
+                    if (!mapping.ContainsKey (tuple)) {
+                        mapping.Add (tuple, new MonitorNode ("s" + (i++), GetStatus (positive, negative, t.Item1.Target, t.Item2.Target)));
+                        product.AddVertex (mapping [tuple]);
+                        pending.Push (tuple);
+                    }
+                    var target = mapping[tuple];
+
+                    //                    Console.WriteLine ("Transition from " + mapping[current] + " to " + target + " with " + string.Join (",", t.Item1.Labels));
+                    product.AddEdge (new LabeledAutomataTransition<MonitorNode> (mapping[current], target, t.Item1.Labels));
+                }
+
+                foreach (var t in positive.OutEdges (current.Item1).Except (commonTransitions.Select (tt => tt.Item1))) {
+                    product.AddEdge (new LabeledAutomataTransition<MonitorNode> (mapping[current], acceptingNode, t.Labels));
+                }
+
+                foreach (var t in negative.OutEdges (current.Item2).Except (commonTransitions.Select (tt => tt.Item2))) {
+                    product.AddEdge (new LabeledAutomataTransition<MonitorNode> (mapping[current], rejectingNode, t.Labels));
+                }
+            }
+
+            // If no edge target the accepting node, it can be removed.
+            if (product.Edges.All (t => !t.Target.Equals (acceptingNode))) {
+                product.RemoveVertex (acceptingNode);
+            }
+
+            // If no edge target the rejecting node, it can be removed.
+            if (product.Edges.All (t => !t.Target.Equals (rejectingNode))) {
+                product.RemoveVertex (rejectingNode);
+            }
+
+            product.Fold ();
+
+            return product;
         }
     }
 }

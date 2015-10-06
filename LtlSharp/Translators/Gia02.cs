@@ -117,9 +117,6 @@ namespace LtlSharp.Buchi.LTL2Buchi
         public HashSet<InternalState> Expand (HashSet<InternalState> states)
         {
             if (ToBeDone.Count == 0) {
-                // TODO : Rmeove???
-                if (NodeId != 0) 
-                    Untils = new BitArray (RightOfUntils).Not ().And (Untils);
                 
                 InternalState candidate;
                 
