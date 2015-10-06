@@ -154,7 +154,7 @@ namespace CheckMyModels.Tests.Models
         [TestCase (@"102", "4",         new [] { "4", "s45", "s456", "s'456", "s0" })]
         [TestCase (@"102", "5",         new [] { "5", "s45", "s456", "s'456", "s0" })]
         [TestCase (@"102", "6",         new [] { "6", "s'456", "s456", "s0" })]
-        public void TestPred (string example, string source, string[] expected)
+        public void TestAllPred (string example, string source, string[] expected)
         {
             var mc = GetExample (example);
             var start = mc.GetVertex (source);
@@ -183,7 +183,7 @@ namespace CheckMyModels.Tests.Models
         [TestCase (@"102", "4",         new [] { "4", "s45" })]
         [TestCase (@"102", "5",         new [] { "5", "s45" })]
         [TestCase (@"102", "6",         new [] { "6", "s'456" })]
-        public void TestAllPred (string example, string source, string[] expected)
+        public void TestPred (string example, string source, string[] expected)
         {
             var mc = GetExample (example);
             var start = mc.GetVertex (source);
@@ -191,6 +191,9 @@ namespace CheckMyModels.Tests.Models
             var post = mc.Pre (start);
             var expectedPost = expected.Select (v => mc.GetVertex (v));
 
+            Console.WriteLine (string.Join (",", post.Select (x => x.Name)));
+            Console.WriteLine (string.Join (",", expectedPost.Select (x => x.Name)));
+            
             Assert.That (post.All (v => expectedPost.Contains (v)), "Not all nodes were expected.");
             Assert.That (expectedPost.All (v => post.Contains (v)), "All expected nodes not contained in post.");
         }

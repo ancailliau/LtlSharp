@@ -32,10 +32,7 @@ namespace LtlSharp.ProbabilisticSystems
             double [] b = new double[Stilde.Length];
             for (int i = 0; i < Stilde.Length; i++) {
                 for (int j = 0; j < Stilde.Length; j++) {
-                    var a = mc.Edges.SingleOrDefault (e => 
-                        e.Source.Equals (Stilde [i])
-                            && e.Target.Equals (Stilde [j])
-                            )?.Probability ?? 0;
+                    var a = mc.GetEdge (Stilde[i], Stilde[j])?.Probability ?? 0;
                     A [i, j] =  ((i == j) ? 1 : 0) - a;
                 }    
             }
@@ -43,10 +40,7 @@ namespace LtlSharp.ProbabilisticSystems
             // Build b
             for (int i = 0; i < Stilde.Length; i++) {
                 var s = Stilde [i];
-                b [i] = B.Sum (u => mc.OutEdges (s)
-                    .SingleOrDefault (e => e.Target.Equals (u))
-                    ?.Probability ?? 0
-                );
+                b [i] = B.Sum (u => mc.GetEdge (s, u)?.Probability ?? 0);
             }
             
             // Solve the system

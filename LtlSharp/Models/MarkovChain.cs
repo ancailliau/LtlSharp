@@ -100,7 +100,7 @@ namespace LtlSharp.Models
     /// A Markov Transition has a source Markov node and a target Markov node. 
     /// The transition is decorated with its probability.
     /// </description>
-    public class MarkovTransition : Edge<MarkovNode>
+    public class MarkovTransition : Edge<int>
     {
         /// <summary>
         /// Gets or sets the probability of the transition.
@@ -117,7 +117,7 @@ namespace LtlSharp.Models
         /// <param name="source">Source node.</param>
         /// <param name="probability">Transition probability.</param>
         /// <param name="target">Target node.</param>
-        public MarkovTransition (MarkovNode source, double probability, MarkovNode target) 
+        public MarkovTransition (int source, double probability, int target) 
             : base (source, target)
         {
             Probability = probability;
@@ -142,8 +142,8 @@ namespace LtlSharp.Models
         {
             unchecked {
                 return Probability.GetHashCode ()
-                    ^ (Source != null ? Source.GetHashCode () : 0)
-                    ^ (Target != null ? Target.GetHashCode () : 0);
+                    ^ Source.GetHashCode ()
+                    ^ Target.GetHashCode ();
             }
         }
         
@@ -153,8 +153,12 @@ namespace LtlSharp.Models
     /// <summary>
     /// Represents a Markov Chain.
     /// </summary>
-    public class MarkovChain : AdjacencyGraph<MarkovNode, MarkovTransition>
+    public class MarkovChain
     {
+        AdjacencyGraph<int, MarkovTransition> graph;
+        
+        Dictionary<int, MarkovNode> nodes;
+        
         /// <summary>
         /// Gets the initial distribution of the nodes. If a node is not contained, it is assumed that its
         /// initial probability is 0.
@@ -168,8 +172,10 @@ namespace LtlSharp.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovChain"/> class.
         /// </summary>
-        public MarkovChain () : base (false)
+        public MarkovChain ()
         {
+            graph = new AdjacencyGraph<int, MarkovTransition> (false);
+            nodes = new Dictionary<int, MarkovNode> ();
             Initial = new Dictionary<MarkovNode, double> ();
         }
         
@@ -179,18 +185,11 @@ namespace LtlSharp.Models
         /// <param name="mc">Markov chain to copy.</param>
         public MarkovChain (MarkovChain mc)
         {
-            var mapping = new Dictionary<MarkovNode, MarkovNode> ();
-            foreach (var node in mc.Vertices) {
-                var newNode = new MarkovNode (node);
-                mapping.Add (node, newNode);
-                AddVertex (newNode);
-            }
-            foreach (var t in mc.Edges) {
-                AddEdge (mapping [t.Source], t.Probability, mapping [t.Target]);
-            }
+            nodes = mc.nodes;
+            graph = mc.graph.Clone ();
             Initial = new Dictionary<MarkovNode, double> ();
             foreach (var i in mc.Initial) {
-                Initial.Add (mapping[i.Key], i.Value);
+                Initial.Add (i.Key, i.Value);
             }
         }
         
@@ -214,7 +213,7 @@ namespace LtlSharp.Models
         public bool CheckProbabilityDistributions ()
         {
             return Initial.Values.Sum () == 1d && 
-                Vertices.All (v => OutEdges (v).Sum (x => x.Probability) == 1d);
+                graph.Vertices.All (v => graph.OutEdges (v).Sum (x => x.Probability) == 1d);
         }
         
         /// <summary>
@@ -224,7 +223,7 @@ namespace LtlSharp.Models
         /// <param name="name">Name.</param>
         public MarkovNode GetVertex (string name)
         {
-            return Vertices.Single (v => v.Name == name);
+            return nodes.Values.Single (v => v.Name == name);
         }
         
         /// <summary>
@@ -235,7 +234,12 @@ namespace LtlSharp.Models
         public MarkovNode AddVertex (string name)
         {
             var v = new MarkovNode (name);
-            return base.AddVertex (v) ? v : null;
+            if (graph.AddVertex (v.Id)) {
+                nodes.Add (v.Id, v);
+                return v;
+            }
+            
+            return null;
         }
         
         /// <summary>
@@ -258,8 +262,8 @@ namespace LtlSharp.Models
         /// <param name="target">Target node.</param>
         public MarkovTransition AddEdge (MarkovNode source, double probability, MarkovNode target)
         {
-            var e = new MarkovTransition (source, probability, target);
-            return base.AddEdge (e) ? e : null;
+            var e = new MarkovTransition (source.Id, probability, target.Id);
+            return graph.AddEdge (e) ? e : null;
         }
         
         /// <summary>
@@ -270,8 +274,8 @@ namespace LtlSharp.Models
         public IEnumerable<MarkovNode> Post (MarkovNode v) 
         {
             IEnumerable<MarkovTransition> edges;
-            if (TryGetOutEdges (v, out edges))
-                return edges.Where (e => e.Probability > 0).Select (e => e.Target).Distinct ();
+            if (graph.TryGetOutEdges (v.Id, out edges))
+                return edges.Where (e => e.Probability > 0).Select (e => nodes[e.Target]).Distinct ();
             
             return Enumerable.Empty<MarkovNode> ();
         }
@@ -284,13 +288,13 @@ namespace LtlSharp.Models
         /// <param name="v">The node.</param>
         public IEnumerable<MarkovNode> AllPost (MarkovNode v) 
         {
-            var pending = new Stack<MarkovNode> (new [] { v });
-            var sucessors = new HashSet<MarkovNode> ();
+            var pending = new Stack<int> (new [] { v.Id });
+            var sucessors = new HashSet<int> ();
             
             IEnumerable<MarkovTransition> edges;
             while (pending.Count > 0) {
                 var current = pending.Pop ();
-                if (TryGetOutEdges (current, out edges)) {
+                if (graph.TryGetOutEdges (current, out edges)) {
                     foreach (var v2 in edges.Where (e => e.Probability > 0).Select (e => e.Target)) {
                         if (!sucessors.Contains (v2)) {
                             sucessors.Add (v2);
@@ -300,7 +304,7 @@ namespace LtlSharp.Models
                 }
             }
             
-            return sucessors;
+            return sucessors.Select (x => nodes[x]);
         }
         
         
@@ -311,7 +315,7 @@ namespace LtlSharp.Models
         /// <param name="v">The node.</param>
         public IEnumerable<MarkovNode> Pre (MarkovNode v) 
         {
-            return Edges.Where (e => e.Probability > 0 & e.Target.Equals (v)).Select (e => e.Source).Distinct ();
+            return graph.Edges.Where (e => e.Probability > 0 & e.Target.Equals (v.Id)).Select (e => nodes[e.Source]).Distinct ();
         }
         
         /// <summary>
@@ -333,8 +337,8 @@ namespace LtlSharp.Models
         /// <param name="v">The node.</param>
         public IEnumerable<MarkovNode> AllPre (IEnumerable<MarkovNode> v) 
         {
-            var pending = new Stack<MarkovNode> (v);
-            var predecessors = new HashSet<MarkovNode> ();
+            var pending = new Stack<int> (v.Select (v2 => v2.Id));
+            var predecessors = new HashSet<int> ();
 
             while (pending.Count > 0) {
                 var current = pending.Pop ();
@@ -346,7 +350,7 @@ namespace LtlSharp.Models
                 }
             }
 
-            return predecessors;
+            return predecessors.Select (x => nodes[x]);
         }
         
         public bool IsAbsorbing (MarkovNode v)
@@ -361,13 +365,17 @@ namespace LtlSharp.Models
         /// <param name="v">The target node.</param>
         public IEnumerable<MarkovTransition> GetInEdges (MarkovNode v)
         {
-            return Edges.Where (e => e.Target.Equals (v));
+            return GetInEdges (v.Id);
         }
         
+        IEnumerable<MarkovTransition> GetInEdges (int v)
+        {
+            return graph.Edges.Where (e => e.Target == v);
+        }
         
         public MarkovTransition GetEdge (MarkovNode source, MarkovNode target)
         {
-            return OutEdges (source).SingleOrDefault (e => e.Target.Equals (target));
+            return graph.OutEdges (source.Id).SingleOrDefault (e => e.Target == target.Id);
         }
     }
 }
