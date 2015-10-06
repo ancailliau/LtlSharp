@@ -2,6 +2,12 @@
 
 ## Probabilistic Systems
 
+Done:
+
+* Markov Chains
+
+To do:
+
 * Markov Chains
   * Reachability Probabilities
   * Qualitative Properties
