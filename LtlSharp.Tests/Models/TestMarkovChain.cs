@@ -8,7 +8,7 @@ namespace CheckMyModels.Tests.Models
     [TestFixture()]
     public class TestMarkovChain
     {
-        static MarkovChain GetExampleFig101 ()
+        public static MarkovChain GetExampleFig101 ()
         {
             var mc = new MarkovChain ();
             var start = mc.AddVertex ("start");
@@ -26,7 +26,7 @@ namespace CheckMyModels.Tests.Models
             return mc;
         }
         
-        static MarkovChain GetExampleFig102 ()
+        public static MarkovChain GetExampleFig102 ()
         {
             var mc = new MarkovChain ();
             var s0 = mc.AddVertex ("s0");
@@ -75,7 +75,7 @@ namespace CheckMyModels.Tests.Models
             return mc;
         }
         
-        MarkovChain GetExample (string example) {
+        public static MarkovChain GetExample (string example) {
             if (example == "101") {
                 return GetExampleFig101 ();
             } else if (example == "102") {

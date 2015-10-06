@@ -64,8 +64,10 @@
     <Compile Include="TestEmptiness.cs" />
     <Compile Include="TestOnTheFly.cs" />
     <Compile Include="Models\TestMarkovChain.cs" />
+    <Compile Include="TestProbabilisticSystems\TestMarkovChain.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
+    <Folder Include="TestProbabilisticSystems\" />
   </ItemGroup>
 </Project>

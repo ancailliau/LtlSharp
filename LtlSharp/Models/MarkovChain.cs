@@ -155,7 +155,7 @@ namespace LtlSharp.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovChain"/> class.
         /// </summary>
-        public MarkovChain () : base ()
+        public MarkovChain () : base (false)
         {
             Initial = new Dictionary<MarkovNode, double> ();
         }

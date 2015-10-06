@@ -49,6 +49,9 @@
     <Reference Include="QuickGraph.Graphviz">
       <HintPath>..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Graphviz.dll</HintPath>
     </Reference>
+    <Reference Include="alglibnet2">
+      <HintPath>..\packages\alglibnet2.0.0.0\lib\alglibnet2.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -78,6 +81,7 @@
     <Compile Include="Language\LiteralSimplifier.cs" />
     <Compile Include="Translators\ILTLTranslator.cs" />
     <Compile Include="Models\MarkovChain.cs" />
+    <Compile Include="ProbabilisticSystems\MarkovChainsAlgorithms.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -91,5 +95,6 @@
     <Folder Include="Translators\" />
     <Folder Include="Language\" />
     <Folder Include="Models\" />
+    <Folder Include="ProbabilisticSystems\" />
   </ItemGroup>
 </Project>

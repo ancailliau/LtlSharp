@@ -56,6 +56,10 @@
       <Project>{AA561918-B98E-40DA-93B1-A6BFE524AF42}</Project>
       <Name>LtlSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LtlSharp.Tests\LtlSharp.Tests.csproj">
+      <Project>{E26F1C62-2643-420D-B116-AF1FCBFF9095}</Project>
+      <Name>LtlSharp.Tests</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
