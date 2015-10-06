@@ -57,6 +57,9 @@ namespace LtlSharp.ProbabilisticSystems
             for (int i = 0; i < Stilde.Length; i++) {
                 dict.Add (Stilde [i], x [i]);
             }
+            foreach (var s in B) {
+                dict.Add (s, 1);
+            }
             
             return dict;
         }
@@ -74,7 +77,7 @@ namespace LtlSharp.ProbabilisticSystems
             var A = new double[Stilde.Length,Stilde.Length];
             for (int i = 0; i < Stilde.Length; i++) {
                 for (int j = 0; j < Stilde.Length; j++) {
-                    A [i, j] = mc.GetEdge (S [i], S [j])?.Probability ?? 0;
+                    A [i, j] = mc.GetEdge (Stilde [i], Stilde [j])?.Probability ?? 0;
                 }   
             }
             
@@ -85,7 +88,30 @@ namespace LtlSharp.ProbabilisticSystems
                 b [i] = B.Sum (u => mc.GetEdge (s, u)?.Probability ?? 0);
             }
             
-            return new Dictionary<MarkovNode, double> ();
+            var x = new double[Stilde.Length];
+            var y = new double[Stilde.Length];
+            var err = -1d;
+            do {
+                err = -1;
+                x = y;
+                alglib.rmatrixmv (Stilde.Length, Stilde.Length, A, 0, 0, 0, x, 0, ref y, 0);
+                
+                // Compute the error as Max_S |x[s] - y[s]|
+                for (int i = 0; i < Stilde.Length; i++) {
+                    var dif = x [i] - y [i];
+                    dif = (dif < 0) ? -dif : dif;
+                    err = (err > dif) ? err : dif;
+                }
+            } while (err > epsilon);
+            
+            var dict = new Dictionary<MarkovNode, double> ();
+            foreach (var s in S1) {
+                dict.Add (s, 1);
+            }
+            for (int i = 0; i < Stilde.Length; i++) {
+                dict.Add (Stilde[i], y[i]);
+            }
+            return dict;
         }
         
         static IEnumerable<MarkovNode> ComputeS0 (MarkovChain mc, IEnumerable<MarkovNode> C, IEnumerable<MarkovNode> B)
