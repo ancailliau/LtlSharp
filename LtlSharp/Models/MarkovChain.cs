@@ -159,6 +159,14 @@ namespace LtlSharp.Models
         
         Dictionary<int, MarkovNode> nodes;
         
+        public IEnumerable<MarkovNode> Nodes {
+            get { return nodes.Values; }
+        }
+        
+        public int NodesCount {
+            get { return nodes.Count; }
+        }
+        
         /// <summary>
         /// Gets the initial distribution of the nodes. If a node is not contained, it is assumed that its
         /// initial probability is 0.
@@ -180,7 +188,8 @@ namespace LtlSharp.Models
         }
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovChain"/> class.
+        /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovChain"/> class. The nodes are shared
+        /// but the underlying graph and initial distribution is copied.
         /// </summary>
         /// <param name="mc">Markov chain to copy.</param>
         public MarkovChain (MarkovChain mc)
@@ -376,6 +385,16 @@ namespace LtlSharp.Models
         public MarkovTransition GetEdge (MarkovNode source, MarkovNode target)
         {
             return graph.OutEdges (source.Id).SingleOrDefault (e => e.Target == target.Id);
+        }
+        
+        public IEnumerable<MarkovNode> ExceptNodes (IEnumerable<MarkovNode> except)
+        {
+            return nodes.Values.Except (except);
+        }
+        
+        public void ClearOutEdges (MarkovNode node)
+        {
+            graph.ClearOutEdges (node.Id);
         }
     }
 }
