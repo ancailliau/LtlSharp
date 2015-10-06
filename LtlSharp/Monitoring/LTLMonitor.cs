@@ -51,7 +51,7 @@ namespace LtlSharp.Monitoring
 
             } else if (transitions.Count () == 0) {
                 // There is no way to satisfy the formula
-                Console.WriteLine ("No out transition in positive NFA");
+//                Console.WriteLine ("No out transition in positive NFA");
                 currentPositive = null;
                 Status = MonitorStatus.False;
                 return;
@@ -65,7 +65,7 @@ namespace LtlSharp.Monitoring
                 currentNegative = transitions.Single ().Target;
 
             } else if (transitions.Count () == 0) {
-                Console.WriteLine ("No out transition in negative NFA");
+//                Console.WriteLine ("No out transition in negative NFA");
                 // There is no way to dissatisfy the formula
                 currentNegative = null;
                 Status = MonitorStatus.True;

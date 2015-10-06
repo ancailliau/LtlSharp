@@ -242,6 +242,10 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     return condition2 || (condition1 && condition3);
                 }
                 
+                if (f is Next) {
+                    return (form1 != null) ? (Next?.Contains (form1) ?? false) : false;
+                }
+                
                 if (f is Release)
                     return ((condition1 && condition2) || (condition1 && condition3));
                 
@@ -256,17 +260,29 @@ namespace LtlSharp.Buchi.LTL2Buchi
         {
             if (f is Release) {
                 return ((Release)f).Right;
-            } else {
+                
+            } 
+            
+            if (f is IUnaryOperator) {
+              return ((IUnaryOperator)f).Enclosed;
+                
+            }
+            
+            if (f is IBinaryOperator) {
                 return ((IBinaryOperator)f).Left;
             }
+
+            return null;
         }
         
         ILTLFormula GetNew2 (ILTLFormula f)
         {
             if (f is Release) {
                 return ((Release)f).Left;
-            } else {
+            } else if (f is IBinaryOperator) {
                 return ((IBinaryOperator)f).Right;
+            } else {
+                return null;
             }
         }
         
