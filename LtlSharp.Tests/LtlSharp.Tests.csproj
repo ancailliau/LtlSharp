@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="TestEmptiness.cs" />
     <Compile Include="TestOnTheFly.cs" />
+    <Compile Include="Models\TestMarkovChain.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

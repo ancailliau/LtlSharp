@@ -227,6 +227,47 @@ namespace LtlSharp.Models
             var e = new MarkovTransition (source, probability, target);
             return base.AddEdge (e) ? e : null;
         }
+        
+        /// <summary>
+        /// Returns the successors of the specified node <c>v</c>.
+        /// </summary>
+        /// <returns>The successors.</returns>
+        /// <param name="v">The node.</param>
+        public IEnumerable<MarkovNode> Post (MarkovNode v) 
+        {
+            IEnumerable<MarkovTransition> edges;
+            if (TryGetOutEdges (v, out edges))
+                return edges.Where (e => e.Probability > 0).Select (e => e.Target).Distinct ();
+            
+            return Enumerable.Empty<MarkovNode> ();
+        }
+        
+        /// <summary>
+        /// Returns all the successors of the specified node <c>v</c>, i.e. all the nodes that can be reached from the
+        /// specified node.
+        /// </summary>
+        /// <returns>The successors.</returns>
+        /// <param name="v">The node.</param>
+        public IEnumerable<MarkovNode> AllPost (MarkovNode v) 
+        {
+            var pending = new Stack<MarkovNode> (new [] { v });
+            var sucessors = new HashSet<MarkovNode> ();
+            
+            IEnumerable<MarkovTransition> edges;
+            while (pending.Count > 0) {
+                var current = pending.Pop ();
+                if (TryGetOutEdges (current, out edges)) {
+                    foreach (var v2 in edges.Where (e => e.Probability > 0).Select (e => e.Target)) {
+                        if (!sucessors.Contains (v2)) {
+                            sucessors.Add (v2);
+                            pending.Push (v2);
+                        }
+                    }
+                }
+            }
+            
+            return sucessors;
+        }
     }
 }
 
