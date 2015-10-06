@@ -57,6 +57,17 @@ namespace LtlSharp.Models
             this.Name = name;
         }
         
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovNode"/> class. Every property is copied
+        /// except the identifier of the node.
+        /// </summary>
+        /// <param name="node">Node.</param>
+        public MarkovNode (MarkovNode node) : this ()
+        {
+            Name = node.Name;
+            Labels = new HashSet<ILiteral> (node.Labels);
+        }
+        
         public override bool Equals (object obj)
         {
             if (obj == null)
@@ -66,12 +77,14 @@ namespace LtlSharp.Models
             if (obj.GetType () != typeof(MarkovNode))
                 return false;
             MarkovNode other = (MarkovNode)obj;
+            // TODO Is it required to check for id?
             return Id == other.Id && Name == other.Name && Labels.SetEquals (other.Labels);
         }
         
         public override int GetHashCode ()
         {
             unchecked {
+                // TODO Is it required to check for id?
                 return Id.GetHashCode () 
                     ^ (Name != null ? Name.GetHashCode () : 0) 
                     ^ (Labels != null ? Labels.GetHashCode () : 0);
@@ -158,6 +171,27 @@ namespace LtlSharp.Models
         public MarkovChain () : base (false)
         {
             Initial = new Dictionary<MarkovNode, double> ();
+        }
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovChain"/> class.
+        /// </summary>
+        /// <param name="mc">Markov chain to copy.</param>
+        public MarkovChain (MarkovChain mc)
+        {
+            var mapping = new Dictionary<MarkovNode, MarkovNode> ();
+            foreach (var node in mc.Vertices) {
+                var newNode = new MarkovNode (node);
+                mapping.Add (node, newNode);
+                AddVertex (newNode);
+            }
+            foreach (var t in mc.Edges) {
+                AddEdge (mapping [t.Source], t.Probability, mapping [t.Target]);
+            }
+            Initial = new Dictionary<MarkovNode, double> ();
+            foreach (var i in mc.Initial) {
+                Initial.Add (mapping[i.Key], i.Value);
+            }
         }
         
         /// <summary>
@@ -279,7 +313,7 @@ namespace LtlSharp.Models
         {
             return Edges.Where (e => e.Probability > 0 & e.Target.Equals (v)).Select (e => e.Source).Distinct ();
         }
-
+        
         /// <summary>
         /// Returns all the predecessors of the specified node <c>v</c>, i.e. all the nodes that can reach the
         /// specified node.
@@ -288,7 +322,18 @@ namespace LtlSharp.Models
         /// <param name="v">The node.</param>
         public IEnumerable<MarkovNode> AllPre (MarkovNode v) 
         {
-            var pending = new Stack<MarkovNode> (new [] { v });
+            return AllPre (new [] { v });
+        }
+        
+        /// <summary>
+        /// Returns all the predecessors of the specified node <c>v</c>, i.e. all the nodes that can reach the
+        /// specified node.
+        /// </summary>
+        /// <returns>The predecessors.</returns>
+        /// <param name="v">The node.</param>
+        public IEnumerable<MarkovNode> AllPre (IEnumerable<MarkovNode> v) 
+        {
+            var pending = new Stack<MarkovNode> (v);
             var predecessors = new HashSet<MarkovNode> ();
 
             while (pending.Count > 0) {
@@ -314,9 +359,15 @@ namespace LtlSharp.Models
         /// </summary>
         /// <returns>The in edges.</returns>
         /// <param name="v">The target node.</param>
-        IEnumerable<MarkovTransition> GetInEdges (MarkovNode v)
+        public IEnumerable<MarkovTransition> GetInEdges (MarkovNode v)
         {
             return Edges.Where (e => e.Target.Equals (v));
+        }
+        
+        
+        public MarkovTransition GetEdge (MarkovNode source, MarkovNode target)
+        {
+            return OutEdges (source).SingleOrDefault (e => e.Target.Equals (target));
         }
     }
 }
