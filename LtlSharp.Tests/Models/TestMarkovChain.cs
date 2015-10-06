@@ -75,11 +75,66 @@ namespace CheckMyModels.Tests.Models
             return mc;
         }
         
+        public static MarkovChain GetExampleFig103 ()
+        {
+            var mc = new MarkovChain ();
+            
+            var start = mc.AddVertex ("start");
+            var s4 = mc.AddVertex ("4");
+            var s10 = mc.AddVertex ("10");
+            var s5 = mc.AddVertex ("5");
+            var s9 = mc.AddVertex ("9");
+            var s6 = mc.AddVertex ("6");
+            var s8 = mc.AddVertex ("8");
+            var won = mc.AddVertex ("won");
+            var lost = mc.AddVertex ("lost");
+            
+            mc.AddEdge (start, 2d/9, won);
+            mc.AddEdge (start, 1d/12, s4);
+            mc.AddEdge (start, 1d/12, s10);
+            mc.AddEdge (start, 1d/9, s5);
+            mc.AddEdge (start, 1d/9, s9);
+            mc.AddEdge (start, 5d/36, s6);
+            mc.AddEdge (start, 5d/36, s8);
+            mc.AddEdge (start, 1d/9, lost);
+            
+            mc.AddEdge (s4, 3d/4, s4);
+            mc.AddEdge (s4, 1d/12, won);
+            mc.AddEdge (s4, 1d/6, lost);
+
+            mc.AddEdge (s10, 3d/4, s10);
+            mc.AddEdge (s10, 1d/12, won);
+            mc.AddEdge (s10, 1d/6, lost);
+
+            mc.AddEdge (s5, 13d/18, s5);
+            mc.AddEdge (s5, 1d/9, won);
+            mc.AddEdge (s5, 1d/6, lost);
+
+            mc.AddEdge (s9, 13d/18, s9);
+            mc.AddEdge (s9, 1d/9, won);
+            mc.AddEdge (s9, 1d/6, lost);
+
+            mc.AddEdge (s6, 25d/36, s6);
+            mc.AddEdge (s6, 5d/36, won);
+            mc.AddEdge (s6, 1d/6, lost);
+
+            mc.AddEdge (s8, 25d/36, s8);
+            mc.AddEdge (s8, 5d/36, won);
+            mc.AddEdge (s8, 1d/6, lost);
+            
+            mc.AddEdge (won, won);
+            mc.AddEdge (lost, lost);
+            
+            return mc;
+        }
+        
         public static MarkovChain GetExample (string example) {
             if (example == "101") {
                 return GetExampleFig101 ();
-            } else if (example == "102") {
+            } else if (example == "102" | example == "die") {
                 return GetExampleFig102 ();
+            } else if (example == "103" | example == "craps") {
+                return GetExampleFig103 ();
             }
             throw new NotImplementedException ();
         }

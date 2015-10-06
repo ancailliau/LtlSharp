@@ -64,21 +64,26 @@ namespace LtlSharp.ProbabilisticSystems
             return dict;
         }
         
-        public static IDictionary<MarkovNode, double> UntilReachabilityIterative (this MarkovChain mc, 
+        public static IDictionary<MarkovNode, double> ConstrainedReachability (this MarkovChain mc, 
             IEnumerable<MarkovNode> C, 
             IEnumerable<MarkovNode> B,
-            double epsilon)
+            bool iterative = false, double epsilon = 1e-5, int n = -1)
         {
             var S0 = ComputeS0 (mc, C, B);
             var S1 = ComputeS1 (mc, C, B);
             var Stilde = mc.ExceptNodes (S0.Union (S1)).ToArray ();
             
-            // Build a
+            // Build I - A if not iterative, and A if iterative
             var A = new double[Stilde.Length,Stilde.Length];
             for (int i = 0; i < Stilde.Length; i++) {
                 for (int j = 0; j < Stilde.Length; j++) {
-                    A [i, j] = mc.GetEdge (Stilde [i], Stilde [j])?.Probability ?? 0;
-                }   
+                    var a = mc.GetEdge (Stilde[i], Stilde[j])?.Probability ?? 0;
+                    if (iterative) {
+                        A [i, j] = a;
+                    } else {
+                        A [i, j] = ((i == j) ? 1 : 0) - a;
+                    }
+                }
             }
             
             // Build b
@@ -89,27 +94,43 @@ namespace LtlSharp.ProbabilisticSystems
             }
             
             var x = new double[Stilde.Length];
-            var y = new double[Stilde.Length];
-            var err = -1d;
-            do {
-                err = -1;
-                x = y;
-                alglib.rmatrixmv (Stilde.Length, Stilde.Length, A, 0, 0, 0, x, 0, ref y, 0);
-                
-                // Compute the error as Max_S |x[s] - y[s]|
-                for (int i = 0; i < Stilde.Length; i++) {
-                    var dif = x [i] - y [i];
-                    dif = (dif < 0) ? -dif : dif;
-                    err = (err > dif) ? err : dif;
-                }
-            } while (err > epsilon);
+            
+            if (iterative & n > 0) {
+                // iteratively solve the system.
+                int step = 0;
+                var y = new double[Stilde.Length];
+                var err = -1d;
+                do {
+                    err = -1;
+                    // Compute Ax
+                    alglib.rmatrixmv (Stilde.Length, Stilde.Length, A, 0, 0, 0, x, 0, ref y, 0);
+                    
+                    for (int i = 0; i < Stilde.Length; i++) {
+                        // Compute Ax + b
+                        y[i] = y[i] + b[i];
+                        
+                        // Compute the error as Max_S |x[s] - y[s]|
+                        var dif = x [i] - y [i];
+                        dif = (dif < 0) ? -dif : dif;
+                        err = (err > dif) ? err : dif;
+                    }
+                    
+                    x = y;
+                    step ++;
+                } while (err > epsilon | (n < 0 || step < n));
+            } else {
+                // solve the system by resolving the linear equations
+                int info = 0;
+                alglib.densesolver.densesolverreport report = new alglib.densesolver.densesolverreport ();
+                alglib.densesolver.rmatrixsolve (A, Stilde.Length, b, ref info, report, ref x);
+            }
             
             var dict = new Dictionary<MarkovNode, double> ();
             foreach (var s in S1) {
                 dict.Add (s, 1);
             }
             for (int i = 0; i < Stilde.Length; i++) {
-                dict.Add (Stilde[i], y[i]);
+                dict.Add (Stilde[i], x[i]);
             }
             return dict;
         }
@@ -141,7 +162,7 @@ namespace LtlSharp.ProbabilisticSystems
                 foreach (var t in mcprime.Nodes) {
                     var transition = mcprime.GetEdge (s, t);
                     if (transition == null) {
-                        mcprime.AddEdge (s, 0, t);
+                        transition = mcprime.AddEdge (s, 0, t);
                     }
                     transition.Probability = s == t ? 1 : 0;
                 }
