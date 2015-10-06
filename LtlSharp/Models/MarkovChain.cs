@@ -304,6 +304,11 @@ namespace LtlSharp.Models
             return predecessors;
         }
         
+        public bool IsAbsorbing (MarkovNode v)
+        {
+            return Post (v).All (v2 => v2.Equals (v));
+        }
+        
         /// <summary>
         /// Returns the incoming edges to the specified node
         /// </summary>

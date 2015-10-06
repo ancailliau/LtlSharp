@@ -194,6 +194,31 @@ namespace CheckMyModels.Tests.Models
             Assert.That (post.All (v => expectedPost.Contains (v)), "Not all nodes were expected.");
             Assert.That (expectedPost.All (v => post.Contains (v)), "All expected nodes not contained in post.");
         }
+        
+        [TestCase (@"101", "start",     false)] 
+        [TestCase (@"101", "try",       false)] 
+        [TestCase (@"101", "delivered", false)] 
+        [TestCase (@"101", "lost",      false)] 
+        [TestCase (@"102", "s0",        false)] 
+        [TestCase (@"102", "s123",      false)] 
+        [TestCase (@"102", "s456",      false)] 
+        [TestCase (@"102", "s'123",     false)] 
+        [TestCase (@"102", "s23",       false)] 
+        [TestCase (@"102", "s45",       false)] 
+        [TestCase (@"102", "s'456",     false)] 
+        [TestCase (@"102", "1",         true)] 
+        [TestCase (@"102", "2",         true)]
+        [TestCase (@"102", "3",         true)]
+        [TestCase (@"102", "4",         true)]
+        [TestCase (@"102", "5",         true)]
+        [TestCase (@"102", "6",         true)] 
+        public void TestAbsorbing (string example, string source, bool absorbing)
+        {
+            var mc = GetExample (example);
+            var start = mc.GetVertex (source);
+
+            Assert.AreEqual (absorbing, mc.IsAbsorbing (start));
+        }
     }
 }
 
