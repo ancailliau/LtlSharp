@@ -185,7 +185,8 @@ namespace LtlSharp.ProbabilisticSystems
                 }
             }
             
-            return GlobalAlmostSureReachability (mc, B);
+            // S \ AllPre(S \ AllPre (B))
+            return mcprime.ExceptNodes (mcprime.AllPre (mcprime.ExceptNodes (mcprime.AllPre (B))));
         }
         
         /// <summary>
@@ -194,10 +195,10 @@ namespace LtlSharp.ProbabilisticSystems
         /// <returns>The set of nodes with almost sure reachability.</returns>
         /// <param name="mc">Markov Chain.</param>
         /// <param name="B">B.</param>
-        static IEnumerable<MarkovNode> GlobalAlmostSureReachability (MarkovChain mc, IEnumerable<MarkovNode> B)
+        public static IEnumerable<MarkovNode> GlobalAlmostSureReachability (MarkovChain mc, IEnumerable<MarkovNode> B)
         {
             // See "Principles of model checking", p 766ff.
-            
+            var mcprime = new MarkovChain (mc);
             foreach (var b in B) {
                 mc.ClearOutEdges (b);
                 mc.AddEdge (b, b);
