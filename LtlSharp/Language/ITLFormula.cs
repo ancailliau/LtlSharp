@@ -796,15 +796,49 @@ namespace LtlSharp
             InclusiveLowerBound = true;
             InclusiveUpperBound = true;
         }
+        
+        public bool IsSatisfied (double p, double epsilon)
+        {
+            bool v = true;
+            v &= InclusiveLowerBound ? GreaterThanOrEquals (p, LowerBound, epsilon) : GreaterThan (p, LowerBound, epsilon);
+            v &= InclusiveUpperBound ? LessThanOrEquals (p, UpperBound, epsilon) : LessThan (p, UpperBound, epsilon);
+            return v;
+        }
+        
+        bool GreaterThanOrEquals(double a, double b, double epsilon)
+        {
+            return (a - b) >= -epsilon;
+        }
+
+        bool LessThanOrEquals(double a, double b, double epsilon)
+        {
+            return (b - a) >= -epsilon;
+        }
+        
+        bool GreaterThan(double a, double b, double epsilon)
+        {
+            return (a - b) > -epsilon;
+        }
+
+        bool LessThan(double a, double b, double epsilon)
+        {
+            return (b - a) > -epsilon;
+        }
 
         public override ITLFormula Negate ()
         {
-            return Enclosed;
+            return new ProbabilisticOperator (Enclosed.Negate (), 1 - UpperBound, 1 - LowerBound) {
+                InclusiveLowerBound = !this.InclusiveUpperBound,
+                InclusiveUpperBound = !this.InclusiveLowerBound
+            };
         }
 
         public override ITLFormula Normalize ()
         {
-            return Enclosed.Negate ();
+            return new ProbabilisticOperator (Enclosed.Normalize (), LowerBound, UpperBound) {
+                InclusiveLowerBound = this.InclusiveLowerBound,
+                InclusiveUpperBound = this.InclusiveUpperBound
+            };
         }
 
         public override bool Equals (object obj)

@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using LtlSharp.Models;
 using System.Linq;
+using LtlSharp;
 
 namespace CheckMyModels.Tests.Models
 {
@@ -79,15 +80,15 @@ namespace CheckMyModels.Tests.Models
         {
             var mc = new MarkovChain ();
             
-            var start = mc.AddVertex ("start");
-            var s4 = mc.AddVertex ("4");
-            var s10 = mc.AddVertex ("10");
-            var s5 = mc.AddVertex ("5");
-            var s9 = mc.AddVertex ("9");
-            var s6 = mc.AddVertex ("6");
-            var s8 = mc.AddVertex ("8");
-            var won = mc.AddVertex ("won");
-            var lost = mc.AddVertex ("lost");
+            var start = mc.AddVertex ("start"); start.Labels.Add (new Proposition ("start"));
+            var s4 = mc.AddVertex ("4"); s4.Labels.Add (new Proposition ("4"));
+            var s10 = mc.AddVertex ("10"); s10.Labels.Add (new Proposition ("10"));
+            var s5 = mc.AddVertex ("5"); s5.Labels.Add (new Proposition ("5"));
+            var s9 = mc.AddVertex ("9"); s9.Labels.Add (new Proposition ("9"));
+            var s6 = mc.AddVertex ("6"); s6.Labels.Add (new Proposition ("6"));
+            var s8 = mc.AddVertex ("8"); s8.Labels.Add (new Proposition ("8"));
+            var won = mc.AddVertex ("won"); won.Labels.Add (new Proposition ("won"));
+            var lost = mc.AddVertex ("lost"); lost.Labels.Add (new Proposition ("lost"));
             mc.Initial.Add (start, 1);
             
             mc.AddEdge (start, 2d/9, won);

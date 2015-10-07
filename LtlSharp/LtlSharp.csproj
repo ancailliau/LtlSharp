@@ -83,6 +83,7 @@
     <Compile Include="ProbabilisticSystems\MarkovChainsAlgorithms.cs" />
     <Compile Include="Utils\TrajanAlgorithm.cs" />
     <Compile Include="Language\ITLFormula.cs" />
+    <Compile Include="ModelCheckers\PCTLModelChecker.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -97,5 +98,6 @@
     <Folder Include="Language\" />
     <Folder Include="Models\" />
     <Folder Include="ProbabilisticSystems\" />
+    <Folder Include="ModelCheckers\" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,8 @@
 ﻿using System;
 using LtlSharp;
 using NUnit.Framework;
+using LtlSharp.ModelCheckers;
+using CheckMyModels.Tests.Models;
 
 namespace CheckMyModels.Tests.TestProbabilisticSystems
 {
@@ -23,16 +25,30 @@ namespace CheckMyModels.Tests.TestProbabilisticSystems
         [Test ()]
         public void TestCraps ()
         {
+            var mc = TestMarkovChain.GetExample ("craps");
+
             var s8 = new Proposition ("8");
             var s9 = new Proposition ("9");
             var s10 = new Proposition ("10");
             var disj = new Disjunction (s8, new Disjunction (s9, s10));
             var neg = new Negation (disj);
             var won = new Proposition ("won");
+
+            var p1 = new ProbabilisticOperator (new Until (neg, won), .32, 1);
+            var p2 = new ProbabilisticOperator (new Until (neg, won, 5), .32, 1);
+            var p3 = new ProbabilisticOperator (new Until (neg, new ProbabilisticOperator (new Globally (won), 1), 5), .32, 1);
+
+            var checker = new PCTLModelChecker (mc, p1, 1e-10);
+            var sat = checker.Check ();
+            Assert.That (sat.Contains (mc.GetVertex ("start")));
             
-            var p1 = new ProbabilisticOperator (new Until (neg, won), .32);
-            var p2 = new ProbabilisticOperator (new Until (neg, won, 5), .32);
-            var p3 = new ProbabilisticOperator (new Until (neg, new ProbabilisticOperator (new Globally (won), 1), 5), .32);
+            checker = new PCTLModelChecker (mc, p2, 1e-10);
+            sat = checker.Check ();
+            Assert.That (sat.Contains (mc.GetVertex ("start")));
+            
+            checker = new PCTLModelChecker (mc, p3, 1e-10);
+            sat = checker.Check ();
+            Assert.That (sat.Contains (mc.GetVertex ("start")));
         }
     }
 }
