@@ -60,7 +60,6 @@
     <Compile Include="Utils\ExtractAlphabet.cs" />
     <Compile Include="Utils\CanonicToString.cs" />
     <Compile Include="Utils\TexToString.cs" />
-    <Compile Include="Language\ILTLFormula.cs" />
     <Compile Include="Automata\Node.cs" />
     <Compile Include="Translators\GPVW.cs" />
     <Compile Include="EmptinessChecker\GBAEmptinessChecker.cs" />
@@ -83,6 +82,7 @@
     <Compile Include="Models\MarkovChain.cs" />
     <Compile Include="ProbabilisticSystems\MarkovChainsAlgorithms.cs" />
     <Compile Include="Utils\TrajanAlgorithm.cs" />
+    <Compile Include="Language\ITLFormula.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

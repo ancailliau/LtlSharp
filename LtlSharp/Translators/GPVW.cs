@@ -13,38 +13,38 @@ namespace LtlSharp.Buchi.LTL2Buchi
         {
         }
         
-        private List<ILTLFormula> New1 (ILTLFormula f)
+        private List<ITLFormula> New1 (ITLFormula f)
         {
             if (f is Until) {
-                return new List<ILTLFormula> ( new [] { ((Until)f).Left });
+                return new List<ITLFormula> ( new [] { ((Until)f).Left });
             } else if (f is Release) {
-                return new List<ILTLFormula> ( new [] { ((Release)f).Right });
+                return new List<ITLFormula> ( new [] { ((Release)f).Right });
             } else if (f is Disjunction) {
-                return new List<ILTLFormula> ( new [] { ((Disjunction) f).Left });
+                return new List<ITLFormula> ( new [] { ((Disjunction) f).Left });
             }
             throw new NotImplementedException ();
         }
         
-        private List<ILTLFormula> New2 (ILTLFormula f)
+        private List<ITLFormula> New2 (ITLFormula f)
         {
             if (f is Until) {
-                return new List<ILTLFormula> ( new [] { ((Until)f).Right });
+                return new List<ITLFormula> ( new [] { ((Until)f).Right });
             } else if (f is Release) {
-                return new List<ILTLFormula> ( new [] { ((Release)f).Left, ((Release)f).Right });
+                return new List<ITLFormula> ( new [] { ((Release)f).Left, ((Release)f).Right });
             } else if (f is Disjunction) {
-                return new List<ILTLFormula> ( new [] { ((Disjunction) f).Right });
+                return new List<ITLFormula> ( new [] { ((Disjunction) f).Right });
             }
             throw new NotImplementedException ();
         }
         
-        private List<ILTLFormula> Next1 (ILTLFormula f)
+        private List<ITLFormula> Next1 (ITLFormula f)
         {
             if (f is Until) {
-                return new List<ILTLFormula> ( new [] { f });
+                return new List<ITLFormula> ( new [] { f });
             } else if (f is Release) {
-                return new List<ILTLFormula> ( new [] { f });
+                return new List<ITLFormula> ( new [] { f });
             } else if (f is Disjunction) {
-                return new List<ILTLFormula> ();
+                return new List<ITLFormula> ();
             }
             throw new NotImplementedException ();
         }
@@ -53,8 +53,8 @@ namespace LtlSharp.Buchi.LTL2Buchi
         {
             if (node.New.Count == 0) {
                 var nd = nodeSet.FirstOrDefault (x => 
-                    new HashSet<ILTLFormula> (x.Old).SetEquals (node.Old)
-                         & new HashSet<ILTLFormula> (x.Next).SetEquals (node.Next));
+                    new HashSet<ITLFormula> (x.Old).SetEquals (node.Old)
+                         & new HashSet<ITLFormula> (x.Next).SetEquals (node.Next));
                 if (nd != null) {
                     foreach (var i in node.Incoming) {
                         nd.Incoming.Add (i);
@@ -64,7 +64,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 
                 var new_node = new Node () {
                     Incoming = new HashSet<string> (new[] { node.Name }),
-                    New = new HashSet<ILTLFormula> (node.Next)
+                    New = new HashSet<ITLFormula> (node.Next)
                 };
                 nodeSet.Add (node);
                 
@@ -83,10 +83,10 @@ namespace LtlSharp.Buchi.LTL2Buchi
                         return Expand (node, nodeSet);
                     }
                 } else if (eta is Until | eta is Release | eta is Disjunction) {
-                    var nlist1 = new HashSet<ILTLFormula> (node.New.Union (New1(eta).Except (node.Old)));
-                    var nlist2 = new HashSet<ILTLFormula> (node.New.Union(New2(eta).Except (node.Old)));
-                    var olist1 = new HashSet<ILTLFormula> (node.Old.Union (new [] { eta }));
-                    var xlist1 = new HashSet<ILTLFormula> (node.Next.Union (Next1 (eta)));
+                    var nlist1 = new HashSet<ITLFormula> (node.New.Union (New1(eta).Except (node.Old)));
+                    var nlist2 = new HashSet<ITLFormula> (node.New.Union(New2(eta).Except (node.Old)));
+                    var olist1 = new HashSet<ITLFormula> (node.Old.Union (new [] { eta }));
+                    var xlist1 = new HashSet<ITLFormula> (node.Next.Union (Next1 (eta)));
                                         
                     var node1 = new Node () {
                         Incoming = new HashSet<string> (node.Incoming),
@@ -98,15 +98,15 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     var node2 = new Node () {
                         Incoming = new HashSet<string> (node.Incoming),
                         New = nlist2,
-                        Old = new HashSet<ILTLFormula> (olist1),
-                        Next = new HashSet<ILTLFormula> (node.Next)
+                        Old = new HashSet<ITLFormula> (olist1),
+                        Next = new HashSet<ITLFormula> (node.Next)
                     };
                     
                     return Expand (node2, Expand (node1, nodeSet));
                 } else if (eta is Conjunction) {
                     var ceta = (Conjunction)eta;
                     
-                    var list = new HashSet<ILTLFormula> (node.New);
+                    var list = new HashSet<ITLFormula> (node.New);
                     if (!node.Old.Contains (ceta.Left))
                         list.Add (ceta.Left);
                     if (!node.Old.Contains (ceta.Right))
@@ -115,17 +115,17 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     var n = new Node (node.Name) {
                         Incoming = new HashSet<string> (node.Incoming),
                         New = list,
-                        Old = new HashSet<ILTLFormula> (node.Old.Union (new [] { eta })),
-                        Next = new HashSet<ILTLFormula> (node.Next)
+                        Old = new HashSet<ITLFormula> (node.Old.Union (new [] { eta })),
+                        Next = new HashSet<ITLFormula> (node.Next)
                     };
                     return Expand (n, nodeSet);  
                 } else if (eta is Next) {
                     
                     var n = new Node (node.Name) {
                         Incoming = new HashSet<string> (node.Incoming),
-                        New = new HashSet<ILTLFormula> (node.New),
-                        Old = new HashSet<ILTLFormula> (node.Old.Union (new [] { eta })),
-                        Next = new HashSet<ILTLFormula> (node.Next.Union (new [] { ((Next) eta).Enclosed }))
+                        New = new HashSet<ITLFormula> (node.New),
+                        Old = new HashSet<ITLFormula> (node.Old.Union (new [] { eta })),
+                        Next = new HashSet<ITLFormula> (node.Next.Union (new [] { ((Next) eta).Enclosed }))
                     };
                     
                     return Expand (n, nodeSet);
@@ -136,15 +136,15 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        public BuchiAutomata GetAutomaton (ILTLFormula phi) {
+        public BuchiAutomata GetAutomaton (ITLFormula phi) {
             return GBA2BA.Transform (GetGBA (phi));
         }
         
-        HashSet<Node> CreateGraph (ILTLFormula phi)
+        HashSet<Node> CreateGraph (ITLFormula phi)
         {
             var n = new Node () {
                 Incoming = new HashSet<string> (new [] { "init" }),
-                New = new HashSet<ILTLFormula> (new [] { phi }),
+                New = new HashSet<ITLFormula> (new [] { phi }),
             };
             
             var set = Expand (n, new HashSet<Node> ());
@@ -157,7 +157,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return set;
         }
         
-        public TransitionGeneralizedBuchiAutomata GetGBA (ILTLFormula phi) {
+        public TransitionGeneralizedBuchiAutomata GetGBA (ITLFormula phi) {
             var formula = phi.Normalize ();
 
             var nodesSet = CreateGraph (formula);
@@ -215,13 +215,13 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var listAcceptanceSets = new LinkedList<GBAAcceptanceSet>();
 
             // Subformulas are processed in a DFS-fashioned way
-            Stack<ILTLFormula> formulasToProcess = new Stack<ILTLFormula>();
+            Stack<ITLFormula> formulasToProcess = new Stack<ITLFormula>();
             formulasToProcess.Push(formula);
 
             int setIndex = 0;
 
             while(formulasToProcess.Count > 0) {
-                ILTLFormula considered = formulasToProcess.Pop();
+                ITLFormula considered = formulasToProcess.Pop();
 
                 if (considered is Until) {
                     Until consideredUntil = considered as Until;

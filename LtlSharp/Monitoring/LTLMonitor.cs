@@ -57,7 +57,7 @@ namespace LtlSharp.Monitoring
 
         public MonitorStatus Status { get; private set; }
         
-        public LTLMonitor (ILTLFormula formula)
+        public LTLMonitor (ITLFormula formula)
         {
             positiveNFA = BA2NFA.Transform (translator.GetAutomaton (formula));
             negativeNFA = BA2NFA.Transform (translator.GetAutomaton (formula.Negate ()));

@@ -11,7 +11,7 @@ namespace LtlSharp.Utils
             private set;
         }
         
-        public CanonicToString (ILTLFormula formula)
+        public CanonicToString (ITLFormula formula)
             : base (formula)
         {
             Visit (formula);

@@ -14,7 +14,7 @@ namespace CheckMyModels.Tests
     [TestFixture()]
     public class TestOnTheFly
     {
-        private void AssertEquivalentEmptiness (ILTLFormula f)
+        private void AssertEquivalentEmptiness (ITLFormula f)
         {
             var t = new GPVW ();
 

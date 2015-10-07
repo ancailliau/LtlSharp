@@ -11,7 +11,7 @@ namespace LtlSharp.Utils
             private set;
         }
         
-        public TexToString (ILTLFormula formula)
+        public TexToString (ITLFormula formula)
             : base (formula)
         {
             Visit (formula);

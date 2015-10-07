@@ -19,7 +19,7 @@ namespace LtlSharp.Monitoring
 
         public MonitorStatus Status;
 
-        public LTLMonitorHard (ILTLFormula formula)
+        public LTLMonitorHard (ITLFormula formula)
         {
             /*
             var ltl2buchi = new GPVW ();

@@ -20,7 +20,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             set;
         }
 
-        public HashSet<ILTLFormula> ToBeDone {
+        public HashSet<ITLFormula> ToBeDone {
             get;
             set;
         }
@@ -40,8 +40,8 @@ namespace LtlSharp.Buchi.LTL2Buchi
             set;
         }
 
-        private HashSet<ILTLFormula> _next ;
-        public HashSet<ILTLFormula> Next {
+        private HashSet<ITLFormula> _next ;
+        public HashSet<ITLFormula> Next {
             get {
                 return _next;
             }
@@ -55,8 +55,8 @@ namespace LtlSharp.Buchi.LTL2Buchi
 
         static int currentId = 1;
         
-        static Dictionary<ILTLFormula, int> indexUntils;
-        static Dictionary<ILTLFormula, int> rightOfWhichUntils;
+        static Dictionary<ITLFormula, int> indexUntils;
+        static Dictionary<ITLFormula, int> rightOfWhichUntils;
         
         public InternalNode (int numberOfUntils) : this (currentId++, numberOfUntils) 
         {}
@@ -65,19 +65,19 @@ namespace LtlSharp.Buchi.LTL2Buchi
         {
             NodeId = id;
             Incoming = new HashSet<int> ();
-            ToBeDone = new HashSet<ILTLFormula> ();
+            ToBeDone = new HashSet<ITLFormula> ();
             Untils = new BitArray (numberOfUntils);
             RightOfUntils = new BitArray (numberOfUntils);
             Old = new HashSet<ILiteral> ();
-            Next = new HashSet<ILTLFormula> ();
+            Next = new HashSet<ITLFormula> ();
         }
         
-        public static InternalNode CreateInitial (ILTLFormula phi)
+        public static InternalNode CreateInitial (ITLFormula phi)
         {
             int numberOfUntils = 0;
-            rightOfWhichUntils = new Dictionary<ILTLFormula, int> ();
-            indexUntils = new Dictionary<ILTLFormula, int> ();
-            Stack<ILTLFormula> toProcess = new Stack<ILTLFormula> ();
+            rightOfWhichUntils = new Dictionary<ITLFormula, int> ();
+            indexUntils = new Dictionary<ITLFormula, int> ();
+            Stack<ITLFormula> toProcess = new Stack<ITLFormula> ();
             toProcess.Push (phi);
             while (toProcess.Count > 0) {
                 var current = toProcess.Pop ();
@@ -102,7 +102,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return node;
         }
         
-        void DecomposeAndForNext (ILTLFormula f)
+        void DecomposeAndForNext (ITLFormula f)
         {
             if (f is Conjunction) {
                 var conj = (Conjunction)f;
@@ -129,7 +129,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     states.Add (newState);
                     var newNode = new InternalNode (Untils.Length) {
                         Incoming = new HashSet<int> (new [] { NodeId }),
-                        ToBeDone = new HashSet<ILTLFormula> (Next)
+                        ToBeDone = new HashSet<ITLFormula> (Next)
                     };
                     return newNode.Expand (states);
                 }
@@ -182,22 +182,22 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        int RightOfWhichUntils (ILTLFormula f) {
+        int RightOfWhichUntils (ITLFormula f) {
             if (rightOfWhichUntils.ContainsKey (f)) {
                 return rightOfWhichUntils[f];
             }
             return -1;
         }
         
-        bool testForContradictions (ILTLFormula f) {
+        bool testForContradictions (ITLFormula f) {
             return SI(f.Negate(), Old, Next);
         }
         
-        bool isRedundant (ILTLFormula f) {
+        bool isRedundant (ITLFormula f) {
             return SI(f, Old, Next);
         }
         
-        bool SI (ILTLFormula f, HashSet<ILiteral> A, HashSet<ILTLFormula> B) {
+        bool SI (ITLFormula f, HashSet<ILiteral> A, HashSet<ITLFormula> B) {
             if (f is True) 
                 return true;
 
@@ -253,7 +253,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return false;
         }
         
-        ILTLFormula GetNew1 (ILTLFormula f)
+        ITLFormula GetNew1 (ITLFormula f)
         {
             if (f is Release) {
                 return ((Release)f).Right;
@@ -272,7 +272,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return null;
         }
         
-        ILTLFormula GetNew2 (ILTLFormula f)
+        ITLFormula GetNew2 (ITLFormula f)
         {
             if (f is Release) {
                 return ((Release)f).Left;
@@ -283,7 +283,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        ILTLFormula GetNext (ILTLFormula f)
+        ITLFormula GetNext (ITLFormula f)
         {
             if (f is Release | f is Until) {
                 return f;
@@ -291,9 +291,9 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return null;
         }
         
-        InternalNode Split (ILTLFormula form)
+        InternalNode Split (ITLFormula form)
         {
-            var toBeDone = new HashSet<ILTLFormula> (ToBeDone);
+            var toBeDone = new HashSet<ITLFormula> (ToBeDone);
             var tempFormula = GetNew2 (form);
             if (tempFormula != null && !Old.Contains (tempFormula)) {
                 toBeDone.Add (tempFormula);
@@ -308,14 +308,14 @@ namespace LtlSharp.Buchi.LTL2Buchi
             
             var newNode = new InternalNode (Untils.Length) {
                 Incoming = new HashSet<int> (Incoming),
-                ToBeDone = new HashSet<ILTLFormula> (toBeDone),
+                ToBeDone = new HashSet<ITLFormula> (toBeDone),
                 Old = new HashSet<ILiteral> (Old),
-                Next = new HashSet<ILTLFormula> (Next),
+                Next = new HashSet<ITLFormula> (Next),
                 Untils = new BitArray (Untils),
                 RightOfUntils = new BitArray (RightOfUntils)
             };
             
-            toBeDone = new HashSet<ILTLFormula> (ToBeDone);
+            toBeDone = new HashSet<ITLFormula> (ToBeDone);
             tempFormula = GetNew1 (form);
             if (tempFormula != null && !Old.Contains(tempFormula)) 
                 toBeDone.Add (tempFormula);
@@ -341,7 +341,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             set;
         }
 
-        public HashSet<ILTLFormula> Next {
+        public HashSet<ITLFormula> Next {
             get;
             set;
         }
@@ -349,7 +349,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         public InternalState ()
         {
             Transitions = new HashSet<InternalTransition> ();
-            Next = new HashSet<ILTLFormula> ();
+            Next = new HashSet<ITLFormula> ();
         }
 
         public InternalState (InternalNode node) : this ()
@@ -363,7 +363,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     Accepting = acc
                 }
             });
-            Next = new HashSet<ILTLFormula> (node.Next);
+            Next = new HashSet<ITLFormula> (node.Next);
         }
 
         public void Merge (InternalNode node)
@@ -456,9 +456,9 @@ namespace LtlSharp.Buchi.LTL2Buchi
         {
         }
         
-        public HashSet<Node> CreateGraph (ILTLFormula phi) { return null; }
+        public HashSet<Node> CreateGraph (ITLFormula phi) { return null; }
         
-        public BuchiAutomata GetAutomaton (ILTLFormula phi) { 
+        public BuchiAutomata GetAutomaton (ITLFormula phi) { 
             phi = phi.Normalize ();
             
             var init = InternalNode.CreateInitial (phi);

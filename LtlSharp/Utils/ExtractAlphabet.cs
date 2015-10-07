@@ -14,7 +14,7 @@ namespace LtlSharp.Utils
         
         private IList<string> alphabet;
         
-        public ExtractAlphabet (ILTLFormula formula)
+        public ExtractAlphabet (ITLFormula formula)
             : base (formula)
         {
         }

@@ -15,17 +15,17 @@ namespace LtlSharp.Buchi
             set;
         }
         
-        public HashSet<ILTLFormula> New {
+        public HashSet<ITLFormula> New {
             get;
             set;
         }
         
-        public HashSet<ILTLFormula> Old {
+        public HashSet<ITLFormula> Old {
             get;
             set;
         }
         
-        public HashSet<ILTLFormula> Next {
+        public HashSet<ITLFormula> Next {
             get;
             set;
         }
@@ -37,9 +37,9 @@ namespace LtlSharp.Buchi
         {
             Name = name;
             Incoming = new HashSet<string> ();
-            New = new HashSet<ILTLFormula> ();
-            Old = new HashSet<ILTLFormula> ();
-            Next = new HashSet<ILTLFormula> ();
+            New = new HashSet<ITLFormula> ();
+            Old = new HashSet<ITLFormula> ();
+            Next = new HashSet<ITLFormula> ();
         }
         
         public override bool Equals (object obj)

@@ -4,9 +4,9 @@ namespace LtlSharp
 {
     public abstract class Traversal
     {
-        protected ILTLFormula formula;
+        protected ITLFormula formula;
         
-        public Traversal (ILTLFormula formula)
+        public Traversal (ITLFormula formula)
         {
             this.formula = formula;
         }
@@ -16,7 +16,7 @@ namespace LtlSharp
             Visit (formula);
         }
         
-        protected virtual void Visit (ILTLFormula formula)
+        protected virtual void Visit (ITLFormula formula)
         {
             if (formula is Proposition) {
                 VisitProposition (formula as Proposition);

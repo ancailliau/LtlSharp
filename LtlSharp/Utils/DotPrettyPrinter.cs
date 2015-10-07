@@ -8,10 +8,10 @@ namespace LtlSharp.Utils
 	public class DotPrettyPrinter : Traversal
 	{
 		private int i = 0;
-        private Dictionary<ILTLFormula, string> mapping;
+        private Dictionary<ITLFormula, string> mapping;
         private TextWriter writer;
 
-        public DotPrettyPrinter (ILTLFormula formula, TextWriter writer)
+        public DotPrettyPrinter (ITLFormula formula, TextWriter writer)
             : base (formula)
 		{
             this.writer = writer;
@@ -19,7 +19,7 @@ namespace LtlSharp.Utils
         
         public void PrettyPrint ()
         {
-            mapping = new Dictionary<ILTLFormula, string> ();
+            mapping = new Dictionary<ITLFormula, string> ();
             mapping.Add (formula, GetNextId ());
 
             writer.WriteLine ("digraph G {");
@@ -56,7 +56,7 @@ namespace LtlSharp.Utils
             
             Visit (@operator.Enclosed);
         }
-		private string GetNameFor (ILTLFormula f)
+		private string GetNameFor (ITLFormula f)
 		{
 			if (f is Proposition) {
 				return (f as Proposition).Name;

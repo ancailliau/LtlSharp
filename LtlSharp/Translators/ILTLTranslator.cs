@@ -5,7 +5,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
 {
     public interface ILTLTranslator
     {
-        BuchiAutomata GetAutomaton (ILTLFormula phi);
+        BuchiAutomata GetAutomaton (ITLFormula phi);
     }
 }
 

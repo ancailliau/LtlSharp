@@ -6,27 +6,27 @@ namespace LtlSharp
 {
 	#region Interface
 
-	public interface ILTLFormula
+    public interface ITLFormula
     {
-        ILTLFormula Negate ();
-        ILTLFormula Normalize ();
-	}
+        ITLFormula Negate ();
+        ITLFormula Normalize ();
+    }
 
 	#endregion
 
 	#region Abstract classes
 
-	public abstract class IUnaryOperator : ILTLFormula
+	public abstract class IUnaryOperator : ITLFormula
 	{
-		public ILTLFormula Enclosed { get; protected set; }
+		public ITLFormula Enclosed { get; protected set; }
 
-		public IUnaryOperator (ILTLFormula enclosed)
+		public IUnaryOperator (ITLFormula enclosed)
 		{
 			Enclosed = enclosed;
 		}
         
-        public abstract ILTLFormula Negate ();
-        public abstract ILTLFormula Normalize ();
+        public abstract ITLFormula Negate ();
+        public abstract ITLFormula Normalize ();
         
         public override string ToString ()
         {
@@ -34,22 +34,22 @@ namespace LtlSharp
         }
 	}
 
-	public abstract class IBinaryOperator : ILTLFormula
+	public abstract class IBinaryOperator : ITLFormula
 	{
-		public ILTLFormula Left  { get; protected set; }
-        public ILTLFormula Right { get; protected set; }
+		public ITLFormula Left  { get; protected set; }
+        public ITLFormula Right { get; protected set; }
 
-        public abstract ILTLFormula Negate ();
-        public abstract ILTLFormula Normalize ();
+        public abstract ITLFormula Negate ();
+        public abstract ITLFormula Normalize ();
 
-		public IBinaryOperator (ILTLFormula left, ILTLFormula right)
+		public IBinaryOperator (ITLFormula left, ITLFormula right)
 		{
 			Left = left; Right = right;
 		}
 	}
     
     
-    public interface ILiteral : ILTLFormula
+    public interface ILiteral : ITLFormula
     {}
 
     #endregion
@@ -57,11 +57,11 @@ namespace LtlSharp
 	#region Logic operators
 
     public class True : ILiteral {
-        public ILTLFormula Negate ()
+        public ITLFormula Negate ()
         {
             return new False ();
         }
-        public ILTLFormula Normalize ()
+        public ITLFormula Normalize ()
         {
             return this;
         }
@@ -87,11 +87,11 @@ namespace LtlSharp
     }
     
     public class False : ILiteral {
-        public ILTLFormula Negate ()
+        public ITLFormula Negate ()
         {
             return new True ();
         }
-        public ILTLFormula Normalize ()
+        public ITLFormula Normalize ()
         {
             return this;
         }
@@ -130,12 +130,12 @@ namespace LtlSharp
 			return Name;
         }
         
-        public ILTLFormula Negate ()
+        public ITLFormula Negate ()
         {
             return new Negation (this);
         }
         
-        public ILTLFormula Normalize ()
+        public ITLFormula Normalize ()
         {
             return this;
         }
@@ -163,16 +163,16 @@ namespace LtlSharp
 
 	public class Implication : IBinaryOperator
 	{
-		public Implication (ILTLFormula left, ILTLFormula right)
+		public Implication (ITLFormula left, ITLFormula right)
 			: base (left, right)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return Normalize ().Negate ();
         }
         
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return new Disjunction (Left.Normalize ().Negate (), Right.Normalize ());
         }
@@ -204,16 +204,16 @@ namespace LtlSharp
 	
 	public class Equivalence : IBinaryOperator
 	{
-		public Equivalence (ILTLFormula left, ILTLFormula right)
+		public Equivalence (ITLFormula left, ITLFormula right)
 			: base (left, right)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return Normalize ().Negate ();
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             var left = Left.Normalize ();
             var right = Right.Normalize ();
@@ -251,16 +251,16 @@ namespace LtlSharp
 
     public class Conjunction : IBinaryOperator
     {
-        public Conjunction (ILTLFormula left, ILTLFormula right)
+        public Conjunction (ITLFormula left, ITLFormula right)
             : base (left, right)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return new Disjunction (Left.Negate (), Right.Negate ());
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return new Conjunction (Left.Normalize (), Right.Normalize ());
         }
@@ -293,16 +293,16 @@ namespace LtlSharp
 
     public class Disjunction : IBinaryOperator
     {
-        public Disjunction (ILTLFormula left, ILTLFormula right)
+        public Disjunction (ITLFormula left, ITLFormula right)
             : base (left, right)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return new Conjunction (Left.Negate (), Right.Negate ());
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return new Disjunction (Left.Normalize (), Right.Normalize ());
         }
@@ -335,16 +335,16 @@ namespace LtlSharp
 
     public class Negation : IUnaryOperator, ILiteral
 	{
-		public Negation (ILTLFormula expression)
+		public Negation (ITLFormula expression)
 			: base (expression)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return Enclosed;
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return Enclosed.Negate ();
         }
@@ -375,19 +375,19 @@ namespace LtlSharp
 
     public class ParenthesedExpression : IUnaryOperator
     {
-        public ParenthesedExpression (ILTLFormula expression)
+        public ParenthesedExpression (ITLFormula expression)
             : base (expression)
         {
             if (expression is ParenthesedExpression)
                 Enclosed = (expression as ParenthesedExpression).Enclosed;
         }
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return Enclosed.Negate ();
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return Enclosed.Normalize ();
         }
@@ -421,16 +421,16 @@ namespace LtlSharp
 
 	public class Next : IUnaryOperator
 	{
-		public Next (ILTLFormula expression)
+		public Next (ITLFormula expression)
 			: base (expression)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return new Next (Enclosed.Negate ());
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return new Next (Enclosed.Normalize ());
         }
@@ -461,16 +461,16 @@ namespace LtlSharp
 
 	public class Finally : IUnaryOperator
 	{
-		public Finally (ILTLFormula expression)
+		public Finally (ITLFormula expression)
 			: base (expression)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return new Globally (Enclosed.Negate ());
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return new Until (new True (), Enclosed.Normalize ());
         }
@@ -501,16 +501,16 @@ namespace LtlSharp
 
 	public class Globally : IUnaryOperator
 	{
-		public Globally (ILTLFormula expression)
+		public Globally (ITLFormula expression)
 			: base (expression)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return new Finally (Enclosed.Negate ());
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return new Release (new False (), Enclosed.Normalize ());
         }
@@ -541,16 +541,16 @@ namespace LtlSharp
 
 	public class Until : IBinaryOperator
 	{
-		public Until (ILTLFormula left, ILTLFormula right)
+		public Until (ITLFormula left, ITLFormula right)
 			: base (left, right)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return new Release (Left.Negate (), Right.Negate ());
         }    
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return new Until (Left.Normalize (), Right.Normalize ());
         }    
@@ -582,16 +582,16 @@ namespace LtlSharp
 	
 	public class Release : IBinaryOperator
 	{
-		public Release (ILTLFormula left, ILTLFormula right)
+		public Release (ITLFormula left, ITLFormula right)
 			: base (left, right)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return new Until (Left.Negate (), Right.Negate ());
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return new Release (Left.Normalize (), Right.Normalize ());
         } 
@@ -623,16 +623,16 @@ namespace LtlSharp
 	
 	public class Unless : IBinaryOperator
 	{
-		public Unless (ILTLFormula left, ILTLFormula right)
+		public Unless (ITLFormula left, ITLFormula right)
 			: base (left, right)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return Normalize ().Negate ();
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             var right = Right.Normalize ();
             var left = Left.Normalize ();
@@ -666,16 +666,16 @@ namespace LtlSharp
 	
 	public class StrongEquivalence : IBinaryOperator
 	{
-		public StrongEquivalence (ILTLFormula left, ILTLFormula right)
+		public StrongEquivalence (ITLFormula left, ITLFormula right)
 			: base (left, right)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return Normalize ().Negate ();
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return new Globally (new Equivalence (Left, Right)).Normalize ();
         } 
@@ -708,16 +708,16 @@ namespace LtlSharp
 	
 	public class StrongImplication : IBinaryOperator
 	{
-		public StrongImplication (ILTLFormula left, ILTLFormula right)
+		public StrongImplication (ITLFormula left, ITLFormula right)
 			: base (left, right)
         {}
 
-        public override ILTLFormula Negate ()
+        public override ITLFormula Negate ()
         {
             return Normalize ().Negate ();
         }
 
-        public override ILTLFormula Normalize ()
+        public override ITLFormula Normalize ()
         {
             return new Globally (new Implication (Left, Right)).Normalize ();
         } 
