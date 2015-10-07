@@ -88,6 +88,7 @@ namespace CheckMyModels.Tests.Models
             var s8 = mc.AddVertex ("8");
             var won = mc.AddVertex ("won");
             var lost = mc.AddVertex ("lost");
+            mc.Initial.Add (start, 1);
             
             mc.AddEdge (start, 2d/9, won);
             mc.AddEdge (start, 1d/12, s4);

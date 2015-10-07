@@ -57,6 +57,26 @@ namespace CheckMyModels.Tests.Models
             Assert.AreEqual (248d / (36 * 36), dict [s5], .00001);
             Assert.AreEqual (305d / (36 * 36), dict [s6], .00001);
         }
+        
+        [Test ()]
+        public void TestConstrainedReachabilityTransient ()
+        {
+            var mc = TestMarkovChain.GetExample ("craps");
+            var start = mc.GetVertex ("start");
+            var s4 = mc.GetVertex ("4");
+            var s5 = mc.GetVertex ("5");
+            var s6 = mc.GetVertex ("6");
+            var won = mc.GetVertex ("won");
+
+            var dict = mc.TransientConstrainedReachability (new [] { start, s4, s5, s6 }, new [] { won }, 0);
+            Assert.AreEqual (0, dict, .00001);
+
+            dict = mc.TransientConstrainedReachability (new [] { start, s4, s5, s6 }, new [] { won }, 1);
+            Assert.AreEqual (2d, dict * 9, .00001);
+            
+            dict = mc.TransientConstrainedReachability (new [] { start, s4, s5, s6 }, new [] { won }, 2);
+            Assert.AreEqual (338d, dict * (36*36), .00001);
+        }
     }
 }
 
