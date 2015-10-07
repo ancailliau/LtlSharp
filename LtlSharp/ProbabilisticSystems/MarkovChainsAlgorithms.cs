@@ -65,6 +65,22 @@ namespace LtlSharp.ProbabilisticSystems
             return dict;
         }
         
+        /// <summary>
+        /// Returns the probability to reach a node in B, while only visiting nodes in C. This is the constrained
+        /// reachability probability and corresponds to the probability to satisfy C U B. 
+        /// </summary>
+        /// <description>
+        /// When using iterative resolution, the iteration is stop when the maximum difference between two solutions
+        /// is bounded by <c>Epsilon</c> or if the <c>n</c> steps were performed.
+        /// </description>
+        /// <returns>The reachability probability.</returns>
+        /// <param name="mc">Markov Chain.</param>
+        /// <param name="C">C.</param>
+        /// <param name="B">B.</param>
+        /// <param name="iterative">If set to <c>true</c>, use iterative resolution. Exact resolution otherwise.</param>
+        /// <param name="epsilon">Epsilon.</param>
+        /// <param name="n">Number of steps, if iterative resolution. Set to <c>-1</c> to not stop after <c>n</c> 
+        /// steps.</param>
         public static IDictionary<MarkovNode, double> ConstrainedReachability (this MarkovChain mc, 
             IEnumerable<MarkovNode> C, 
             IEnumerable<MarkovNode> B,
