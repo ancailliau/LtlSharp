@@ -200,11 +200,11 @@ namespace LtlSharp.ProbabilisticSystems
             // See "Principles of model checking", p 766ff.
             var mcprime = new MarkovChain (mc);
             foreach (var b in B) {
-                mc.ClearOutEdges (b);
-                mc.AddEdge (b, b);
+                mcprime.ClearOutEdges (b);
+                mcprime.AddEdge (b, b);
             }
             // S \ AllPre(S \ AllPre (B))
-            return mc.ExceptNodes (mc.AllPre (mc.ExceptNodes (mc.AllPre (B))));
+            return mcprime.ExceptNodes (mcprime.AllPre (mcprime.ExceptNodes (mcprime.AllPre (B))));
         }
         
         /// <summary>
