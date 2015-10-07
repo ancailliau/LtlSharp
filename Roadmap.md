@@ -6,12 +6,11 @@ Done:
 
 * Markov Chains
   * Reachability Probabilities
+  * Transient Reachability Probabilities
+  * Qualitative Properties
 
 To do:
 
-* Markov Chains
-  * Transient Reachability Probabilities
-  * Qualitative Properties
 * Probabilistic Computation Tree Logic
   * PCTL Model Checking
   * The qualitative fragment of PCTL
