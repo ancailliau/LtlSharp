@@ -68,6 +68,7 @@
     <Compile Include="TestOnTheFly.cs" />
     <Compile Include="Models\TestMarkovChain.cs" />
     <Compile Include="TestProbabilisticSystems\TestReachability.cs" />
+    <Compile Include="TestProbabilisticSystems\TestPCTL.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

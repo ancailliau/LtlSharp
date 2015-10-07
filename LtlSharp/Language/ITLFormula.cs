@@ -541,8 +541,19 @@ namespace LtlSharp
 
 	public class Until : IBinaryOperator
 	{
+        public int Bound {
+            get;
+            set;
+        }
+        
+        public Until (ITLFormula left, ITLFormula right, int bound)
+            : base (left, right)
+        {
+            Bound = bound;
+        }
+        
 		public Until (ITLFormula left, ITLFormula right)
-			: base (left, right)
+			: this (left, right, -1)
         {}
 
         public override ITLFormula Negate ()
@@ -748,5 +759,83 @@ namespace LtlSharp
 	}
 
 	#endregion
+    
+    #region 
+    
+    public class ProbabilisticOperator : IUnaryOperator
+    {
+        public double LowerBound {
+            get;
+            set;
+        }
+        
+        public double UpperBound {
+            get;
+            set;
+        }
+        
+        public bool InclusiveLowerBound {
+            get;
+            set;
+        }
+        
+        public bool InclusiveUpperBound {
+            get;
+            set;
+        }
+        
+        public ProbabilisticOperator (ITLFormula expression, double p)
+            : this (expression, p, p)
+        {}
+        
+        public ProbabilisticOperator (ITLFormula expression, double lower, double upper)
+            : base (expression)
+        {
+            LowerBound = lower;
+            UpperBound = upper;
+            InclusiveLowerBound = true;
+            InclusiveUpperBound = true;
+        }
+
+        public override ITLFormula Negate ()
+        {
+            return Enclosed;
+        }
+
+        public override ITLFormula Normalize ()
+        {
+            return Enclosed.Negate ();
+        }
+
+        public override bool Equals (object obj)
+        {
+            if (obj == null)
+                return false;
+            if (ReferenceEquals (this, obj))
+                return true;
+            if (obj.GetType () != typeof(ProbabilisticOperator))
+                return false;
+            ProbabilisticOperator other = (ProbabilisticOperator)obj;
+            return Enclosed.Equals (other.Enclosed)
+                & LowerBound == other.LowerBound & InclusiveLowerBound == other.InclusiveLowerBound
+                    & UpperBound == other.UpperBound & InclusiveUpperBound == other.InclusiveUpperBound;
+        }
+
+        public override int GetHashCode ()
+        {
+            return 17 + 23 * (Enclosed.GetHashCode () + 23 * (LowerBound.GetHashCode () + 23 * (InclusiveLowerBound.GetHashCode ()
+                + 23 * (UpperBound.GetHashCode () + 23 * InclusiveUpperBound.GetHashCode ()))));
+        }
+
+        public override string ToString ()
+        {
+            return string.Format ("P{1}{2},{3}{4}{0}", 
+                string.Format (Enclosed is IBinaryOperator ? "({0})" : "{0}", Enclosed),
+                InclusiveLowerBound ? "[" : "]", LowerBound, InclusiveUpperBound ? "]" : "[", UpperBound
+            );
+        }
+    }
+    
+    #endregion
 }
 
