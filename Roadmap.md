@@ -8,11 +8,12 @@ Done:
   * Reachability Probabilities
   * Transient Reachability Probabilities
   * Qualitative Properties
+* Probabilistic Computation Tree Logic
+  * PCTL Model Checking
 
 To do:
 
 * Probabilistic Computation Tree Logic
-  * PCTL Model Checking
   * The qualitative fragment of PCTL
 * Linear-time properties 
 * Model-Checking PCTL*
