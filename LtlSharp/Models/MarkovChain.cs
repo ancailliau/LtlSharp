@@ -289,6 +289,11 @@ namespace LtlSharp.Models
             return Enumerable.Empty<MarkovNode> ();
         }
         
+        public IEnumerable<MarkovNode> Post (IEnumerable<MarkovNode> vs) 
+        {
+            return vs.SelectMany (v => Post(v)).Distinct ();
+        }
+        
         /// <summary>
         /// Returns all the successors of the specified node <c>v</c>, i.e. all the nodes that can be reached from the
         /// specified node.

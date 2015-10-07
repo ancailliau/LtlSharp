@@ -82,6 +82,7 @@
     <Compile Include="Translators\ILTLTranslator.cs" />
     <Compile Include="Models\MarkovChain.cs" />
     <Compile Include="ProbabilisticSystems\MarkovChainsAlgorithms.cs" />
+    <Compile Include="Utils\TrajanAlgorithm.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

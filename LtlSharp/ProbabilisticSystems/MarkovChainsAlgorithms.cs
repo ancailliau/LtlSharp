@@ -3,6 +3,7 @@ using LtlSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using LtlSharp.Utils;
 
 namespace LtlSharp.ProbabilisticSystems
 {
@@ -205,6 +206,31 @@ namespace LtlSharp.ProbabilisticSystems
             }
             // S \ AllPre(S \ AllPre (B))
             return mcprime.ExceptNodes (mcprime.AllPre (mcprime.ExceptNodes (mcprime.AllPre (B))));
+        }
+        
+        /// <summary>
+        /// Returns the nodes satisfying G(F(B)), i.e. nodes that always eventually reach a node in B.
+        /// </summary>
+        /// <returns>The nodes repeatly reaching a node in B.</returns>
+        /// <param name="mc">Markov Chain.</param>
+        /// <param name="B">B.</param>
+        public static IEnumerable<MarkovNode> QualitativeRepeatedReachability (MarkovChain mc, IEnumerable<MarkovNode> B)
+        {
+            var bsccs = mc.GetBSCC ();
+            return mc.Nodes.Where (n => bsccs.Where (bscc => mc.AllPre (bscc).Contains (n))
+                                             .All   (bscc => bscc.Intersect (B).Any ()));
+        }
+        
+        /// <summary>
+        /// Returns the probability for repeated reachability of all nodes in B.
+        /// </summary>
+        /// <returns>The repeated reachability.</returns>
+        /// <param name="mc">Mc.</param>
+        /// <param name="B">B.</param>
+        public static IDictionary<MarkovNode, double> QuantitativeRepeatedReachability (MarkovChain mc, IEnumerable<MarkovNode> B)
+        {
+            var U = mc.GetBSCC ().Where (bscc => bscc.Intersect (B).Any ()).SelectMany (x => x);
+            return mc.ReachabilityLinearSystem (U);
         }
         
         /// <summary>
