@@ -829,7 +829,7 @@ namespace LtlSharp
 
         public override string ToString ()
         {
-            return string.Format ("P{1}{2},{3}{4}{0}", 
+            return string.Format ("P{1}{2},{4}{3}{0}", 
                 string.Format (Enclosed is IBinaryOperator ? "({0})" : "{0}", Enclosed),
                 InclusiveLowerBound ? "[" : "]", LowerBound, InclusiveUpperBound ? "]" : "[", UpperBound
             );
