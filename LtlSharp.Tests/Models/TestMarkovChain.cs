@@ -129,6 +129,33 @@ namespace CheckMyModels.Tests.Models
             return mc;
         }
         
+        public static MarkovChain GetExamplePMCLecture1513 () {
+            var mc = new MarkovChain ();
+            var s0 = mc.AddVertex ("s0");
+            var s1 = mc.AddVertex ("s1");
+            var s2 = mc.AddVertex ("s2");
+            var s3 = mc.AddVertex ("s3");
+            var s4 = mc.AddVertex ("s4");
+            var s5 = mc.AddVertex ("s5");
+            
+            mc.AddEdge (s0, .5, s1);
+            mc.AddEdge (s0, .5, s3);
+            
+            mc.AddEdge (s1, .5, s0);
+            mc.AddEdge (s1, .25, s4);
+            mc.AddEdge (s1, .25, s2);
+            
+            mc.AddEdge (s2, s5);
+            mc.AddEdge (s5, s2);
+            
+            mc.AddEdge (s3, s3);
+            mc.AddEdge (s4, s4);
+            
+            mc.SetInitial (s0, 1);
+            
+            return mc;
+        }
+        
         public static MarkovChain GetExample (string example) {
             if (example == "101") {
                 return GetExampleFig101 ();
@@ -136,6 +163,8 @@ namespace CheckMyModels.Tests.Models
                 return GetExampleFig102 ();
             } else if (example == "103" | example == "craps") {
                 return GetExampleFig103 ();
+            } else if (example == "pmc-lecture-15-13") {
+                return GetExamplePMCLecture1513 ();
             }
             throw new NotImplementedException ();
         }

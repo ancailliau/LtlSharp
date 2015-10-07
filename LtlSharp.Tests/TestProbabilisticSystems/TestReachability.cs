@@ -3,6 +3,7 @@ using NUnit.Framework;
 using LtlSharp.Models;
 using System.Linq;
 using LtlSharp.ProbabilisticSystems;
+using System.Collections.Generic;
 
 namespace CheckMyModels.Tests.Models
 {
@@ -76,6 +77,74 @@ namespace CheckMyModels.Tests.Models
             
             dict = mc.TransientConstrainedReachability (new [] { start, s4, s5, s6 }, new [] { won }, 2);
             Assert.AreEqual (338d, dict * (36*36), .00001);
+        }
+        
+        [Test ()]
+        public void TestQualitativeRepeatedReachability ()
+        {
+            var mc = TestMarkovChain.GetExample ("pmc-lecture-15-13");
+            var s0 = mc.GetVertex ("s0");
+            var s1 = mc.GetVertex ("s1");
+            var s2 = mc.GetVertex ("s2");
+            var s3 = mc.GetVertex ("s3");
+            var s4 = mc.GetVertex ("s4");
+            var s5 = mc.GetVertex ("s5");
+            
+            var B = new HashSet<MarkovNode> (new [] { s3, s4 });
+            var C = new HashSet<MarkovNode> (new [] { s5 });
+            
+            Assert.That (mc.QualitativeRepeatedReachability (B.Union (C)).Contains (s0));
+            Assert.That (!mc.QualitativeRepeatedReachability (B).Contains (s0));
+            Assert.That (mc.QualitativeRepeatedReachability (C).Contains (s2));
+        }
+        
+        [Test ()]
+        public void TestQuantitativeRepeatedReachability ()
+        {
+            var mc = TestMarkovChain.GetExample ("pmc-lecture-15-13");
+            var s0 = mc.GetVertex ("s0");
+            var s1 = mc.GetVertex ("s1");
+            var s2 = mc.GetVertex ("s2");
+            var s3 = mc.GetVertex ("s3");
+            var s4 = mc.GetVertex ("s4");
+            var s5 = mc.GetVertex ("s5");
+
+            var B = new HashSet<MarkovNode> (new [] { s3, s4 });
+            var C = new HashSet<MarkovNode> (new [] { s5 });
+
+            var dict = mc.QuantitativeRepeatedReachability (B.Union (C));
+            Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in B Union C.");
+            Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in B Union C.");
+            Assert.That (dict.ContainsKey (s2), "State 's2' cannot repeatly reach a state in B Union C.");
+            Assert.That (dict.ContainsKey (s3), "State 's3' cannot repeatly reach a state in B Union C.");
+            Assert.That (dict.ContainsKey (s4), "State 's4' cannot repeatly reach a state in B Union C.");
+            Assert.That (dict.ContainsKey (s5), "State 's5' cannot repeatly reach a state in B Union C.");
+            Assert.AreEqual (dict [s0], 1);
+            Assert.AreEqual (dict [s1], 1);
+            Assert.AreEqual (dict [s2], 1);
+            Assert.AreEqual (dict [s3], 1);
+            Assert.AreEqual (dict [s4], 1);
+            Assert.AreEqual (dict [s5], 1);
+            
+            dict = mc.QuantitativeRepeatedReachability (B);
+            Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in B.");
+            Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in B.");
+            Assert.That (dict.ContainsKey (s3), "State 's3' cannot repeatly reach a state in B.");
+            Assert.That (dict.ContainsKey (s4), "State 's4' cannot repeatly reach a state in B.");
+            Assert.AreEqual (dict [s0], 5d/6, 1e-5);
+            Assert.AreEqual (dict [s1], 2d/3, 1e-5);
+            Assert.AreEqual (dict [s3], 1);
+            Assert.AreEqual (dict [s4], 1);
+            
+            dict = mc.QuantitativeRepeatedReachability (C);
+            Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in C.");
+            Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in C.");
+            Assert.That (dict.ContainsKey (s5), "State 's5' cannot repeatly reach a state in C.");
+            Assert.That (dict.ContainsKey (s2), "State 's2' cannot repeatly reach a state in C.");
+            Assert.AreEqual (dict [s0], 1d/6, 1e-5);
+            Assert.AreEqual (dict [s1], 1d/3, 1e-5);
+            Assert.AreEqual (dict [s5], 1);
+            Assert.AreEqual (dict [s2], 1);
         }
     }
 }
