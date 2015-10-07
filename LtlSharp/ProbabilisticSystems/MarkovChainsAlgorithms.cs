@@ -196,7 +196,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <returns>The set of nodes with almost sure reachability.</returns>
         /// <param name="mc">Markov Chain.</param>
         /// <param name="B">B.</param>
-        public static IEnumerable<MarkovNode> GlobalAlmostSureReachability (MarkovChain mc, IEnumerable<MarkovNode> B)
+        public static IEnumerable<MarkovNode> GlobalAlmostSureReachability (this MarkovChain mc, IEnumerable<MarkovNode> B)
         {
             // See "Principles of model checking", p 766ff.
             var mcprime = new MarkovChain (mc);
@@ -214,7 +214,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <returns>The nodes repeatly reaching a node in B.</returns>
         /// <param name="mc">Markov Chain.</param>
         /// <param name="B">B.</param>
-        public static IEnumerable<MarkovNode> QualitativeRepeatedReachability (MarkovChain mc, IEnumerable<MarkovNode> B)
+        public static IEnumerable<MarkovNode> QualitativeRepeatedReachability (this MarkovChain mc, IEnumerable<MarkovNode> B)
         {
             var bsccs = mc.GetBSCC ();
             return mc.Nodes.Where (n => bsccs.Where (bscc => mc.AllPre (bscc).Contains (n))
@@ -227,7 +227,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <returns>The repeated reachability.</returns>
         /// <param name="mc">Mc.</param>
         /// <param name="B">B.</param>
-        public static IDictionary<MarkovNode, double> QuantitativeRepeatedReachability (MarkovChain mc, IEnumerable<MarkovNode> B)
+        public static IDictionary<MarkovNode, double> QuantitativeRepeatedReachability (this MarkovChain mc, IEnumerable<MarkovNode> B)
         {
             var U = mc.GetBSCC ().Where (bscc => bscc.Intersect (B).Any ()).SelectMany (x => x);
             return mc.ReachabilityLinearSystem (U);
