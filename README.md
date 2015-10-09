@@ -1,8 +1,6 @@
 # LtlSharp
 
-* [Project Source](http://github.com/ancailliau/ltlsharp)
-
-![Travis CI Build](https://travis-ci.org/ancailliau/LtlSharp.svg?branch=master)
+[![Travis CI Build](https://travis-ci.org/ancailliau/LtlSharp.svg?branch=master)](https://travis-ci.org/ancailliau/LtlSharp)
 
 LtlSharp aims at providing model checking feature as a library for easy integration with external tools.
 
