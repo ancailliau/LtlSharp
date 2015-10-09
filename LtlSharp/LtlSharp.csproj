@@ -84,6 +84,11 @@
     <Compile Include="Utils\TrajanAlgorithm.cs" />
     <Compile Include="Language\ITLFormula.cs" />
     <Compile Include="ModelCheckers\PCTLModelChecker.cs" />
+    <Compile Include="Translators\SafraDeterminization.cs" />
+    <Compile Include="Translators\Transformer.cs" />
+    <Compile Include="Automata\RabinAutomata.cs" />
+    <Compile Include="Translators\Fold.cs" />
+    <Compile Include="Utils\CollectionUtils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
