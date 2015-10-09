@@ -4,3 +4,7 @@ test-results
 *.userprefs
 *.tokens
 .DS_Store
+LtlSharp.Temp/*
+TestResult.xml
+packages/*
+testrunner/*
