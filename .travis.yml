@@ -1,0 +1,9 @@
+language: csharp
+sudo: false
+solution: LtlSharp.sln
+install:
+  - nuget restore LtlSharp.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Debug LtlSharp.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./LtlSharp.Tests/bin/Debug/CheckMyModels.Tests.dll
