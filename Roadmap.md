@@ -13,8 +13,6 @@ Done:
 
 To do:
 
-* Probabilistic Computation Tree Logic
-  * The qualitative fragment of PCTL
 * Linear-time properties 
 * Model-Checking PCTL*
 * Markov Decision Processes
