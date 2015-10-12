@@ -11,10 +11,12 @@ namespace LtlSharp.Translators
     public static class ProductAutomata
     {
         public static MarkovChain Product (this MarkovChain mc, BuchiAutomata ba, IEnumerable<MarkovNode> initials, 
+            out HashSet<MarkovNode> condition,
             out Dictionary<MarkovNode, MarkovNode> mapping2)
         {
             var mapping = new Dictionary<Tuple<MarkovNode,AutomataNode>, MarkovNode> ();
             mapping2 = new Dictionary<MarkovNode, MarkovNode> ();
+            condition = new HashSet<MarkovNode> ();
             
             var accept = new Proposition ("Accept");
             var naccept = new Negation (accept);
@@ -38,9 +40,7 @@ namespace LtlSharp.Translators
                 if (succBA != null) {
                     var n = product.AddVertex (/*"s" + (i++)*/ initial.Name + " x (" + succBA.Name + ")" );
                     if (ba.AcceptanceSet.Contains (succBA)) {
-                        n.Labels.Add (accept);
-                    } else {
-                        n.Labels.Add (naccept);
+                        condition.Add (n);
                     }
 
                     var tuple = new Tuple<MarkovNode, AutomataNode> (initial, succBA);
@@ -79,9 +79,7 @@ namespace LtlSharp.Translators
                         if (!mapping.ContainsKey (tuple)) {
                             n = product.AddVertex ( succMC.Name + " x (" + succBA.Name + ")"  /* "s" + (i++) */ );
                             if (ba.AcceptanceSet.Contains (succBA)) {
-                                n.Labels.Add (accept);
-                            } else {
-                                n.Labels.Add (naccept);
+                                condition.Add (n);
                             }
 
                             mapping.Add (tuple, n);

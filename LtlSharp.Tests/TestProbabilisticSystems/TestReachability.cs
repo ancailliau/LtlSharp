@@ -19,7 +19,7 @@ namespace CheckMyModels.Tests.Models
             var ntry = mc.GetVertex ("try");
             var lost = mc.GetVertex ("lost");
 
-            var dict = mc.ReachabilityLinearSystem (new [] { delivered });
+            var dict = mc.Reachability (new [] { delivered });
             Assert.NotNull (dict);
             
             Assert.That (dict.ContainsKey (start), "Node 'start' is not detected as reachable.");
@@ -102,6 +102,7 @@ namespace CheckMyModels.Tests.Models
         public void TestQuantitativeRepeatedReachability ()
         {
             var mc = TestMarkovChain.GetExample ("pmc-lecture-15-13");
+            
             var s0 = mc.GetVertex ("s0");
             var s1 = mc.GetVertex ("s1");
             var s2 = mc.GetVertex ("s2");
@@ -136,6 +137,7 @@ namespace CheckMyModels.Tests.Models
             Assert.AreEqual (dict [s3], 1);
             Assert.AreEqual (dict [s4], 1);
             
+
             dict = mc.QuantitativeRepeatedReachability (C);
             Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in C.");
             Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in C.");
