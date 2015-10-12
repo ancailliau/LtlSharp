@@ -2,6 +2,8 @@
 using QuickGraph;
 using System.Collections.Generic;
 using System.Linq;
+using QuickGraph.Graphviz;
+using QuickGraph.Graphviz.Dot;
 
 namespace LtlSharp.Models
 {
@@ -36,7 +38,7 @@ namespace LtlSharp.Models
         /// <value>The labels.</value>
         public ISet<ILiteral> Labels {
             get;
-            private set;
+            set;
         }
         
         /// <summary>
@@ -400,6 +402,27 @@ namespace LtlSharp.Models
         public void ClearOutEdges (MarkovNode node)
         {
             graph.ClearOutEdges (node.Id);
+        }
+        
+        public double GetProbability (MarkovNode source, MarkovNode target)
+        {
+            return graph.OutEdges (source.Id).Single (x => x.Target.Equals (target.Id)).Probability;
+        }
+
+        public string ToDot ()
+        {
+            var graphviz = new GraphvizAlgorithm<int, MarkovTransition> (this.graph);
+            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<int> e) => {
+                e.VertexFormatter.Label = nodes[e.Vertex].Name + "{" + string.Join (",", nodes[e.Vertex].Labels) + "}";
+                if (this.Initial.ContainsKey (nodes[e.Vertex]))
+                    e.VertexFormatter.Style = GraphvizVertexStyle.Bold;
+                //                if (rabin.AcceptanceSet.Contains (e.Vertex))
+                //                    e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.DoubleCircle;
+            };
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<int, MarkovTransition> e) => {
+                e.EdgeFormatter.Label.Value = Math.Round (e.Edge.Probability, 2).ToString ();
+            };
+            return graphviz.Generate ();
         }
     }
 }

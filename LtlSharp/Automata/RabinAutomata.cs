@@ -8,22 +8,28 @@ using LtlSharp.Utils;
 
 namespace LtlSharp.Automata
 {
-    public class RabinCondition
+    public class RabinCondition<T>
     {
-        public HashSet<AutomataNode> E {
+        public HashSet<T> E {
             get;
             set;
         }
         
-        public HashSet<AutomataNode> F {
+        public HashSet<T> F {
             get;
             set;
         }
         
-        public RabinCondition (IEnumerable<AutomataNode> e, IEnumerable<AutomataNode> f)
+        public RabinCondition ()
         {
-            E = new HashSet<AutomataNode> (e);
-            F = new HashSet<AutomataNode> (f);
+            E = new HashSet<T> ();
+            F = new HashSet<T> ();
+        }
+        
+        public RabinCondition (IEnumerable<T> e, IEnumerable<T> f)
+        {
+            E = new HashSet<T> (e);
+            F = new HashSet<T> (f);
         }
         
         public override bool Equals (object obj)
@@ -32,9 +38,9 @@ namespace LtlSharp.Automata
                 return false;
             if (ReferenceEquals (this, obj))
                 return true;
-            if (obj.GetType () != typeof(RabinCondition))
+            if (obj.GetType () != typeof(RabinCondition<T>))
                 return false;
-            RabinCondition other = (RabinCondition)obj;
+            var other = (RabinCondition<T>)obj;
             return E.SetEquals (other.E) && F.SetEquals (other.F);
         }
         
@@ -52,12 +58,12 @@ namespace LtlSharp.Automata
     public class RabinAutomata : AdjacencyGraph<AutomataNode, LabeledAutomataTransition<AutomataNode>> 
     {
         public HashSet<AutomataNode> InitialNodes;
-        public HashSet<RabinCondition> AcceptanceSet;
+        public HashSet<RabinCondition<AutomataNode>> AcceptanceSet;
 
         public RabinAutomata () : base ()
         {
             InitialNodes = new HashSet<AutomataNode> ();
-            AcceptanceSet = new HashSet<RabinCondition> ();
+            AcceptanceSet = new HashSet<RabinCondition<AutomataNode>> ();
         }
 
         public string ToDot ()

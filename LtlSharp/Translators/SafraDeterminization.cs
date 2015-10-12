@@ -249,7 +249,7 @@ namespace LtlSharp.Translators
             /// <returns><c>True</c> if there is a node with the corresponding identifier, <c>False</c> otherwise</returns>
             public bool ContainsIdentifier (int id)
             {
-                return id != this.Id & Children.Any (x => x.ContainsIdentifier (id));
+                return id == this.Id | Children.Any (x => x.ContainsIdentifier (id));
             }
 
             /// <summary>
@@ -314,6 +314,12 @@ namespace LtlSharp.Translators
         {
         }
         
+        string PrintTree (SafraTree t, int indent = 0)
+        {
+            return new String ('-', indent) + t.Id + " - " + string.Join (",", t.MacroState.Select (x => x.Name)) + " - " + (t.Mark ? "!" : "")
+                + "\n" + string.Join ("\n", t.Children.Select (x => PrintTree (x, indent + 1)));
+        }
+        
         /// <summary>
         /// Transform the specified Non-Deterministic Buchi Automata into a Deterministic Rabin Automata.
         /// </summary>
@@ -370,14 +376,23 @@ namespace LtlSharp.Translators
             
             foreach (var t in Transitions) {
                 foreach (var e in t.Value) {
-                    rabin.AddEdge (new LabeledAutomataTransition<AutomataNode> (mapping[t.Key], mapping[e.Target], e.Labels));
+                    var edge = new LabeledAutomataTransition<AutomataNode> (mapping [t.Key], mapping [e.Target], e.Labels);
+                    if (!rabin.OutEdges (mapping [t.Key]).Contains (edge)) {
+                        rabin.AddEdge (edge);
+                    }
                 }
             }
             
+//            foreach (var kk in Transitions.Keys) {
+//                Console.WriteLine (mapping[kk].Name + " = ");
+//                Console.WriteLine (PrintTree (kk));
+//            }
+            
             foreach (int k in Transitions.Keys.Select(t => t.Id).Distinct ()) {
+//                Console.WriteLine (k + " identifier on the test");
                 var r1 = Transitions.Keys.Where (x => !x.ContainsIdentifier (k)).Select (x => mapping[x]);
                 var r2 = Transitions.Keys.Where (x => x.ContainsMarkedNode (k)).Select (x => mapping[x]);
-                rabin.AcceptanceSet.Add (new RabinCondition (r1, r2));
+                rabin.AcceptanceSet.Add (new RabinCondition<AutomataNode> (r1, r2));
             }
             
             return rabin;

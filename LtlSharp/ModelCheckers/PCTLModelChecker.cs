@@ -23,13 +23,18 @@ namespace LtlSharp.ModelCheckers
         {
             var sat = new Dictionary<ITLFormula, HashSet<MarkovNode>> ();
             
+            Console.WriteLine ("Initial formula " + phi);
+            
             foreach (var f in EnumerateSubFormulae (this.phi)) {
+                Console.WriteLine ("Enumerate : " + f);
                 if (sat.ContainsKey (f))
                     continue;
                 
                 var satSet = ComputeSatisfactionSet (f, sat);
                 sat.Add (f, satSet);
             }
+            
+            Console.WriteLine (phi);
             
             return sat[phi];
         }
@@ -44,7 +49,7 @@ namespace LtlSharp.ModelCheckers
                 foreach (var s in EnumerateSubFormulae(binary.Right)) {
                     yield return s;
                 }
-                if (phi is Conjunction)
+                if (phi is Conjunction )
                     yield return phi;
                 
             } else if (phi is IUnaryOperator) {
@@ -55,7 +60,7 @@ namespace LtlSharp.ModelCheckers
                 if (phi is Negation | phi is ProbabilisticOperator)
                     yield return phi;
                 
-            } else {
+            } else if (phi is ILiteral) {
                 yield return phi;
             }
         }
@@ -79,6 +84,14 @@ namespace LtlSharp.ModelCheckers
                     throw new InvalidProgramException (c.Left + " or " + c.Right + " was not precomputed.");
                 }
                 return new HashSet<MarkovNode> (sat [c.Left].Intersect (sat [c.Right]));
+            }
+            
+            if (phi is Disjunction) {
+                var c = (Disjunction)phi;
+                if (!sat.ContainsKey (c.Left) | !sat.ContainsKey(c.Right)) {
+                    throw new InvalidProgramException (c.Left + " or " + c.Right + " was not precomputed.");
+                }
+                return new HashSet<MarkovNode> (sat [c.Left].Union (sat [c.Right]).Distinct ());
             }
             
             if (phi is Negation) {
@@ -107,9 +120,11 @@ namespace LtlSharp.ModelCheckers
                     var n2 = mc.ConstrainedReachability (mc.ExceptNodes (sat [u.Left]), mc.ExceptNodes (sat [u.Right]));
                     var nodes = n2.Where (kv => po.IsSatisfied (kv.Value, epsilon)).Select (kv => kv.Key);
                     return new HashSet<MarkovNode> (mc.ExceptNodes (nodes));
-                       
+                
                 } else {
-                    throw new NotImplementedException ("Operator " + po.GetType () + " is not supported in probabilistic operator.");
+                    var result = mc.QuantitativeLinearProperty (enclosed);
+                    var nodes = result.Where (kv => po.IsSatisfied (kv.Value, epsilon)).Select (kv => kv.Key);
+                    return new HashSet<MarkovNode> (nodes);
                 }
             }
             

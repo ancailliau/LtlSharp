@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using QuickGraph;
+using LtlSharp.Utils;
 
 namespace LtlSharp.Buchi.Automata
 {
@@ -64,14 +65,13 @@ namespace LtlSharp.Buchi.Automata
                 return true;
             if (obj.GetType () != typeof(LabeledAutomataTransition<T>))
                 return false;
-            var transition = (LabeledAutomataTransition<T>)obj;
-            return base.Equals(obj) && Labels.All (l => transition.Labels.Contains (l))
-                       && transition.Labels.All (l => Labels.Contains (l));
+            var other = (LabeledAutomataTransition<T>)obj;
+            return Source.Equals (other.Source) && Target.Equals (other.Target) && Labels.SetEquals (other.Labels);
         }
 
         public override int GetHashCode ()
         {
-            return base.GetHashCode () ^ Labels.GetHashCode ();
+            return 17 + Source.GetHashCode () + 32 * ( Target.GetHashCode () + 32 * Labels.GetHashCodeForElements ());
         }
     }
     

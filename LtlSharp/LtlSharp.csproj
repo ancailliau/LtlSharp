@@ -89,6 +89,8 @@
     <Compile Include="Automata\RabinAutomata.cs" />
     <Compile Include="Translators\Fold.cs" />
     <Compile Include="Utils\CollectionUtils.cs" />
+    <Compile Include="Translators\Unfold.cs" />
+    <Compile Include="Translators\ProductAutomata.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

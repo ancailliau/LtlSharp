@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using LtlSharp.Utils;
+using LtlSharp.Automata;
+using LtlSharp.Buchi.LTL2Buchi;
+using LtlSharp.Translators;
 
 namespace LtlSharp.ProbabilisticSystems
 {
@@ -29,6 +32,9 @@ namespace LtlSharp.ProbabilisticSystems
             // nodes that can reach B
             var Stilde = B.SelectMany (v => mc.AllPre (v)).Except (B).Distinct ().ToArray ();
             
+            if (Stilde.Length == 0)
+                return new Dictionary<MarkovNode, double> ();
+            
             // Build I - A
             double [,] A = new double[Stilde.Length, Stilde.Length];
             for (int i = 0; i < Stilde.Length; i++) {
@@ -37,6 +43,14 @@ namespace LtlSharp.ProbabilisticSystems
                     A [i, j] =  ((i == j) ? 1 : 0) - a;
                 }    
             }
+//            
+//            Console.WriteLine ("A = ");
+//            for (int i = 0; i < Stilde.Length; i++) {
+//                for (int j = 0; j < Stilde.Length; j++) {
+//                    Console.Write (A[i,j] + " ");
+//                }
+//                Console.WriteLine ();
+//            }
             
             // Build b
             double [] b = new double[Stilde.Length];
@@ -44,7 +58,12 @@ namespace LtlSharp.ProbabilisticSystems
                 var s = Stilde [i];
                 b [i] = B.Sum (u => mc.GetEdge (s, u)?.Probability ?? 0);
             }
-            
+//            
+//            Console.WriteLine ("b = ");
+//            for (int i = 0; i < Stilde.Length; i++) {
+//                Console.WriteLine (b[i]);
+//            }
+//            
             // Solve the system
             int info = 0;
             alglib.densesolver.densesolverreport report = new alglib.densesolver.densesolverreport ();
@@ -54,6 +73,12 @@ namespace LtlSharp.ProbabilisticSystems
             if (info != 1) // no solution found. See ALGIB documentation for more details.
                 return null;
             
+//
+//            Console.WriteLine ("x = ");
+//            for (int i = 0; i < Stilde.Length; i++) {
+//                Console.WriteLine (x[i]);
+//            }
+//            
             // Build a user-friendly dictionnary for storing the results.
             var dict = new Dictionary<MarkovNode, double> ();
             for (int i = 0; i < Stilde.Length; i++) {
@@ -230,6 +255,23 @@ namespace LtlSharp.ProbabilisticSystems
         public static IDictionary<MarkovNode, double> QuantitativeRepeatedReachability (this MarkovChain mc, IEnumerable<MarkovNode> B)
         {
             var U = mc.GetBSCC ().Where (bscc => bscc.Intersect (B).Any ()).SelectMany (x => x);
+//            Console.WriteLine ("["+string.Join (",", U.Select (x => x.Name))+"]");
+            return mc.ReachabilityLinearSystem (U);
+        }
+        
+        
+        /// <summary>
+        /// Returns the probability for repeated reachability of all nodes in B.
+        /// </summary>
+        /// <returns>The repeated reachability.</returns>
+        /// <param name="mc">Mc.</param>
+        /// <param name="B">B.</param>
+        public static IDictionary<MarkovNode, double> QuantitativeRepeatedReachability (this MarkovChain mc, IEnumerable<RabinCondition<MarkovNode>> conditions)
+        {
+            var U = mc.GetBSCC ().Where (u => conditions.Any (c => c.E.Intersect (u).Count() == 0 && (c.F.Intersect (u).Count () > 0)))
+                .SelectMany (x => x);
+            
+                        Console.WriteLine ("["+string.Join (",", U.Select (x => x.Name))+"]");
             return mc.ReachabilityLinearSystem (U);
         }
         
@@ -306,6 +348,42 @@ namespace LtlSharp.ProbabilisticSystems
             
             // Returns the computed probability
             return B.Sum (b => theta[Array.IndexOf (nodes, b)]);
+        }
+        
+        public static Dictionary<MarkovNode, double> QuantitativeLinearProperty (this MarkovChain mc, ITLFormula formula)
+        {
+            MarkovChain productMC;
+            Dictionary<MarkovNode, MarkovNode> mapping;
+            IDictionary<MarkovNode, double> probabilities;
+            Dictionary<MarkovNode, double> dict;
+            
+            var buchi = (new Gia02 ()).GetAutomaton (formula);
+            var unfolder = new Unfold ();
+            buchi = unfolder.Transform (buchi /*, mc.Nodes.SelectMany (x => x.Labels).Distinct () */ );
+
+            if (buchi.IsDeterministic()) {
+                productMC = mc.Product (buchi, mc.Nodes, out mapping);
+                probabilities = productMC.QuantitativeRepeatedReachability (productMC.Nodes.Where (x => x.Labels.Contains (new Proposition ("Accept"))));
+                dict = new Dictionary<MarkovNode, double> ();
+                foreach (var k in mapping) {
+                    dict.Add (k.Key, probabilities [k.Value]);
+                }
+                return dict;
+            }
+
+            var safra = new  SafraDeterminization ();
+            var rabin = safra.Transform (buchi);
+            
+            IEnumerable<RabinCondition<MarkovNode>> conditions;
+            productMC = mc.Product (rabin, mc.Nodes, out conditions, out mapping);
+            probabilities = productMC.QuantitativeRepeatedReachability (conditions);
+            
+            dict = new Dictionary<MarkovNode, double> ();
+            foreach (var k in mapping) {
+                dict.Add (k.Key, probabilities [k.Value]);
+            }
+            
+            return dict;
         }
     }
 }

@@ -50,6 +50,30 @@ namespace CheckMyModels.Tests.TestProbabilisticSystems
             sat = checker.Check ();
             Assert.That (sat.Contains (mc.GetVertex ("start")));
         }
+        
+        [Test ()]
+        public void TestCommunicationProtocol () {
+            var formula = new ProbabilisticOperator (
+                new Globally (
+                    new ProbabilisticOperator (
+                        new Implication (
+                            new Proposition ("try"), 
+                            new Next (
+                                new Proposition ("delivered")
+                            )
+                        ), 
+                        .9, 1
+                    )
+                ), 
+                1, 1
+            );
+    
+            var mc = TestMarkovChain.GetExampleFig101 ();
+            var mchecker = new PCTLModelChecker (mc, formula, 1e-5);
+    
+            var result = mchecker.Check ();
+            Assert.That (result.SetEquals (mc.Nodes));
+        }
     }
 }
 

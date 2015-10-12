@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using LtlSharp.Buchi.Automata;
 using QuickGraph;
+using QuickGraph.Graphviz;
+using QuickGraph.Graphviz.Dot;
 
 namespace LtlSharp.Buchi
 {
@@ -58,7 +60,7 @@ namespace LtlSharp.Buchi
         /// Returns all the successor nodes of the specified node for the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<AutomataNode> Post (AutomataNode node, HashSet<ILiteral> labels)
+        public IEnumerable<AutomataNode> Post (AutomataNode node, ISet<ILiteral> labels)
         {
             return OutEdges (node).Where (e => e.Labels.SetEquals (labels)).Select (e => e.Target);
         }
@@ -88,6 +90,51 @@ namespace LtlSharp.Buchi
         public IEnumerable<AutomataNode> Post (IEnumerable<AutomataNode> nodes, IEnumerable<HashSet<ILiteral>> labels)
         {
             return nodes.SelectMany (node => Post(node, labels));
+        }
+        
+        
+        public bool IsDeterministic ()
+        {
+            var pending = new Stack<AutomataNode> (InitialNodes);
+            var visited = new HashSet<AutomataNode> ();
+
+            while (pending.Count > 0) {
+                var s0 = pending.Pop ();
+                visited.Add (s0);
+
+                var transitions = OutEdges (s0);
+
+                foreach (var c in transitions.Select (x => x.Labels)) {
+                    // TODO Remove assumption that transitions were unfolded
+                    var succ = transitions.Where (t => t.Labels.SetEquals (c)).Select (t => t.Target);
+                    if (succ.Count () > 1) {
+                        return false;
+                    } else {
+                        foreach (var s in succ.Where (node => !visited.Contains (node))) {
+                            pending.Push (s);
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+        
+
+        public string ToDot ()
+        {
+            var graphviz = new GraphvizAlgorithm<AutomataNode, LabeledAutomataTransition<AutomataNode>> (this);
+            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
+                e.VertexFormatter.Label = e.Vertex.Name;
+                if (this.InitialNodes.Contains (e.Vertex))
+                    e.VertexFormatter.Style = GraphvizVertexStyle.Bold;
+                //                if (rabin.AcceptanceSet.Contains (e.Vertex))
+                //                    e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.DoubleCircle;
+            };
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, LabeledAutomataTransition<AutomataNode>> e) => {
+                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
+            };
+            return graphviz.Generate ();
         }
         
     }

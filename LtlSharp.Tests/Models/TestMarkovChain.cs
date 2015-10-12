@@ -3,6 +3,7 @@ using NUnit.Framework;
 using LtlSharp.Models;
 using System.Linq;
 using LtlSharp;
+using System.Collections.Generic;
 
 namespace CheckMyModels.Tests.Models
 {
@@ -11,11 +12,21 @@ namespace CheckMyModels.Tests.Models
     {
         public static MarkovChain GetExampleFig101 ()
         {
+            var p1 = new Proposition ("start");
+            var p2 = new Proposition ("try");
+            var p3 = new Proposition ("lost");
+            var p4 = new Proposition ("delivered");
+            
+            var np1 = new Negation (p1);
+            var np2 = new Negation (p2);
+            var np3 = new Negation (p3);
+            var np4 = new Negation (p4);
+            
             var mc = new MarkovChain ();
-            var start = mc.AddVertex ("start");
-            var ntry = mc.AddVertex ("try");
-            var lost = mc.AddVertex ("lost");
-            var delivered = mc.AddVertex ("delivered");
+            var start = mc.AddVertex ("start"); start.Labels = new HashSet<ILiteral> (new ILiteral[] { p1, np2, np3, np4 });
+            var ntry = mc.AddVertex ("try"); ntry.Labels = new HashSet<ILiteral> (new ILiteral[] { np1, p2, np3, np4 });
+            var lost = mc.AddVertex ("lost"); lost.Labels = new HashSet<ILiteral> (new ILiteral[] { np1, p2, p3, np4 });
+            var delivered = mc.AddVertex ("delivered"); delivered.Labels = new HashSet<ILiteral> (new ILiteral[] { np1, np2, np3, p4 });
             mc.SetInitial (start, 1);
             
             mc.AddEdge (start, ntry);
