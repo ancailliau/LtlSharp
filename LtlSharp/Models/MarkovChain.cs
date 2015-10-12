@@ -197,7 +197,13 @@ namespace LtlSharp.Models
         public MarkovChain (MarkovChain mc)
         {
             nodes = mc.nodes;
-            graph = mc.graph.Clone ();
+            graph = new AdjacencyGraph<int, MarkovTransition> ();
+            foreach (var vertex in mc.graph.Vertices) {
+                graph.AddVertex (vertex); 
+            }
+            foreach (var edge in mc.graph.Edges) {
+                graph.AddEdge (new MarkovTransition (edge.Source, edge.Probability, edge.Target));
+            }
             Initial = new Dictionary<MarkovNode, double> ();
             foreach (var i in mc.Initial) {
                 Initial.Add (i.Key, i.Value);
@@ -331,6 +337,12 @@ namespace LtlSharp.Models
         /// <param name="v">The node.</param>
         public IEnumerable<MarkovNode> Pre (MarkovNode v) 
         {
+            Console.WriteLine ("-- Pre -- ");
+            foreach (var edge in graph.Edges) {
+                Console.WriteLine (edge + " " + edge.Target.Equals (v.Id) + " " + edge.Probability);
+            }
+            Console.WriteLine ("--");
+            
             return graph.Edges.Where (e => e.Probability > 0 & e.Target.Equals (v.Id)).Select (e => nodes[e.Source]).Distinct ();
         }
         
