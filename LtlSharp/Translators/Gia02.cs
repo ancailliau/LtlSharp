@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using LtlSharp.Automata;
 using LtlSharp.Buchi.Automata;
+using QuickGraph;
 using QuickGraph.Graphviz;
 
 namespace LtlSharp.Buchi.LTL2Buchi
@@ -453,6 +454,19 @@ namespace LtlSharp.Buchi.LTL2Buchi
     
     public class Gia02 : ILTLTranslator
     {
+        
+        private class Degeneralizer : AdjacencyGraph<AutomatonNode, DegeneralizerAutomataTransition<AutomatonNode>> 
+        {
+            public HashSet<AutomatonNode> InitialNodes;
+            public HashSet<AutomatonNode> AcceptanceSet;
+    
+            public Degeneralizer () : base ()
+            {
+                InitialNodes = new HashSet<AutomatonNode> ();
+                AcceptanceSet = new HashSet<AutomatonNode> ();
+            }
+        }
+    
         public Gia02 ()
         {
         }
@@ -505,7 +519,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return SynchrounousProduct (automaton, degeneralizer); 
         }
 
-        BuchiAutomata SynchrounousProduct (TGBA tgba, DegeneralizerBuchiAutomata degeneralizer)
+        BuchiAutomata SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
         {
             var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, LabelledAutomataNode> ();
             var ba = new BuchiAutomata ();
@@ -520,7 +534,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return ba;
         }
 
-        void DFSSynchrounousProduct (BuchiAutomata ba, TGBA tgba, DegeneralizerBuchiAutomata degeneralizer,
+        void DFSSynchrounousProduct (BuchiAutomata ba, TGBA tgba, Degeneralizer degeneralizer,
                                      Dictionary<Tuple<AutomatonNode, AutomatonNode>, LabelledAutomataNode> cache, 
                                      AutomatonNode n0, AutomatonNode n1) {
             
@@ -583,7 +597,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        LabelledAutomataNode Get (BuchiAutomata ba, TGBA automaton, DegeneralizerBuchiAutomata degeneralizer,
+        LabelledAutomataNode Get (BuchiAutomata ba, TGBA automaton, Degeneralizer degeneralizer,
                                   Dictionary<Tuple<AutomatonNode, AutomatonNode>, LabelledAutomataNode> cache, 
                                   AutomatonNode n0, AutomatonNode n1)
         {
@@ -601,9 +615,9 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return cachedNode;
         }
         
-        DegeneralizerBuchiAutomata Generate (int nAcceptingSets)
+        Degeneralizer Generate (int nAcceptingSets)
         {
-            var automaton = new DegeneralizerBuchiAutomata ();
+            var automaton = new Degeneralizer ();
             
             var nNodes = nAcceptingSets + 1;
             var nodes = new AutomatonNode [nNodes];

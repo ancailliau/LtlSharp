@@ -50,17 +50,5 @@ namespace LtlSharp.Automata
         }
 
     }
-    
-    public class DegeneralizerBuchiAutomata : AdjacencyGraph<AutomatonNode, DegeneralizerAutomataTransition<AutomatonNode>> 
-    {
-        public HashSet<AutomatonNode> InitialNodes;
-        public HashSet<AutomatonNode> AcceptanceSet;
-
-        public DegeneralizerBuchiAutomata () : base ()
-        {
-            InitialNodes = new HashSet<AutomatonNode> ();
-            AcceptanceSet = new HashSet<AutomatonNode> ();
-        }
-    }
 }
 
