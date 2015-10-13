@@ -29,7 +29,4 @@ Future work
 
 ## Refactoring
 
-* Implement w-automata as parent of all automata
-* Ensure that all automata exports to DOT
-* Removes multiple initial nodes in automata (except MC)
 * Represents set of literals as BDD so operations for combining/testing are easier and faster.
