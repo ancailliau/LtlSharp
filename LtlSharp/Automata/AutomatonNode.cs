@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using LtlSharp.Monitoring;
 
-namespace LtlSharp.Buchi.Automata
+namespace LtlSharp.Automata
 {
-    public class AutomataNode
+    public class AutomatonNode
     {
         public string Name;
         
-        public AutomataNode (string name)
+        public AutomatonNode (string name)
         {
             Name = name;
         }
@@ -24,9 +24,9 @@ namespace LtlSharp.Buchi.Automata
                 return false;
             if (ReferenceEquals (this, obj))
                 return true;
-            if (obj.GetType () != typeof(AutomataNode))
+            if (obj.GetType () != typeof(AutomatonNode))
                 return false;
-            var node = (AutomataNode)obj;
+            var node = (AutomatonNode)obj;
             return Name == node.Name;
         }
 
@@ -36,7 +36,7 @@ namespace LtlSharp.Buchi.Automata
         }
     }
     
-    public class LabelledAutomataNode : AutomataNode 
+    public class LabelledAutomataNode : AutomatonNode 
     {   
         public HashSet<ILiteral> Labels;
 
@@ -46,7 +46,7 @@ namespace LtlSharp.Buchi.Automata
         }
     }
 
-    public class MonitorNode : AutomataNode 
+    public class MonitorNode : AutomatonNode 
     {   
         public MonitorStatus Status;
 

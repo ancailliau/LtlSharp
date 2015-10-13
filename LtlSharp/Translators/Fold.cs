@@ -27,7 +27,7 @@ namespace LtlSharp.Translators
                         target.RemoveTransition (e);
                     }
                     foreach (var nl in newLabels) {
-                        target.AddTransition (new LabeledAutomataTransition<AutomataNode> (trans.Source, trans.Target, nl));
+                        target.AddTransition (new LabeledAutomataTransition<AutomatonNode> (trans.Source, trans.Target, nl));
                     }
                 }
             }

@@ -91,7 +91,7 @@ namespace LtlSharp.Translators
         {
             // For more details about the product algorithm, see "Principles of Model Checking", p787ff
 
-            var unique = new Dictionary<Tuple<T,AutomataNode>, ProductMarkovNode<T>> ();
+            var unique = new Dictionary<Tuple<T,AutomatonNode>, ProductMarkovNode<T>> ();
             correspondingNodes = new Dictionary<T, ProductMarkovNode<T>> ();
             
             var product = new MarkovChain<ProductMarkovNode<T>> (new MarkovNodeProductFactory<T> ());
@@ -99,8 +99,8 @@ namespace LtlSharp.Translators
             var visited = new HashSet<ProductMarkovNode<T>> ();
 
             var initWA = automaton.InitialNode;
-            IEnumerable<AutomataNode> successorsInWA;
-            AutomataNode successorInWA;
+            IEnumerable<AutomatonNode> successorsInWA;
+            AutomatonNode successorInWA;
             ProductMarkovNode<T> newNode;
 
             foreach (var initial in initials) {
@@ -115,7 +115,7 @@ namespace LtlSharp.Translators
                     newNode = product.AddVertex ();
                     newNode.SetNodes (initial, successorInWA);
                     
-                    var tuple = new Tuple<T, AutomataNode> (initial, successorInWA);
+                    var tuple = new Tuple<T, AutomatonNode> (initial, successorInWA);
                     
                     unique.Add (tuple, newNode);
                     correspondingNodes.Add (initial, newNode);
@@ -139,7 +139,7 @@ namespace LtlSharp.Translators
                         
                     if (successorsInWA.Any ()) {
                         successorInWA = successorsInWA.Single ();
-                        var tuple = new Tuple<T, AutomataNode> (successorInMC, successorInWA);
+                        var tuple = new Tuple<T, AutomatonNode> (successorInMC, successorInWA);
 
                         if (!unique.ContainsKey (tuple)) {
                             newNode = product.AddVertex ();

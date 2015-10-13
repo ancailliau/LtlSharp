@@ -18,12 +18,12 @@ namespace LittleSharp.Buchi
 			private set;
 		}
 		
-        public Stack<AutomataNode> dfsStack1;
-        public Stack<AutomataNode> dfsStack2;
+        public Stack<AutomatonNode> dfsStack1;
+        public Stack<AutomatonNode> dfsStack2;
 		
         public EmptinessChecker (BuchiAutomata automaton)
         {
-            dfsStack1 = new Stack<AutomataNode> ();
+            dfsStack1 = new Stack<AutomatonNode> ();
 			Automaton = automaton;
 		}
 		
@@ -33,7 +33,7 @@ namespace LittleSharp.Buchi
                 return false;
             }
             
-            dfsStack1 = new Stack<AutomataNode> ();
+            dfsStack1 = new Stack<AutomatonNode> ();
             if (dfs1(Automaton.InitialNode)) {
 				return true;
             }
@@ -41,13 +41,13 @@ namespace LittleSharp.Buchi
 			return false;
 		}
         
-        public bool Emptiness (AutomataNode n)
+        public bool Emptiness (AutomatonNode n)
         {
-            dfsStack1 = new Stack<AutomataNode> ();
+            dfsStack1 = new Stack<AutomatonNode> ();
             return dfs1 (n);
         }
         
-        bool dfs1(AutomataNode n)
+        bool dfs1(AutomatonNode n)
 		{
             dfsStack1.Push (n);
             foreach (var succ in Automaton.Post(n)) {
@@ -58,7 +58,7 @@ namespace LittleSharp.Buchi
                 }
             }
             
-            dfsStack2 = new Stack<AutomataNode>();
+            dfsStack2 = new Stack<AutomatonNode>();
             if (Automaton.AcceptanceCondition.Accept (n)) {
                 if (dfs2 (n)) {
                     return true;
@@ -70,7 +70,7 @@ namespace LittleSharp.Buchi
             return false;
 		}
         
-        bool dfs2(AutomataNode n) {
+        bool dfs2(AutomatonNode n) {
             dfsStack2.Push(n);
             foreach (var succ in Automaton.Post(n)) {
                 if (dfsStack1.Contains (succ)) {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LtlSharp.Automata;
 using LtlSharp.Buchi.Automata;
 using LtlSharp.Buchi.LTL2Buchi;
 using LtlSharp.Buchi.Translators;
@@ -11,8 +12,8 @@ namespace LtlSharp.Monitoring
     
     public class LTLMonitorHard
     {
-        HashSet<AutomataNode> currentPositive;
-        HashSet<AutomataNode> currentNegative;
+        HashSet<AutomatonNode> currentPositive;
+        HashSet<AutomatonNode> currentNegative;
         
         NFA positiveNFA;
         NFA negativeNFA;

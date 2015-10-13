@@ -24,13 +24,13 @@ namespace LtlSharp.Translators
         {        
             var automata = new BuchiAutomata ();
             automata.AddNodes (t.Vertices);
-            automata.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> ((BuchiAcceptance<AutomataNode>) t.AcceptanceCondition));
+            automata.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode>((BuchiAcceptance<AutomatonNode>) t.AcceptanceCondition));
             automata.SetInitialNode (t.InitialNode);
 
             foreach (var trans in t.Edges) {
                 var labels = UnfoldLabels (trans.Labels, alphabet);
                 foreach (var label in labels) {
-                    automata.AddTransition (new LabeledAutomataTransition<AutomataNode> (trans.Source, trans.Target, label));
+                    automata.AddTransition (new LabeledAutomataTransition<AutomatonNode>(trans.Source, trans.Target, label));
                 }
             }
             return automata;

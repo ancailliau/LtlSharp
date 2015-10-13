@@ -12,7 +12,7 @@ namespace LtlSharp.Buchi.Translators
         {
             var emptinessChecker = new EmptinessChecker (automata);
 
-            var newAcceptanceSet = new HashSet<AutomataNode> ();
+            var newAcceptanceSet = new HashSet<AutomatonNode> ();
             foreach (var n in automata.Vertices) {
                 if (emptinessChecker.Emptiness (n)) {
                     newAcceptanceSet.Add (n);
@@ -23,7 +23,7 @@ namespace LtlSharp.Buchi.Translators
             nfa.AddVertexRange (automata.Vertices);
             nfa.AddEdgeRange (automata.Edges);
             nfa.AcceptanceSet = newAcceptanceSet;
-            nfa.InitialNodes = new HashSet<AutomataNode> (new [] { automata.InitialNode });
+            nfa.InitialNodes = new HashSet<AutomatonNode> (new [] { automata.InitialNode });
             return nfa;
         }
     }

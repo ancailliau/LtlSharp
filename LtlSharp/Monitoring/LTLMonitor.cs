@@ -8,6 +8,7 @@ using LtlSharp.Buchi.Translators;
 using QuickGraph.Graphviz;
 using QuickGraph;
 using LtlSharp.Language;
+using LtlSharp.Automata;
 
 namespace LtlSharp.Monitoring
 {
@@ -49,8 +50,8 @@ namespace LtlSharp.Monitoring
             }
         }
         
-        public AutomataNode currentNegative;
-        public AutomataNode currentPositive;
+        public AutomatonNode currentNegative;
+        public AutomatonNode currentPositive;
         public NFA negativeNFA;
         public NFA positiveNFA;
         ILTLTranslator translator = new Gia02 ();
@@ -154,7 +155,7 @@ namespace LtlSharp.Monitoring
         
         // TODO This should not be in that fucking class!
 
-        static MonitorStatus GetStatus (NFA positive, NFA negative, AutomataNode s0, AutomataNode s1)
+        static MonitorStatus GetStatus (NFA positive, NFA negative, AutomatonNode s0, AutomatonNode s1)
         {
             var positiveAcceptance = positive.AcceptanceSet.Contains (s0);
             var negativeAcceptance = negative.AcceptanceSet.Contains (s1);
@@ -209,12 +210,12 @@ namespace LtlSharp.Monitoring
             product.AddVertex (init);
             product.InitialNodes.Add (init);
 
-            var pending = new Stack<Tuple<AutomataNode, AutomataNode>> ();
+            var pending = new Stack<Tuple<AutomatonNode, AutomatonNode>> ();
 
-            var tuple = new Tuple<AutomataNode, AutomataNode> (initA, initB);
+            var tuple = new Tuple<AutomatonNode, AutomatonNode> (initA, initB);
             pending.Push (tuple);
 
-            var mapping = new Dictionary<Tuple<AutomataNode, AutomataNode>, MonitorNode> ();
+            var mapping = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, MonitorNode> ();
             mapping.Add (tuple, init);
 
             var acceptingNode = new MonitorNode ("accept", MonitorStatus.True);
@@ -229,11 +230,11 @@ namespace LtlSharp.Monitoring
                 var commonTransitions = from t1 in positive.OutEdges (current.Item1)
                     from t2 in negative.OutEdges (current.Item2)
                         where t1.Labels.SetEquals (t2.Labels)
-                    select new Tuple<LabeledAutomataTransition<AutomataNode>, LabeledAutomataTransition<AutomataNode>> (t1, t2);
+                    select new Tuple<LabeledAutomataTransition<AutomatonNode>, LabeledAutomataTransition<AutomatonNode>> (t1, t2);
 
                 foreach (var t in commonTransitions) {
                     //                    Console.WriteLine ("Transition : " + t);
-                    tuple = new Tuple<AutomataNode, AutomataNode> (t.Item1.Target, t.Item2.Target);
+                    tuple = new Tuple<AutomatonNode, AutomatonNode> (t.Item1.Target, t.Item2.Target);
                     if (!mapping.ContainsKey (tuple)) {
                         mapping.Add (tuple, new MonitorNode ("s" + (i++), GetStatus (positive, negative, t.Item1.Target, t.Item2.Target)));
                         product.AddVertex (mapping [tuple]);

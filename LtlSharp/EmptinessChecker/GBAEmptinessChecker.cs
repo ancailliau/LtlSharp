@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LtlSharp.Automata;
 using LtlSharp.Buchi.Automata;
 
 namespace LtlSharp.Buchi
 {
     public class GBAEmptinessChecker
     {
-        Stack<AutomataNode> path;
+        Stack<AutomatonNode> path;
         // stack of nodes
         
-        HashSet<AutomataNode> processed;
+        HashSet<AutomatonNode> processed;
         // set of nodes
         
-        Dictionary<AutomataNode, HashSet<int>> label; 
+        Dictionary<AutomatonNode, HashSet<int>> label; 
         // index of the node, index of the acceptance set
         
         public GBAEmptinessChecker ()
@@ -27,9 +28,9 @@ namespace LtlSharp.Buchi
                 throw new NotImplementedException ("EmptinessSearch (GeneralizedBuchiAutomata a)");
             }
             
-            path = new Stack<AutomataNode> ();
-            processed = new HashSet<AutomataNode> ();
-            label = new Dictionary<AutomataNode, HashSet<int>> ();
+            path = new Stack<AutomatonNode> ();
+            processed = new HashSet<AutomatonNode> ();
+            label = new Dictionary<AutomatonNode, HashSet<int>> ();
             
             foreach (var n in a.InitialNodes) {
                 //Console.WriteLine ("******");
@@ -42,9 +43,9 @@ namespace LtlSharp.Buchi
             return false;
         }
         
-        public bool EmptinessSearch (TransitionGeneralizedBuchiAutomata a, AutomataNode qi)
+        public bool EmptinessSearch (TransitionGeneralizedBuchiAutomata a, AutomatonNode qi)
         {
-            label = new Dictionary<AutomataNode, HashSet<int>> ();
+            label = new Dictionary<AutomatonNode, HashSet<int>> ();
             foreach (var n in a.Vertices) {
                 label.Add (n, new HashSet<int> ());
             }
@@ -89,14 +90,14 @@ namespace LtlSharp.Buchi
         }
         
 
-        void propagate (TransitionGeneralizedBuchiAutomata a, IEnumerable<AutomataNode> nodes, IEnumerable<int> labelsToPropagate)
+        void propagate (TransitionGeneralizedBuchiAutomata a, IEnumerable<AutomatonNode> nodes, IEnumerable<int> labelsToPropagate)
         {
             
             //Console.WriteLine ("path : " + string.Join(",", path));
             //Console.WriteLine ("processed : " + string.Join(",", processed));
             
             var toProp = labelsToPropagate.ToArray ();
-            var nodesToProcess = new Stack<AutomataNode> (nodes);
+            var nodesToProcess = new Stack<AutomatonNode> (nodes);
             while (nodesToProcess.Count > 0) {
                 var q = nodesToProcess.Pop ();
                 var successors = a.OutEdges (q).Select (x => x.Target).Intersect (path.Union (processed));

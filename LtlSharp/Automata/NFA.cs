@@ -8,6 +8,7 @@ using QuickGraph;
 using LtlSharp.Monitoring;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
+using LtlSharp.Automata;
 
 namespace LtlSharp.Buchi.Automata
 {
@@ -17,15 +18,15 @@ namespace LtlSharp.Buchi.Automata
     /// <description>
     /// See Andreas Bauer et al, Runtime Verification for LTL and TLTL, TOSEM.
     /// </description>
-    public class NFA : AdjacencyGraph<AutomataNode, LabeledAutomataTransition<AutomataNode>>
+    public class NFA : AdjacencyGraph<AutomatonNode, LabeledAutomataTransition<AutomatonNode>>
     {
-        public HashSet<AutomataNode> AcceptanceSet;
-        public HashSet<AutomataNode> InitialNodes;
+        public HashSet<AutomatonNode> AcceptanceSet;
+        public HashSet<AutomatonNode> InitialNodes;
         
         public NFA ()
         {
-            AcceptanceSet = new HashSet<AutomataNode> ();
-            InitialNodes = new HashSet<AutomataNode> ();
+            AcceptanceSet = new HashSet<AutomatonNode> ();
+            InitialNodes = new HashSet<AutomatonNode> ();
         }
         
         public void ToSingleInitialState ()
@@ -34,13 +35,13 @@ namespace LtlSharp.Buchi.Automata
             if (InitialNodes.Count == 1)
                 return;
             
-            var newInitialState = new AutomataNode ("init");
+            var newInitialState = new AutomatonNode ("init");
             this.AddVertex (newInitialState);
             
             foreach (var initialState in InitialNodes.ToList ()) {
                 //Console.WriteLine (OutDegree (initialState));
                 foreach (var otransition in OutEdges (initialState)) {
-                    var newTransition = new LabeledAutomataTransition<AutomataNode> (
+                    var newTransition = new LabeledAutomataTransition<AutomatonNode> (
                         newInitialState, 
                         otransition.Target, 
                         otransition.Labels
@@ -58,8 +59,8 @@ namespace LtlSharp.Buchi.Automata
         
         public bool IsDeterministic ()
         {
-            var pending = new Stack<AutomataNode> (InitialNodes);
-            var visited = new HashSet<AutomataNode> ();
+            var pending = new Stack<AutomatonNode> (InitialNodes);
+            var visited = new HashSet<AutomatonNode> ();
             
             while (pending.Count > 0) {
                 var s0 = pending.Pop ();
@@ -99,7 +100,7 @@ namespace LtlSharp.Buchi.Automata
                         RemoveEdge (e);
                     }
                     foreach (var nl in newLabels) {
-                        AddEdge (new LabeledAutomataTransition<AutomataNode> (trans.Source, trans.Target, nl));
+                        AddEdge (new LabeledAutomataTransition<AutomatonNode> (trans.Source, trans.Target, nl));
                     }
                 }
             }
@@ -119,13 +120,13 @@ namespace LtlSharp.Buchi.Automata
             
             var nnfa = new NFA ();
             nnfa.AddVertexRange (Vertices);
-            nnfa.AcceptanceSet = new HashSet<AutomataNode> (AcceptanceSet);
-            nnfa.InitialNodes = new HashSet<AutomataNode> (InitialNodes);
+            nnfa.AcceptanceSet = new HashSet<AutomatonNode> (AcceptanceSet);
+            nnfa.InitialNodes = new HashSet<AutomatonNode> (InitialNodes);
             
             foreach (var trans in Edges) {
                 var labels = UnfoldLabels (trans.Labels, alphabet);
                 foreach (var label in labels) {
-                    nnfa.AddEdge (new LabeledAutomataTransition<AutomataNode> (trans.Source, trans.Target, label));
+                    nnfa.AddEdge (new LabeledAutomataTransition<AutomatonNode> (trans.Source, trans.Target, label));
                 }
             }
             return nnfa;
@@ -178,13 +179,13 @@ namespace LtlSharp.Buchi.Automata
             
             var dfa = new NFA ();
             
-            var ss0 = new HashSet<AutomataNode> (new [] { initialNode });
+            var ss0 = new HashSet<AutomatonNode> (new [] { initialNode });
 
-            var pending = new Stack<HashSet<AutomataNode>> ();
+            var pending = new Stack<HashSet<AutomatonNode>> ();
             pending.Push (ss0);
 
-            var mapping = new Dictionary<HashSet<AutomataNode>, AutomataNode> (HashSet<AutomataNode>.CreateSetComparer ());
-            var node = new AutomataNode (string.Join (",", ss0.Select (s => s.Name)));
+            var mapping = new Dictionary<HashSet<AutomatonNode>, AutomatonNode> (HashSet<AutomatonNode>.CreateSetComparer ());
+            var node = new AutomatonNode (string.Join (",", ss0.Select (s => s.Name)));
             mapping.Add (ss0, node);
             dfa.AddVertex (node);
             dfa.InitialNodes.Add (node);
@@ -193,7 +194,7 @@ namespace LtlSharp.Buchi.Automata
                 dfa.AcceptanceSet.Add (initialNode);
             }
 
-            var transitions = new Dictionary<Tuple<HashSet<AutomataNode>, HashSet<AutomataNode>>, HashSet<HashSet<ILiteral>>> ();
+            var transitions = new Dictionary<Tuple<HashSet<AutomatonNode>, HashSet<AutomatonNode>>, HashSet<HashSet<ILiteral>>> ();
             while (pending.Count > 0) {
                 var ss = pending.Pop ();
                 var cc = new HashSet<HashSet<ILiteral>> (ss.SelectMany (s => unfoldedAutomata.OutEdges (s).Select (x => x.Labels)),
@@ -207,7 +208,7 @@ namespace LtlSharp.Buchi.Automata
                 
                 foreach (var c in cc) {
 
-                    var succs = new HashSet<AutomataNode> ();
+                    var succs = new HashSet<AutomatonNode> ();
                     
                     foreach (var s in ss) {
 //                        Console.WriteLine ("Successor of " + s);
@@ -224,8 +225,8 @@ namespace LtlSharp.Buchi.Automata
 //                    Console.WriteLine ("Successors with [" + string.Join (",", c) + "] : " + string.Join (",", succs));
                     
                     if (!mapping.ContainsKey (succs)) {
-                        node = new AutomataNode (string.Join (",", succs.Select (s => s.Name)));
-                        var vs = new HashSet<AutomataNode> (succs);
+                        node = new AutomatonNode (string.Join (",", succs.Select (s => s.Name)));
+                        var vs = new HashSet<AutomatonNode> (succs);
                         mapping.Add (vs, node);
                         dfa.AddVertex (node);
 
@@ -236,7 +237,7 @@ namespace LtlSharp.Buchi.Automata
                         }
                     }
 
-                    var skey = new Tuple<HashSet<AutomataNode>, HashSet<AutomataNode>> (ss, succs);
+                    var skey = new Tuple<HashSet<AutomatonNode>, HashSet<AutomatonNode>> (ss, succs);
                     if (!transitions.ContainsKey (skey)) {
                         transitions.Add (skey, new HashSet<HashSet<ILiteral>> ());
                     }
@@ -246,7 +247,7 @@ namespace LtlSharp.Buchi.Automata
             
             foreach (var key in transitions.Keys) {
                 foreach (var tadam in transitions [key]) {
-                    dfa.AddEdge (new LabeledAutomataTransition<AutomataNode> (mapping [key.Item1], 
+                    dfa.AddEdge (new LabeledAutomataTransition<AutomatonNode> (mapping [key.Item1], 
                                                                               mapping [key.Item2],
                                                                               tadam)
                                 );

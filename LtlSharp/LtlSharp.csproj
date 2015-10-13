@@ -70,8 +70,8 @@
     <Compile Include="EmptinessChecker\OnTheFlyEmptinessChecker.cs" />
     <Compile Include="EmptinessChecker\OnTheFlyGBAEmptinessChecker.cs" />
     <Compile Include="Automata\NFA.cs" />
-    <Compile Include="Automata\AutomataNode.cs" />
-    <Compile Include="Automata\AutomataTransition.cs" />
+    <Compile Include="Automata\AutomatonNode.cs" />
+    <Compile Include="Automata\AutomatonTransition.cs" />
     <Compile Include="Translators\BA2NFA.cs" />
     <Compile Include="Monitoring\LTLMonitorHard.cs" />
     <Compile Include="Monitoring\MonitoredState.cs" />

@@ -166,7 +166,7 @@ namespace LtlSharp.Models
             get;
             set;
         }
-        public AutomataNode AutomataNode {
+        public AutomatonNode AutomataNode {
             get;
             set;
         }
@@ -200,7 +200,7 @@ namespace LtlSharp.Models
             return string.Format ("[ProductMarkovNode: MarkovNode={0}, AutomataNode={1}]", MarkovNode.Name, AutomataNode.Name);
         }
 
-        public void SetNodes (T markovNode, AutomataNode automataNode)
+        public void SetNodes (T markovNode, AutomatonNode automataNode)
         {
             this.MarkovNode = markovNode;
             this.AutomataNode = automataNode;

@@ -8,19 +8,19 @@ namespace LtlSharp.Automata
 {
     public abstract class OmegaAutomaton
     {
-        protected AdjacencyGraph<AutomataNode, LabeledAutomataTransition<AutomataNode>> graph;
+        protected AdjacencyGraph<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> graph;
         
-        public AutomataNode InitialNode { get; protected set; }
+        public AutomatonNode InitialNode { get; protected set; }
 
-        public abstract IAcceptanceCondition<AutomataNode> AcceptanceCondition { get; }
+        public abstract IAcceptanceCondition<AutomatonNode> AcceptanceCondition { get; }
         
-        public IEnumerable<AutomataNode> Vertices { 
+        public IEnumerable<AutomatonNode> Vertices { 
             get {
                 return graph.Vertices;
             }
         }
 
-        public IEnumerable<LabeledAutomataTransition<AutomataNode>> Edges { 
+        public IEnumerable<LabeledAutomataTransition<AutomatonNode>> Edges { 
             get {
                 return graph.Edges;
             }
@@ -28,14 +28,14 @@ namespace LtlSharp.Automata
 
         public OmegaAutomaton ()
         {
-            graph = new AdjacencyGraph<AutomataNode, LabeledAutomataTransition<AutomataNode>> ();
+            graph = new AdjacencyGraph<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> ();
         }
 
         /// <summary>
         /// Sets the initial node.
         /// </summary>
         /// <param name="node">Node.</param>
-        public void SetInitialNode (AutomataNode node)
+        public void SetInitialNode (AutomatonNode node)
         {
             InitialNode = node;
         }
@@ -44,7 +44,7 @@ namespace LtlSharp.Automata
         /// Returns the set of literals that correspond to (at least) a transition from the specified node.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<HashSet<ILiteral>> OutAlphabet (AutomataNode node)
+        public IEnumerable<HashSet<ILiteral>> OutAlphabet (AutomatonNode node)
         {
             return graph.OutEdges (node).Select (e => e.Labels).Distinct ();
         }
@@ -53,7 +53,7 @@ namespace LtlSharp.Automata
         /// Returns the set of literals that correspond to (at least) a transition for (at least) a specified node.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<HashSet<ILiteral>> OutAlphabet (IEnumerable<AutomataNode> nodes)
+        public IEnumerable<HashSet<ILiteral>> OutAlphabet (IEnumerable<AutomatonNode> nodes)
         {
             return nodes.SelectMany (OutAlphabet).Distinct ();
         }
@@ -62,7 +62,7 @@ namespace LtlSharp.Automata
         /// Returns all the successor nodes of the specified node
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<AutomataNode> Post (AutomataNode node)
+        public IEnumerable<AutomatonNode> Post (AutomatonNode node)
         {
             return graph.OutEdges (node).Select (e => e.Target);
         }
@@ -71,7 +71,7 @@ namespace LtlSharp.Automata
         /// Returns all the successor nodes of the specified nodes
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<AutomataNode> Post (IEnumerable<AutomataNode> nodes)
+        public IEnumerable<AutomatonNode> Post (IEnumerable<AutomatonNode> nodes)
         {
             return nodes.SelectMany (node => Post(node));
         }
@@ -80,7 +80,7 @@ namespace LtlSharp.Automata
         /// Returns all the successor nodes of the specified node for the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<AutomataNode> Post (AutomataNode node, ISet<ILiteral> labels)
+        public IEnumerable<AutomatonNode> Post (AutomatonNode node, ISet<ILiteral> labels)
         {
             return graph.OutEdges (node).Where (e => e.Labels.IsSubsetOf (labels)).Select (e => e.Target);
         }
@@ -89,7 +89,7 @@ namespace LtlSharp.Automata
         /// Returns all the successor nodes of the specified nodes for the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<AutomataNode> Post (IEnumerable<AutomataNode> nodes, HashSet<ILiteral> labels)
+        public IEnumerable<AutomatonNode> Post (IEnumerable<AutomatonNode> nodes, HashSet<ILiteral> labels)
         {
             return nodes.SelectMany (node => Post(node, labels));
         }
@@ -98,7 +98,7 @@ namespace LtlSharp.Automata
         /// Returns all the successor nodes of the specified node for all the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<AutomataNode> Post (AutomataNode node, IEnumerable<HashSet<ILiteral>> labels)
+        public IEnumerable<AutomatonNode> Post (AutomatonNode node, IEnumerable<HashSet<ILiteral>> labels)
         {
             return labels.SelectMany (l => Post(node, l));
         }
@@ -107,7 +107,7 @@ namespace LtlSharp.Automata
         /// Returns all the successor nodes of the specified nodes for all the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<AutomataNode> Post (IEnumerable<AutomataNode> nodes, IEnumerable<HashSet<ILiteral>> labels)
+        public IEnumerable<AutomatonNode> Post (IEnumerable<AutomatonNode> nodes, IEnumerable<HashSet<ILiteral>> labels)
         {
             return nodes.SelectMany (node => Post(node, labels));
         }
@@ -117,7 +117,7 @@ namespace LtlSharp.Automata
         /// </summary>
         /// <returns>The transitions.</returns>
         /// <param name="node">Node.</param>
-        public IEnumerable<LabeledAutomataTransition<AutomataNode>> OutTransitions (AutomataNode node)
+        public IEnumerable<LabeledAutomataTransition<AutomatonNode>> OutTransitions (AutomatonNode node)
         {
             return graph.OutEdges (node);
         }
@@ -126,7 +126,7 @@ namespace LtlSharp.Automata
         /// Adds the specified transition to the automaton.
         /// </summary>
         /// <param name="transition">Transition.</param>
-        public void AddTransition (LabeledAutomataTransition<AutomataNode> transition)
+        public void AddTransition (LabeledAutomataTransition<AutomatonNode> transition)
         {
             graph.AddEdge (transition);
         }
@@ -135,7 +135,7 @@ namespace LtlSharp.Automata
         /// Removes the transition.
         /// </summary>
         /// <param name="transition">Transition.</param>
-        public void RemoveTransition (LabeledAutomataTransition<AutomataNode> transition)
+        public void RemoveTransition (LabeledAutomataTransition<AutomatonNode> transition)
         {
             graph.RemoveEdge (transition);
         }
@@ -144,7 +144,7 @@ namespace LtlSharp.Automata
         /// Adds the transitions.
         /// </summary>
         /// <param name="transitions">Transitions.</param>
-        public void AddTransitions (IEnumerable<LabeledAutomataTransition<AutomataNode>> transitions)
+        public void AddTransitions (IEnumerable<LabeledAutomataTransition<AutomatonNode>> transitions)
         {
             graph.AddEdgeRange (transitions);
         }
@@ -153,7 +153,7 @@ namespace LtlSharp.Automata
         /// Adds the node.
         /// </summary>
         /// <param name="node">Node.</param>
-        public void AddNode (AutomataNode node)
+        public void AddNode (AutomatonNode node)
         {
             graph.AddVertex (node);
         }
@@ -162,7 +162,7 @@ namespace LtlSharp.Automata
         /// Adds all the nodes.
         /// </summary>
         /// <param name="nodes">Nodes.</param>
-        public void AddNodes (IEnumerable<AutomataNode> nodes)
+        public void AddNodes (IEnumerable<AutomatonNode> nodes)
         {
             graph.AddVertexRange (nodes);
         }
@@ -173,8 +173,8 @@ namespace LtlSharp.Automata
         /// <returns><c>True</c> if deterministic, <c>False</c> otherwise.</returns>
         public bool IsDeterministic ()
         {
-            var pending = new Stack<AutomataNode> (new [] { InitialNode });
-            var visited = new HashSet<AutomataNode> ();
+            var pending = new Stack<AutomatonNode> (new [] { InitialNode });
+            var visited = new HashSet<AutomatonNode> ();
 
             while (pending.Count > 0) {
                 var s0 = pending.Pop ();

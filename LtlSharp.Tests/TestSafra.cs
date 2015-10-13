@@ -16,9 +16,9 @@ namespace CheckMyModels.Tests
         public void TestSafraExampleInPaper ()
         {
             var ba = new BuchiAutomata ();
-            var q = new AutomataNode ("qI"); ba.AddNode (q);
-            var f = new AutomataNode ("f"); ba.AddNode (f);
-            var g = new AutomataNode ("g"); ba.AddNode (g);
+            var q = new AutomatonNode ("qI"); ba.AddNode (q);
+            var f = new AutomatonNode ("f"); ba.AddNode (f);
+            var g = new AutomatonNode ("g"); ba.AddNode (g);
 
             var pa = new Proposition ("a");
             var pb = new Proposition ("b");
@@ -29,26 +29,26 @@ namespace CheckMyModels.Tests
             var c = new HashSet<ILiteral> (new ILiteral[] { pc });
 
             // a,b from qI to qI
-            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (q, q, a));
-            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (q, q, b));
+            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (q, q, a));
+            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (q, q, b));
 
             // c from f to f
-            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (f, f, c));
+            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (f, f, c));
 
             // a from qI to f
-            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (q, f, a));
+            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (q, f, a));
 
             // a from f to g
-            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (f, g, a));
+            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (f, g, a));
 
             // a from g to g
-            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (g, g, a));
+            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (g, g, a));
 
             // a from g to f
-            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (g, f, a));
+            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (g, f, a));
 
             ba.SetInitialNode (q);
-            ba.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> (new [] { f, g }));
+            ba.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (new [] { f, g }));
 
             var safra = new SafraDeterminization ();
             var rabin = safra.Transform (ba);

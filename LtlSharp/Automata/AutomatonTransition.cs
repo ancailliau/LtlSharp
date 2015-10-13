@@ -4,17 +4,17 @@ using System.Linq;
 using QuickGraph;
 using LtlSharp.Utils;
 
-namespace LtlSharp.Buchi.Automata
+namespace LtlSharp.Automata
 {
-    public class AutomataTransition<T> : Edge<T>
-        where T : AutomataNode
+    public class AutomatonTransition<T> : Edge<T>
+        where T : AutomatonNode
     {
-        public AutomataTransition (AutomataTransition<T> transition) 
+        public AutomatonTransition (AutomatonTransition<T> transition) 
             : base (transition.Source, transition.Target)
         {
         }
         
-        public AutomataTransition (T source, T target)
+        public AutomatonTransition (T source, T target)
             : base (source, target)
         {
         }
@@ -41,8 +41,8 @@ namespace LtlSharp.Buchi.Automata
         }
     }
 
-    public class LabeledAutomataTransition<T> : AutomataTransition<T>
-        where T : AutomataNode
+    public class LabeledAutomataTransition<T> : AutomatonTransition<T>
+        where T : AutomatonNode
     {   
         public HashSet<ILiteral> Labels;
         
@@ -75,8 +75,8 @@ namespace LtlSharp.Buchi.Automata
         }
     }
     
-    public class DegeneralizerAutomataTransition<T> : AutomataTransition<T>
-        where T : AutomataNode
+    public class DegeneralizerAutomataTransition<T> : AutomatonTransition<T>
+        where T : AutomatonNode
     {   
         public HashSet<int> Labels;
         public bool Else;

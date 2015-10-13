@@ -22,7 +22,7 @@ namespace LtlSharp.Translators
             /// Gets the set of corresponding states in the Buchi Automata
             /// </summary>
             /// <value>The set of states.</value>
-            public HashSet<AutomataNode> MacroState {
+            public HashSet<AutomatonNode> MacroState {
                 get ;
                 private set ;
             }
@@ -66,7 +66,7 @@ namespace LtlSharp.Translators
             /// </summary>
             /// <param name="nodes">Nodes of the Macro State.</param>
             /// <param name="ba">Buchi Automata.</param>
-            public SafraTree (IEnumerable<AutomataNode> nodes, BuchiAutomata ba) : this (0, nodes, ba)
+            public SafraTree (IEnumerable<AutomatonNode> nodes, BuchiAutomata ba) : this (0, nodes, ba)
             {
                 Id = CurrentId++;
             }
@@ -79,9 +79,9 @@ namespace LtlSharp.Translators
             /// <param name="Id">Identifier.</param>
             /// <param name="nodes">Nodes of the Macro State.</param>
             /// <param name="ba">Buchi Automata.</param>
-            public SafraTree (int Id, IEnumerable<AutomataNode> nodes, BuchiAutomata ba)
+            public SafraTree (int Id, IEnumerable<AutomatonNode> nodes, BuchiAutomata ba)
             {
-                MacroState = new HashSet<AutomataNode> (nodes);
+                MacroState = new HashSet<AutomatonNode> (nodes);
                 Children = new List<SafraTree> ();
                 Mark = false;
                 this.ba = ba;
@@ -182,7 +182,7 @@ namespace LtlSharp.Translators
             /// <param name="a">The literals.</param>
             public void Update (HashSet<ILiteral> a)
             {
-                MacroState = new HashSet<AutomataNode> (ba.Post (MacroState, a));
+                MacroState = new HashSet<AutomatonNode> (ba.Post (MacroState, a));
                 
                 foreach (var c in Children) {
                     c.Update (a);
@@ -199,7 +199,7 @@ namespace LtlSharp.Translators
                     c.HorizontalMerge ();
                 }
                 
-                var visitedState = new HashSet<AutomataNode> ();
+                var visitedState = new HashSet<AutomatonNode> ();
                 foreach (var c in Children) {
                     foreach (var s in c.MacroState.ToList ()) {
                         if (visitedState.Contains (s)) {
@@ -364,10 +364,10 @@ namespace LtlSharp.Translators
             }
             
             var rabin = new RabinAutomata ();
-            var mapping = new Dictionary<SafraTree, AutomataNode> ();
+            var mapping = new Dictionary<SafraTree, AutomatonNode> ();
             int i = 0;
             foreach (var t in Transitions.Keys) {
-                var n = new AutomataNode ("s" + (i++));
+                var n = new AutomatonNode ("s" + (i++));
                 rabin.AddNode (n);
                 mapping.Add (t, n);
             }
@@ -376,7 +376,7 @@ namespace LtlSharp.Translators
             
             foreach (var t in Transitions) {
                 foreach (var e in t.Value) {
-                    var edge = new LabeledAutomataTransition<AutomataNode> (mapping [t.Key], mapping [e.Target], e.Labels);
+                    var edge = new LabeledAutomataTransition<AutomatonNode> (mapping [t.Key], mapping [e.Target], e.Labels);
                     if (!rabin.OutTransitions (mapping [t.Key]).Contains (edge)) {
                         rabin.AddTransition (edge);
                     }
