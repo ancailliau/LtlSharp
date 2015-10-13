@@ -93,6 +93,8 @@
     <Compile Include="Translators\ProductAutomata.cs" />
     <Compile Include="Automata\OmegaAutomaton.cs" />
     <Compile Include="Automata\IAcceptanceCondition.cs" />
+    <Compile Include="Automata\AcceptanceConditions\BuchiAcceptance.cs" />
+    <Compile Include="Automata\AcceptanceConditions\RabinAcceptance.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -108,5 +110,6 @@
     <Folder Include="Models\" />
     <Folder Include="ProbabilisticSystems\" />
     <Folder Include="ModelCheckers\" />
+    <Folder Include="Automata\AcceptanceConditions\" />
   </ItemGroup>
 </Project>

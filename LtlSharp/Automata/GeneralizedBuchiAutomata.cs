@@ -16,7 +16,6 @@ namespace LtlSharp.Buchi
             Id = id;
             Nodes = acceptance_nodes;
         }
-        
     }
     
     public class GeneralizedBuchiAutomata : AdjacencyGraph<LabelledAutomataNode, AutomatonTransition<LabelledAutomataNode>>

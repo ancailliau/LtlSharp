@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Buchi.Automata;
 using QuickGraph;
 using QuickGraph.Graphviz;
@@ -40,8 +41,8 @@ namespace LtlSharp.Automata
                 e.VertexFormatter.Label = e.Vertex.Name;
                 if (this.InitialNode.Equals (e.Vertex))
                     e.VertexFormatter.Style = GraphvizVertexStyle.Bold;
-                //                if (rabin.AcceptanceSet.Contains (e.Vertex))
-                //                    e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.DoubleCircle;
+                if (AcceptanceCondition.Accept (e.Vertex))
+                    e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.DoubleCircle;
             };
             graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> e) => {
                 e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);

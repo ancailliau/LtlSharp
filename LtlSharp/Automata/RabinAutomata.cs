@@ -5,6 +5,7 @@ using LtlSharp.Buchi.Automata;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 using LtlSharp.Utils;
+using LtlSharp.Automata.AcceptanceConditions;
 
 namespace LtlSharp.Automata
 {

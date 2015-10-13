@@ -6,6 +6,7 @@ using LtlSharp.Buchi.Automata;
 using System.Linq;
 using LtlSharp.Automata;
 using QuickGraph;
+using LtlSharp.Automata.AcceptanceConditions;
 
 namespace LtlSharp.Translators
 {

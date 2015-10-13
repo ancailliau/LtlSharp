@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Buchi.Automata;
 using QuickGraph;
 

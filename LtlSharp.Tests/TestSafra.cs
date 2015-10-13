@@ -6,6 +6,7 @@ using LtlSharp.Buchi.Automata;
 using System.Collections.Generic;
 using LtlSharp.Translators;
 using LtlSharp.Automata;
+using LtlSharp.Automata.AcceptanceConditions;
 
 namespace CheckMyModels.Tests
 {

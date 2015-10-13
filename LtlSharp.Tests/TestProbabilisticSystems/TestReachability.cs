@@ -5,6 +5,7 @@ using System.Linq;
 using LtlSharp.ProbabilisticSystems;
 using System.Collections.Generic;
 using LtlSharp.Automata;
+using LtlSharp.Automata.AcceptanceConditions;
 
 namespace CheckMyModels.Tests.Models
 {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
 using LtlSharp.Automata;
+using LtlSharp.Automata.AcceptanceConditions;
 
 namespace LtlSharp.Translators
 {
