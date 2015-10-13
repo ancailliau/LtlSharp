@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LittleSharp.Buchi;
+using LtlSharp.Automata;
 using LtlSharp.Buchi.Automata;
 
 namespace LtlSharp.Buchi.Translators
@@ -10,7 +11,7 @@ namespace LtlSharp.Buchi.Translators
         public static NFA Transform (BuchiAutomata automata)
         {
             var emptinessChecker = new EmptinessChecker (automata);
-            
+
             var newAcceptanceSet = new HashSet<AutomataNode> ();
             foreach (var n in automata.Vertices) {
                 if (emptinessChecker.Emptiness (n)) {
@@ -22,7 +23,7 @@ namespace LtlSharp.Buchi.Translators
             nfa.AddVertexRange (automata.Vertices);
             nfa.AddEdgeRange (automata.Edges);
             nfa.AcceptanceSet = newAcceptanceSet;
-            nfa.InitialNodes = new HashSet<AutomataNode> (automata.InitialNodes);
+            nfa.InitialNodes = new HashSet<AutomataNode> (new [] { automata.InitialNode });
             return nfa;
         }
     }

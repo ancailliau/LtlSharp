@@ -31,26 +31,10 @@ namespace CheckMyModels.Tests
             var e1 = ec.EmptinessSearch (gba);
             var e2 = ec2.Emptiness ();
             var e3 = ec3.Emptiness ();
-
-            // Display Buchi Automata
             
-            var graphviz = new GraphvizAlgorithm<AutomataNode, LabeledAutomataTransition<AutomataNode>> (ba);
-            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
-                e.VertexFormatter.Label = e.Vertex.Name;
-                if (ba.InitialNodes.Contains (e.Vertex))
-                    e.VertexFormatter.Style = GraphvizVertexStyle.Bold;
-                if (ba.AcceptanceSet.Contains (e.Vertex))
-                    e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.DoubleCircle;
-            };
-            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, LabeledAutomataTransition<AutomataNode>> e) => {
-                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
-            };
-            Console.WriteLine (graphviz.Generate ());
-            
-            
-            Assert.That (e1 == e2);
-            Assert.That (e2 == e3);
-            Assert.That (e1 == e3);
+            Assert.That (e1 == e2, "GBAEmptinessChecker and EmptinessChecker (on transformed ba) differs");
+            Assert.That (e2 == e3, "EmptinessChecker and EmptinessChecker (on transformed ba) differs");
+            Assert.That (e1 == e3, "GBAEmptinessChecker and EmptinessChecker differs");
         }
         
         

@@ -164,7 +164,7 @@ namespace LtlSharp.Translators
             {   
                 var children = Children.ToList ();
                 
-                var inter = MacroState.Intersect (ba.AcceptanceSet);
+                var inter = ba.AcceptanceCondition.GetAcceptingNodes (MacroState);
                 if (inter.Any ()) {
                     var newNode = new SafraTree (inter, ba);
                     Children.Add (newNode);
@@ -330,7 +330,7 @@ namespace LtlSharp.Translators
             // For more details about the algorithm, check "Determinization of Büchi-Automata" by Markus Roggenbach
             
             // Assume single initial node
-            var initialBA = ba.InitialNodes.Single ();
+            var initialBA = ba.InitialNode;
             
             var initial = new SafraTree (new [] { initialBA }, ba);
             
@@ -372,12 +372,12 @@ namespace LtlSharp.Translators
                 mapping.Add (t, n);
             }
             
-            rabin.InitialNodes.Add (mapping [initial]);
+            rabin.SetInitialNode (mapping [initial]);
             
             foreach (var t in Transitions) {
                 foreach (var e in t.Value) {
                     var edge = new LabeledAutomataTransition<AutomataNode> (mapping [t.Key], mapping [e.Target], e.Labels);
-                    if (!rabin.OutEdges (mapping [t.Key]).Contains (edge)) {
+                    if (!rabin.OutTransitions (mapping [t.Key]).Contains (edge)) {
                         rabin.AddEdge (edge);
                     }
                 }
@@ -392,7 +392,7 @@ namespace LtlSharp.Translators
 //                Console.WriteLine (k + " identifier on the test");
                 var r1 = Transitions.Keys.Where (x => !x.ContainsIdentifier (k)).Select (x => mapping[x]);
                 var r2 = Transitions.Keys.Where (x => x.ContainsMarkedNode (k)).Select (x => mapping[x]);
-                rabin.AcceptanceSet.Add (new RabinCondition<AutomataNode> (r1, r2));
+                rabin.AddToAcceptance (r1, r2);
             }
             
             return rabin;

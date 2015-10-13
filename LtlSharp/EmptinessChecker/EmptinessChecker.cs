@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
 using LtlSharp.Buchi.Automata;
+using LtlSharp.Automata;
 
 namespace LittleSharp.Buchi
 {
@@ -28,16 +29,14 @@ namespace LittleSharp.Buchi
 		
 		public bool Emptiness()
 		{
-            if (Automaton.AcceptanceSet.Count == 0) {
+            if (!Automaton.AcceptanceCondition.IsSatisfiable) {
                 return false;
             }
             
-            foreach (var node in Automaton.InitialNodes) {
-                dfsStack1 = new Stack<AutomataNode> ();
-				if (dfs1(node)) {
-					return true;
-                }
-			}
+            dfsStack1 = new Stack<AutomataNode> ();
+            if (dfs1(Automaton.InitialNode)) {
+				return true;
+            }
             
 			return false;
 		}
@@ -51,16 +50,16 @@ namespace LittleSharp.Buchi
         bool dfs1(AutomataNode n)
 		{
             dfsStack1.Push (n);
-            foreach (var succ in Automaton.OutEdges(n)) {
-                if (!dfsStack1.Contains (succ.Target)) {
-                    if (dfs1 (succ.Target)) {
+            foreach (var succ in Automaton.Post(n)) {
+                if (!dfsStack1.Contains (succ)) {
+                    if (dfs1 (succ)) {
                         return true;
                     }
                 }
             }
             
             dfsStack2 = new Stack<AutomataNode>();
-            if (Automaton.AcceptanceSet.Contains (n)) {
+            if (Automaton.AcceptanceCondition.Accept (n)) {
                 if (dfs2 (n)) {
                     return true;
                 }
@@ -73,7 +72,7 @@ namespace LittleSharp.Buchi
         
         bool dfs2(AutomataNode n) {
             dfsStack2.Push(n);
-            foreach (var succ in Automaton.OutEdges (n).Select (w => w.Target)) {
+            foreach (var succ in Automaton.Post(n)) {
                 if (dfsStack1.Contains (succ)) {
                     return true;
 					

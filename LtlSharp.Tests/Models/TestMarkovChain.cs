@@ -10,7 +10,7 @@ namespace CheckMyModels.Tests.Models
     [TestFixture()]
     public class TestMarkovChain
     {
-        public static MarkovChain GetExampleFig101 ()
+        public static MarkovChain<MarkovNode> GetExampleFig101 ()
         {
             var p1 = new Proposition ("start");
             var p2 = new Proposition ("try");
@@ -22,7 +22,7 @@ namespace CheckMyModels.Tests.Models
             var np3 = new Negation (p3);
             var np4 = new Negation (p4);
             
-            var mc = new MarkovChain ();
+            var mc = new MarkovChain<MarkovNode> (new MarkovNodeDefaultFactory ());
             var start = mc.AddVertex ("start"); start.Labels = new HashSet<ILiteral> (new ILiteral[] { p1, np2, np3, np4 });
             var ntry = mc.AddVertex ("try"); ntry.Labels = new HashSet<ILiteral> (new ILiteral[] { np1, p2, np3, np4 });
             var lost = mc.AddVertex ("lost"); lost.Labels = new HashSet<ILiteral> (new ILiteral[] { np1, p2, p3, np4 });
@@ -38,9 +38,9 @@ namespace CheckMyModels.Tests.Models
             return mc;
         }
         
-        public static MarkovChain GetExampleFig102 ()
+        public static MarkovChain<MarkovNode> GetExampleFig102 ()
         {
-            var mc = new MarkovChain ();
+            var mc = new MarkovChain<MarkovNode> (new MarkovNodeDefaultFactory ());
             var s0 = mc.AddVertex ("s0");
             var s123 = mc.AddVertex ("s123");
             var s456 = mc.AddVertex ("s456");
@@ -87,9 +87,9 @@ namespace CheckMyModels.Tests.Models
             return mc;
         }
         
-        public static MarkovChain GetExampleFig103 ()
+        public static MarkovChain<MarkovNode> GetExampleFig103 ()
         {
-            var mc = new MarkovChain ();
+            var mc = new MarkovChain<MarkovNode> (new MarkovNodeDefaultFactory ());
             
             var start = mc.AddVertex ("start"); start.Labels.Add (new Proposition ("start"));
             var s4 = mc.AddVertex ("4"); s4.Labels.Add (new Proposition ("4"));
@@ -141,8 +141,8 @@ namespace CheckMyModels.Tests.Models
             return mc;
         }
         
-        public static MarkovChain GetExamplePMCLecture1513 () {
-            var mc = new MarkovChain ();
+        public static MarkovChain<MarkovNode> GetExamplePMCLecture1513 () {
+            var mc = new MarkovChain<MarkovNode> (new MarkovNodeDefaultFactory ());
             var s0 = mc.AddVertex ("s0");
             var s1 = mc.AddVertex ("s1");
             var s2 = mc.AddVertex ("s2");
@@ -168,7 +168,7 @@ namespace CheckMyModels.Tests.Models
             return mc;
         }
         
-        public static MarkovChain GetExample (string example) {
+        public static MarkovChain<MarkovNode> GetExample (string example) {
             if (example == "101") {
                 return GetExampleFig101 ();
             } else if (example == "102" | example == "die") {

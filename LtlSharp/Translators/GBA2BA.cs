@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
 using LtlSharp.Buchi.Automata;
+using LtlSharp.Automata;
 
 namespace LtlSharp.Buchi.Translators
 {
@@ -32,8 +33,8 @@ namespace LtlSharp.Buchi.Translators
                 var automata = new BuchiAutomata ();
                 automata.AddVertexRange (gba.Vertices);
                 automata.AddEdgeRange (gba.Edges);
-                automata.AcceptanceSet = new HashSet<AutomataNode> (gba.AcceptanceSets [0].Nodes);
-                automata.InitialNodes = new HashSet<AutomataNode> (gba.InitialNodes);
+                automata.SetInitialNode (gba.InitialNodes.Single ());
+                automata.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> (gba.AcceptanceSets [0].Nodes));
                 return automata;
             }
 
@@ -50,7 +51,7 @@ namespace LtlSharp.Buchi.Translators
             foreach (var acceptingNode in gba.AcceptanceSets [0].Nodes) {
                 AutomataNode n;
                 if (mapping[0].TryGetValue (acceptingNode, out n)) {
-                    ba.AcceptanceSet.Add (n);
+                    ba.AddToAcceptance (n);
                 }
             }
             
@@ -66,8 +67,8 @@ namespace LtlSharp.Buchi.Translators
             var bANode = new AutomataNode (root.Name + " x " + acceptanceIndex);
             mapping [acceptanceIndex].Add(root, bANode);
             ba.AddVertex (bANode);
-            if (gba.InitialNodes.Contains (root) & acceptanceIndex == 0) {
-                ba.InitialNodes.Add (bANode);
+            if (gba.InitialNodes.Single ().Equals (root) & acceptanceIndex == 0) {
+                ba.SetInitialNode (bANode);
             }
             
             int newAI = acceptanceIndex;

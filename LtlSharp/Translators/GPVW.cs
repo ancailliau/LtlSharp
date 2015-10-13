@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using LtlSharp.Buchi;
 using LtlSharp.Buchi.Automata;
 using LtlSharp.Buchi.Translators;
+using LtlSharp.Automata;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {

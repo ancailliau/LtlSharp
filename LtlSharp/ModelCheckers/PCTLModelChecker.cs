@@ -6,22 +6,23 @@ using LtlSharp.ProbabilisticSystems;
 
 namespace LtlSharp.ModelCheckers
 {
-    public class PCTLModelChecker
+    public class PCTLModelChecker<T>
+        where T : IMarkovNode
     {
-        MarkovChain mc;
+        MarkovChain<T> mc;
         ITLFormula phi;
         double epsilon;
         
-        public PCTLModelChecker (MarkovChain mc, ITLFormula phi, double epsilon)
+        public PCTLModelChecker (MarkovChain<T> mc, ITLFormula phi, double epsilon)
         {
             this.mc = mc;
             this.phi = phi.Normalize ();
             this.epsilon = epsilon;
         }
         
-        public HashSet<MarkovNode> Check ()
+        public HashSet<T> Check ()
         {
-            var sat = new Dictionary<ITLFormula, HashSet<MarkovNode>> ();
+            var sat = new Dictionary<ITLFormula, HashSet<T>> ();
             
             Console.WriteLine ("Initial formula " + phi);
             
@@ -65,25 +66,25 @@ namespace LtlSharp.ModelCheckers
             }
         }
         
-        HashSet<MarkovNode> ComputeSatisfactionSet (ITLFormula phi, Dictionary<ITLFormula, HashSet<MarkovNode>> sat)
+        HashSet<T> ComputeSatisfactionSet (ITLFormula phi, Dictionary<ITLFormula, HashSet<T>> sat)
         {
             // See "Principles of Model-Checking", p343 and p774ff
             
             if (phi is True)
-                return new HashSet<MarkovNode> (mc.Nodes);
+                return new HashSet<T> (mc.Nodes);
             
             if (phi is False)
-                return new HashSet<MarkovNode> ();
+                return new HashSet<T> ();
             
             if (phi is Proposition)
-                return new HashSet<MarkovNode> (mc.Nodes.Where (n => n.Labels.Contains (phi)));
+                return new HashSet<T> (mc.Nodes.Where (n => n.Labels.Contains (phi)));
             
             if (phi is Conjunction) {
                 var c = (Conjunction)phi;
                 if (!sat.ContainsKey (c.Left) | !sat.ContainsKey(c.Right)) {
                     throw new InvalidProgramException (c.Left + " or " + c.Right + " was not precomputed.");
                 }
-                return new HashSet<MarkovNode> (sat [c.Left].Intersect (sat [c.Right]));
+                return new HashSet<T> (sat [c.Left].Intersect (sat [c.Right]));
             }
             
             if (phi is Disjunction) {
@@ -91,7 +92,7 @@ namespace LtlSharp.ModelCheckers
                 if (!sat.ContainsKey (c.Left) | !sat.ContainsKey(c.Right)) {
                     throw new InvalidProgramException (c.Left + " or " + c.Right + " was not precomputed.");
                 }
-                return new HashSet<MarkovNode> (sat [c.Left].Union (sat [c.Right]).Distinct ());
+                return new HashSet<T> (sat [c.Left].Union (sat [c.Right]).Distinct ());
             }
             
             if (phi is Negation) {
@@ -99,7 +100,7 @@ namespace LtlSharp.ModelCheckers
                 if (!sat.ContainsKey (e.Enclosed)) {
                     throw new InvalidProgramException (e.Enclosed + " was not precomputed.");
                 }
-                return new HashSet<MarkovNode> (mc.ExceptNodes (sat[e.Enclosed]));
+                return new HashSet<T> (mc.ExceptNodes (sat[e.Enclosed]));
             }
             
             if (phi is ProbabilisticOperator) {
@@ -107,24 +108,24 @@ namespace LtlSharp.ModelCheckers
                 var enclosed = po.Enclosed;
                 if (enclosed is Next) {
                     var nodes = mc.Nodes.Where (n => po.IsSatisfied (sat [enclosed].Sum (s => mc.GetEdge (n, s)?.Probability ?? 0), epsilon));
-                    return new HashSet<MarkovNode> (nodes);
+                    return new HashSet<T> (nodes);
                     
                 } else if (enclosed is Until) {
                     var u = (Until)enclosed;
                     var n2 = mc.ConstrainedReachability (sat [u.Left], sat [u.Right]);
                     var nodes = n2.Where (kv => po.IsSatisfied (kv.Value, epsilon)).Select (kv => kv.Key);
-                    return new HashSet<MarkovNode> (nodes);
+                    return new HashSet<T> (nodes);
                     
                 } else if (enclosed is Release) { // A R B is !(!A U !B)
                     var u = (Release)enclosed;
                     var n2 = mc.ConstrainedReachability (mc.ExceptNodes (sat [u.Left]), mc.ExceptNodes (sat [u.Right]));
                     var nodes = n2.Where (kv => po.IsSatisfied (kv.Value, epsilon)).Select (kv => kv.Key);
-                    return new HashSet<MarkovNode> (mc.ExceptNodes (nodes));
+                    return new HashSet<T> (mc.ExceptNodes (nodes));
                 
                 } else {
                     var result = mc.QuantitativeLinearProperty (enclosed);
                     var nodes = result.Where (kv => po.IsSatisfied (kv.Value, epsilon)).Select (kv => kv.Key);
-                    return new HashSet<MarkovNode> (nodes);
+                    return new HashSet<T> (nodes);
                 }
             }
             

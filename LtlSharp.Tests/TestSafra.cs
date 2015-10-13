@@ -47,8 +47,8 @@ namespace CheckMyModels.Tests
             // a from g to f
             ba.AddEdge (new LabeledAutomataTransition<AutomataNode> (g, f, a));
 
-            ba.InitialNodes.Add (q);
-            ba.AcceptanceSet = new HashSet<AutomataNode> (new [] { f, g });
+            ba.SetInitialNode (q);
+            ba.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> (new [] { f, g }));
 
             var safra = new SafraDeterminization ();
             var rabin = safra.Transform (ba);

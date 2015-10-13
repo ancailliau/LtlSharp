@@ -8,6 +8,7 @@ using LittleSharp.Buchi;
 using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi.Automata;
+using LtlSharp.Automata;
 
 namespace CheckMyModels.Tests
 {
@@ -73,14 +74,14 @@ namespace CheckMyModels.Tests
             var n2 = new AutomataNode ("s1");lts.AddVertex (n2);
             var n3 = new AutomataNode ("s2");lts.AddVertex (n3);
 
-            lts.InitialNodes.Add (n0);
+            lts.SetInitialNode (n0);
                
             lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
             lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
             lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
             lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
             
-            lts.AcceptanceSet = new HashSet<AutomataNode> (lts.Vertices);
+            lts.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> (lts.Vertices));
             
             var f = new StrongImplication (alloc, new Next (mob)).Negate ();
             
@@ -121,14 +122,14 @@ namespace CheckMyModels.Tests
             var n2 = new AutomataNode ("s1");lts.AddVertex (n2);
             var n3 = new AutomataNode ("s2");lts.AddVertex (n3);
 
-            lts.InitialNodes.Add (n0);
+            lts.SetInitialNode (n0);
 
             lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
             lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
             lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
             lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
 
-            lts.AcceptanceSet = new HashSet<AutomataNode> (lts.Vertices);
+            lts.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> (lts.Vertices));
 
             var f = new StrongImplication (alloc, new Next (mob)).Negate ();
 

@@ -4,6 +4,7 @@ using LtlSharp.Buchi.Automata;
 using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
+using LtlSharp.Automata;
 
 namespace LtlSharp.Translators
 {
@@ -23,8 +24,8 @@ namespace LtlSharp.Translators
         {        
             var automata = new BuchiAutomata ();
             automata.AddVertexRange (t.Vertices);
-            automata.AcceptanceSet = new HashSet<AutomataNode> (t.AcceptanceSet);
-            automata.InitialNodes = new HashSet<AutomataNode> (t.InitialNodes);
+            automata.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> ((BuchiAcceptance<AutomataNode>) t.AcceptanceCondition));
+            automata.SetInitialNode (t.InitialNode);
 
             foreach (var trans in t.Edges) {
                 var labels = UnfoldLabels (trans.Labels, alphabet);

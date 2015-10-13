@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using LtlSharp.Automata;
 using LtlSharp.Buchi.Automata;
 using QuickGraph.Graphviz;
 
@@ -514,7 +515,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             DFSSynchrounousProduct (ba, tgba, degeneralizer,
                                     cache, n0, n1);
 
-            ba.InitialNodes.Add (cache[new Tuple<AutomataNode, AutomataNode> (n0, n1)]);
+            ba.SetInitialNode (cache[new Tuple<AutomataNode, AutomataNode> (n0, n1)]);
             
             return ba;
         }
@@ -591,7 +592,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             if (!cache.TryGetValue (key, out cachedNode)) {
                 cachedNode = new LabelledAutomataNode (n0.Name + " x " + n1.Name);
                 if (degeneralizer.AcceptanceSet.Contains (n1)) {
-                    ba.AcceptanceSet.Add (cachedNode);
+                    ba.AddToAcceptance (cachedNode);
                 }
                 ba.AddVertex (cachedNode);
                 cache.Add (key, cachedNode);

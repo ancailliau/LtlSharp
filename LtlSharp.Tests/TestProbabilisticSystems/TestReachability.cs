@@ -4,6 +4,7 @@ using LtlSharp.Models;
 using System.Linq;
 using LtlSharp.ProbabilisticSystems;
 using System.Collections.Generic;
+using LtlSharp.Automata;
 
 namespace CheckMyModels.Tests.Models
 {
@@ -113,7 +114,7 @@ namespace CheckMyModels.Tests.Models
             var B = new HashSet<MarkovNode> (new [] { s3, s4 });
             var C = new HashSet<MarkovNode> (new [] { s5 });
 
-            var dict = mc.QuantitativeRepeatedReachability (B.Union (C));
+            var dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<MarkovNode> (B.Union (C)));
             Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in B Union C.");
             Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in B Union C.");
             Assert.That (dict.ContainsKey (s2), "State 's2' cannot repeatly reach a state in B Union C.");
@@ -127,7 +128,7 @@ namespace CheckMyModels.Tests.Models
             Assert.AreEqual (dict [s4], 1);
             Assert.AreEqual (dict [s5], 1);
             
-            dict = mc.QuantitativeRepeatedReachability (B);
+            dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<MarkovNode> (B));
             Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in B.");
             Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in B.");
             Assert.That (dict.ContainsKey (s3), "State 's3' cannot repeatly reach a state in B.");
@@ -138,7 +139,7 @@ namespace CheckMyModels.Tests.Models
             Assert.AreEqual (dict [s4], 1);
             
 
-            dict = mc.QuantitativeRepeatedReachability (C);
+            dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<MarkovNode> (C));
             Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in C.");
             Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in C.");
             Assert.That (dict.ContainsKey (s5), "State 's5' cannot repeatly reach a state in C.");

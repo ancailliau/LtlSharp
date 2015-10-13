@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LtlSharp.Automata;
 using LtlSharp.Buchi.Automata;
 
 namespace LtlSharp.Buchi
@@ -36,10 +37,9 @@ namespace LtlSharp.Buchi
             path = new Stack<Tuple<AutomataNode,AutomataNode>> ();
             
             foreach (var n1 in a.InitialNodes) {
-                foreach (var n2 in ba.InitialNodes) {
-                    if (EmptinessSearch (n1, n2)) {
-                        return true;
-                    }
+                var n2 = ba.InitialNode;
+                if (EmptinessSearch (n1, n2)) {
+                    return true;
                 }
             }
             
@@ -60,7 +60,7 @@ namespace LtlSharp.Buchi
                 
                 var pup = new HashSet<Tuple<AutomataNode, AutomataNode>> (path.Union (processed));
                 foreach (var t1 in a.OutEdges (q.Item1)) {
-                    foreach (var t2 in ba.OutEdges (q.Item2)) {
+                    foreach (var t2 in ba.OutTransitions (q.Item2)) {
                         if (t1.Labels.IsSubsetOf (t2.Labels)) {
                             var nt = new Tuple<AutomataNode, AutomataNode> (t1.Target, t2.Target);
                             if (!pup.Contains (nt)) {
@@ -80,7 +80,7 @@ namespace LtlSharp.Buchi
                     succToProcess = new Stack<Tuple<AutomataNode, AutomataNode>> ();
                     pup = new HashSet<Tuple<AutomataNode,AutomataNode>> (path.Union (processed));
                     foreach (var t1 in a.OutEdges (q.Item1)) {
-                        foreach (var t2 in ba.OutEdges (q.Item2)) {
+                        foreach (var t2 in ba.OutTransitions (q.Item2)) {
                             if (t1.Labels.IsSubsetOf (t2.Labels)) {
                                 var nt = new Tuple<AutomataNode,AutomataNode> (t1.Target, t2.Target);
                                 if (!pup.Contains (nt)) {
@@ -131,7 +131,7 @@ namespace LtlSharp.Buchi
                 
                 var pup = new HashSet<Tuple<AutomataNode,AutomataNode>> (path.Union (processed));
                 foreach (var t1 in a.OutEdges (q.Item1)) {
-                    foreach (var t2 in ba.OutEdges (q.Item2)) {
+                    foreach (var t2 in ba.OutTransitions (q.Item2)) {
                         if (t1.Labels.IsSubsetOf (t2.Labels)) {
                             var nt = new Tuple<AutomataNode,AutomataNode> (t1.Target, t2.Target);
                             if (pup.Contains (nt)) {

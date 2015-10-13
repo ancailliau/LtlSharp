@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LtlSharp.Automata;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {

@@ -91,6 +91,8 @@
     <Compile Include="Utils\CollectionUtils.cs" />
     <Compile Include="Translators\Unfold.cs" />
     <Compile Include="Translators\ProductAutomata.cs" />
+    <Compile Include="Automata\OmegaAutomaton.cs" />
+    <Compile Include="Automata\IAcceptanceCondition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

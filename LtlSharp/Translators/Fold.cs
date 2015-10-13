@@ -3,11 +3,12 @@ using QuickGraph;
 using LtlSharp.Buchi.Automata;
 using System.Linq;
 using LtlSharp.Language;
+using LtlSharp.Automata;
 
 namespace LtlSharp.Translators
 {
     public class Fold<T> : Transformer<T,T>
-        where T : AdjacencyGraph<AutomataNode, LabeledAutomataTransition<AutomataNode>>
+        where T : OmegaAutomaton
     {
         public Fold ()
         {
@@ -16,7 +17,7 @@ namespace LtlSharp.Translators
         public override T Transform (T target)
         {
             foreach (var node in target.Vertices) {
-                var transitions = target.OutEdges (node);
+                var transitions = target.OutTransitions (node);
                 foreach (var trans in transitions.ToList ()) {
                     var sameTarget = transitions.Where (t => t.Target.Equals (trans.Target)).ToList ();
                     var labels = sameTarget.Select (x => x.Labels);

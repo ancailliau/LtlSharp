@@ -5,207 +5,160 @@ using System.Collections.Generic;
 using LtlSharp.Buchi.Automata;
 using System.Linq;
 using LtlSharp.Automata;
+using QuickGraph;
 
 namespace LtlSharp.Translators
 {
     public static class ProductAutomata
     {
-        public static MarkovChain Product (this MarkovChain mc, BuchiAutomata ba, IEnumerable<MarkovNode> initials, 
-            out HashSet<MarkovNode> condition,
-            out Dictionary<MarkovNode, MarkovNode> mapping2)
+        /// <summary>
+        /// Returns the product automata of the specified Markov Chain and the specified Buchï Automata.
+        /// </summary>
+        /// <description>
+        /// This methods is used to compute the product automata between a Markov Chain and a Buchï Automata.
+        /// 
+        /// A trace in the resulting automata is accepting if it contains at least a state in <c>condition</c>.
+        /// 
+        /// The mapping table <c>mappingProductToInitial</c> is used to identify the initial node when computing
+        /// the probability to reach a state in <c>condition</c>. See 
+        /// <see cref="LtlSharp.ProbabilisticSystems.MarkovChainsAlgorithms.QuantitativeLinearProperty"/> for an
+        /// example of usage.
+        /// </description>
+        /// <param name="mc">Markov Chain.</param>
+        /// <param name="ba">Buchï Automata.</param>
+        /// <param name="initials">Node of the Markov Chain to start the product with.</param>
+        /// <param name="condition">Condition to be satisfied by the product Markov Chain to accept a trace.</param>
+        /// <param name="correspondingNodes">Mapping table <c>(x,y)</c> where <c>x</c> is the node in product 
+        /// automata and <c>y</c> is the corresponding node in the specified Markov Chain for the initial state of 
+        /// the Buchï Automata.</param>
+        public static MarkovChain<ProductMarkovNode<T>> Product<T> (this MarkovChain<T> mc, 
+                                                                    BuchiAutomata ba, 
+                                                                    IEnumerable<T> initials,
+                                                                    out IAcceptanceCondition<ProductMarkovNode<T>> condition,
+                                                                    out Dictionary<T, ProductMarkovNode<T>> correspondingNodes)
+            where T : IMarkovNode
         {
-            var mapping = new Dictionary<Tuple<MarkovNode,AutomataNode>, MarkovNode> ();
-            mapping2 = new Dictionary<MarkovNode, MarkovNode> ();
-            condition = new HashSet<MarkovNode> ();
+            var product = mc.Product<T> (ba, initials, out correspondingNodes);
             
-            var accept = new Proposition ("Accept");
-            var naccept = new Negation (accept);
-
-            int i = 0;
-
-            var product = new MarkovChain ();
-            var pending = new Stack<Tuple<MarkovNode,AutomataNode>> ();
-
-            var initBA = ba.InitialNodes.Single ();
-            foreach (var initial in initials) {
-                //Console.WriteLine ("initial " + initial.Name);
-
-                //Console.WriteLine ("{"+string.Join (",", initial.Labels.Select (x => x.ToString ()))+"}");
-                //            foreach (var sss in ba.OutEdges (initBA)) {
-                //Console.WriteLine ("{"+string.Join (",", sss.Labels.Select (x => x.ToString ()))+"}");
-                //            }
-
-                AutomataNode succBA = ba.OutEdges (initBA).SingleOrDefault (e => e.Labels.IsSubsetOf (initial.Labels))?.Target;
-
-                if (succBA != null) {
-                    var n = product.AddVertex (/*"s" + (i++)*/ initial.Name + " x (" + succBA.Name + ")" );
-                    if (ba.AcceptanceSet.Contains (succBA)) {
-                        condition.Add (n);
-                    }
-
-                    var tuple = new Tuple<MarkovNode, AutomataNode> (initial, succBA);
-                    mapping.Add (tuple, n);
-                    pending.Push (tuple);
-                    mapping2.Add (initial, n);
-                    
-//                    product.SetInitial (n, 1); // initial.Value);
-                }
-            }
-
-            ////Console.WriteLine (product.Nodes.Count ());
-
-            while (pending.Count > 0) {
-                var current = pending.Pop ();
-                var currentMC = current.Item1;
-                var currentBA = current.Item2;
-                var currentProduct = mapping [current];
-                //Console.WriteLine ("currentMC " + currentMC.Name);
-                //Console.WriteLine ("currentBA " + currentBA.Name);
-
-                foreach (var succMC in mc.Post (currentMC)) {
-                    // var succBA = ba.Post (initBA, succMC.Labels);
-                    //Console.WriteLine ("{"+string.Join (",", succMC.Labels)+"}");
-
-                    var succBA = ba.OutEdges (currentBA).SingleOrDefault (e => e.Labels.IsSubsetOf (succMC.Labels))?.Target;
-                    if (succBA != null) {
-
-                        MarkovNode n;
-                        var tuple = new Tuple<MarkovNode, AutomataNode> (succMC, succBA);
-
-                        if (!pending.Contains (tuple) & !mapping.ContainsKey (tuple)) {
-                            pending.Push (tuple);
-                        }
-
-                        if (!mapping.ContainsKey (tuple)) {
-                            n = product.AddVertex ( succMC.Name + " x (" + succBA.Name + ")"  /* "s" + (i++) */ );
-                            if (ba.AcceptanceSet.Contains (succBA)) {
-                                condition.Add (n);
-                            }
-
-                            mapping.Add (tuple, n);
-                        } else {
-                            n = mapping [tuple];
-                        }
-
-                        product.AddEdge (currentProduct, mc.GetProbability (currentMC, succMC), n);
-                    } else {
-                        //Console.WriteLine ("no succ in ba");
-                    }
-                }
-            }
+            condition = ba.AcceptanceCondition.Map<ProductMarkovNode<T>> (x => product.Nodes.Where (t => t.AutomataNode.Equals (x)));
 
             return product;
         }
         
-        public static MarkovChain Product (this MarkovChain mc, RabinAutomata rabin, IEnumerable<MarkovNode> initials, 
-            out IEnumerable<RabinCondition<MarkovNode>> conditions,
-            out Dictionary<MarkovNode, MarkovNode> mapping2)
+        /// <summary>
+        /// Returns the product automata of the specified Markov Chain and the specified Rabin Automata.
+        /// </summary>
+        /// <description>
+        /// This methods is used to compute the product automata between a Markov Chain and a Rabin Automata.
+        /// 
+        /// A trace in the resulting automata is accepting if it there is a pair in <c>conditions</c> such that
+        /// eventually first item is never met and second item is always enventually met. See "Principles of Model
+        /// Checking", p790ff for a detailled discussion.
+        /// 
+        /// The mapping table <c>mappingProductToInitial</c> is used to identify the initial node when computing
+        /// the probability to reach a state in <c>condition</c>. See 
+        /// <see cref="LtlSharp.ProbabilisticSystems.MarkovChainsAlgorithms.QuantitativeLinearProperty"/> for an
+        /// example of usage.
+        /// </description>
+        /// <param name="mc">Markov Chain.</param>
+        /// <param name="rabin">Rabin Automata.</param>
+        /// <param name="initials">Initials.</param>
+        /// <param name="condition">Condition to be satisfied by the product Markov Chain to accept a trace.</param>
+        /// <param name="correspondingNodes">Mapping table <c>(x,y)</c> where <c>x</c> is the node in product 
+        /// automata and <c>y</c> is the corresponding node in the specified Markov Chain for the initial state of 
+        /// the Rabin Automata.</param>
+        public static MarkovChain<ProductMarkovNode<T>> Product<T> (this MarkovChain<T> mc, 
+                                                                    RabinAutomata rabin, 
+                                                                    IEnumerable<T> initials, 
+                                                                    out IAcceptanceCondition<ProductMarkovNode<T>> condition,
+                                                                    out Dictionary<T, ProductMarkovNode<T>> correspondingNodes)
+            where T : IMarkovNode
         {
-            var mapping = new Dictionary<Tuple<MarkovNode,AutomataNode>, MarkovNode> ();
-            mapping2 = new Dictionary<MarkovNode, MarkovNode> ();
+            var product = mc.Product<T> (rabin, initials, out correspondingNodes);
+
+            condition = rabin.AcceptanceCondition.Map<ProductMarkovNode<T>> (x => {
+                return product.Nodes.Where (t => t.AutomataNode.Equals (x));
+            });
+
+            return product;
+        }
+        
+        static MarkovChain<ProductMarkovNode<T>> Product<T> (this MarkovChain<T> mc,
+                                                             OmegaAutomaton automaton,
+                                                             IEnumerable<T> initials,
+                                                             out Dictionary<T, ProductMarkovNode<T>> correspondingNodes)
+            where T : IMarkovNode
+        {
+            // For more details about the product algorithm, see "Principles of Model Checking", p787ff
+
+            var unique = new Dictionary<Tuple<T,AutomataNode>, ProductMarkovNode<T>> ();
+            correspondingNodes = new Dictionary<T, ProductMarkovNode<T>> ();
             
-//            var accept = new Proposition ("Accept");
-//            var naccept = new Negation (accept);
-            
-            
-            int i = 0;
-            
-            var product = new MarkovChain ();
-            var pending = new Stack<Tuple<MarkovNode,AutomataNode>> ();
-            
-            var initBA = rabin.InitialNodes.Single ();
+            var product = new MarkovChain<ProductMarkovNode<T>> (new MarkovNodeProductFactory<T> ());
+            var pending = new Stack<ProductMarkovNode<T>> ();
+            var visited = new HashSet<ProductMarkovNode<T>> ();
+
+            var initWA = automaton.InitialNode;
+            IEnumerable<AutomataNode> successorsInWA;
+            AutomataNode successorInWA;
+            ProductMarkovNode<T> newNode;
+
             foreach (var initial in initials) {
-                //Console.WriteLine ("initial " + initial.Name);
-//            
-//            Console.WriteLine ("* {"+string.Join (",", initial.Labels.Select (x => x.ToString ()))+"}");
-//                foreach (var sss in rabin.OutEdges (initBA)) {
-//                    Console.WriteLine ("{"+string.Join (",", sss.Labels.Select (x => x.ToString ()))+"} to " + sss.Target.Name);
-//            }
-//            
-                AutomataNode succBA = rabin.OutEdges (initBA).SingleOrDefault (e => e.Labels.IsSubsetOf (initial.Labels))?.Target;
+                successorsInWA = automaton.Post (initWA, initial.Labels);
                 
-                if (succBA != null) {
-                    var n = product.AddVertex (/*"s" + (i++)*/ initial.Name + " x (" + succBA.Name + ")" );
-//                    n.Labels = succBA;
-//                    if (rabin.AcceptanceSet.Contains (succBA)) {
-//                        n.Labels.Add (accept);
-//                    } else {
-//                        n.Labels.Add (naccept);
-//                    }
+                if (successorsInWA.Count () > 1)
+                    throw new NotSupportedException ("Product between a Markov Chain and a non-deterministic " +
+                                                     "w-automaton is not supported.");
+                
+                if (successorsInWA.Any ()) {
+                    successorInWA = successorsInWA.Single ();
+                    newNode = product.AddVertex ();
+                    newNode.SetNodes (initial, successorInWA);
                     
-                    var tuple = new Tuple<MarkovNode, AutomataNode> (initial, succBA);
-                    mapping.Add (tuple, n);
-                    pending.Push (tuple);
+                    var tuple = new Tuple<T, AutomataNode> (initial, successorInWA);
                     
-                    mapping2.Add (initial, n);
+                    unique.Add (tuple, newNode);
+                    correspondingNodes.Add (initial, newNode);
                     
-                    // We are cheating here, as we have no inital node in fact. 
-                    // product.SetInitial (n, 1); // initial.Value);
+                    pending.Push (newNode);
                 }
             }
-            
-            ////Console.WriteLine (product.Nodes.Count ());
             
             while (pending.Count > 0) {
                 var current = pending.Pop ();
-                var currentMC = current.Item1;
-                var currentBA = current.Item2;
-                var currentProduct = mapping [current];
-                //Console.WriteLine ("currentMC " + currentMC.Name);
-                //Console.WriteLine ("currentBA " + currentBA.Name);
-                
-                foreach (var succMC in mc.Post (currentMC)) {
-                    // var succBA = ba.Post (initBA, succMC.Labels);
-                    //Console.WriteLine ("{"+string.Join (",", succMC.Labels)+"}");
-                    
-                    var succBA = rabin.OutEdges (currentBA).SingleOrDefault (e => e.Labels.IsSubsetOf (succMC.Labels))?.Target;
-                    if (succBA != null) {
-                        
-                        MarkovNode n;
-                        var tuple = new Tuple<MarkovNode, AutomataNode> (succMC, succBA);
+                var currentNodeInMC = current.MarkovNode;
+                var currentNodeInWA = current.AutomataNode;
+                var currentNodeInPA = current;
+                visited.Add (current);
 
-                        if (!pending.Contains (tuple) & !mapping.ContainsKey (tuple)) {
-                            pending.Push (tuple);
-                        }
+                foreach (var successorInMC in mc.Post (currentNodeInMC)) {
+                    successorsInWA = automaton.Post (currentNodeInWA, successorInMC.Labels);
+                    if (successorsInWA.Count () > 1)
+                        throw new NotSupportedException ("Product between a Markov Chain and a non-deterministic " +
+                                                         "w-automaton is not supported.");
                         
-                        if (!mapping.ContainsKey (tuple)) {
-                            n = product.AddVertex ( succMC.Name + " x (" + succBA.Name + ")"  /* "s" + (i++) */ );
-//                            if (rabin.AcceptanceSet.Contains (succBA)) {
-//                                n.Labels.Add (accept);
-//                            } else {
-//                                n.Labels.Add (naccept);
-//                            }
-                            
-                            mapping.Add (tuple, n);
+                    if (successorsInWA.Any ()) {
+                        successorInWA = successorsInWA.Single ();
+                        var tuple = new Tuple<T, AutomataNode> (successorInMC, successorInWA);
+
+                        if (!unique.ContainsKey (tuple)) {
+                            newNode = product.AddVertex ();
+                            newNode.SetNodes (successorInMC, successorInWA);
+                            unique.Add (tuple, newNode);
+
                         } else {
-                            n = mapping [tuple];
+                            newNode = unique [tuple];
+                        }
+
+                        if (!pending.Contains (newNode) & !visited.Contains (newNode)) {
+                            pending.Push (newNode);
                         }
                         
-                        product.AddEdge (currentProduct, mc.GetProbability (currentMC, succMC), n);
-                    } else {
-                        //Console.WriteLine ("no succ in ba");
+                        product.AddEdge (currentNodeInPA, mc.GetProbability (currentNodeInMC, successorInMC), newNode);
                     }
                 }
             }
-            
-            var cond = new HashSet<RabinCondition<MarkovNode>> ();
-            foreach (var ac in rabin.AcceptanceSet) {
-                var nc = new RabinCondition<MarkovNode> ();
-                foreach (var n in mapping) {
-                    var mcNode = n.Key.Item1;
-                    var raNode = n.Key.Item2;
-                    var prNode = n.Value;
-                    if (ac.E.Contains (raNode)) {
-                        nc.E.Add (prNode);
-                    }
-                    if (ac.F.Contains (raNode)) {
-                        nc.F.Add (prNode);
-                    }
-                }
-                cond.Add (nc);
-            }
-            conditions = cond;
-            
+
             return product;
         }
     }
