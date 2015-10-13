@@ -5,6 +5,7 @@ using LtlSharp.Buchi;
 using LtlSharp.Buchi.Automata;
 using LtlSharp.Buchi.Translators;
 using LtlSharp.Automata;
+using LtlSharp.Automata.OmegaAutomata;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
@@ -137,7 +138,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        public BuchiAutomata GetAutomaton (ITLFormula phi) {
+        public BuchiAutomaton GetAutomaton (ITLFormula phi) {
             return GBA2BA.Transform (GetGBA (phi));
         }
         

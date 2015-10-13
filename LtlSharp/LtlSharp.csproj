@@ -64,7 +64,7 @@
     <Compile Include="Translators\GPVW.cs" />
     <Compile Include="EmptinessChecker\GBAEmptinessChecker.cs" />
     <Compile Include="Automata\GeneralizedBuchiAutomata.cs" />
-    <Compile Include="Automata\BuchiAutomata.cs" />
+    <Compile Include="Automata\OmegaAutomata\BuchiAutomaton.cs" />
     <Compile Include="EmptinessChecker\EmptinessChecker.cs" />
     <Compile Include="Translators\GBA2BA.cs" />
     <Compile Include="EmptinessChecker\OnTheFlyEmptinessChecker.cs" />
@@ -86,7 +86,7 @@
     <Compile Include="ModelCheckers\PCTLModelChecker.cs" />
     <Compile Include="Translators\SafraDeterminization.cs" />
     <Compile Include="Translators\Transformer.cs" />
-    <Compile Include="Automata\RabinAutomata.cs" />
+    <Compile Include="Automata\OmegaAutomata\RabinAutomaton.cs" />
     <Compile Include="Translators\Fold.cs" />
     <Compile Include="Utils\CollectionUtils.cs" />
     <Compile Include="Translators\Unfold.cs" />
@@ -111,5 +111,7 @@
     <Folder Include="ProbabilisticSystems\" />
     <Folder Include="ModelCheckers\" />
     <Folder Include="Automata\AcceptanceConditions\" />
+    <Folder Include="Automata\OmegaAutomata\" />
+    <Folder Include="Automata\FiniteAutomata\" />
   </ItemGroup>
 </Project>

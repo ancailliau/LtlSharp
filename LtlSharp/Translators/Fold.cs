@@ -4,6 +4,7 @@ using LtlSharp.Buchi.Automata;
 using System.Linq;
 using LtlSharp.Language;
 using LtlSharp.Automata;
+using LtlSharp.Automata.OmegaAutomata;
 
 namespace LtlSharp.Translators
 {

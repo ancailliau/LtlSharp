@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using LtlSharp.Translators;
 using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
+using LtlSharp.Automata.OmegaAutomata;
 
 namespace CheckMyModels.Tests
 {
@@ -16,7 +17,7 @@ namespace CheckMyModels.Tests
         [Test()]
         public void TestSafraExampleInPaper ()
         {
-            var ba = new BuchiAutomata ();
+            var ba = new BuchiAutomaton ();
             var q = new AutomatonNode ("qI"); ba.AddNode (q);
             var f = new AutomatonNode ("f"); ba.AddNode (f);
             var g = new AutomatonNode ("g"); ba.AddNode (g);
@@ -54,7 +55,7 @@ namespace CheckMyModels.Tests
             var safra = new SafraDeterminization ();
             var rabin = safra.Transform (ba);
 
-            var folder = new Fold<RabinAutomata> ();
+            var folder = new Fold<RabinAutomaton> ();
             rabin = folder.Transform (rabin);
 
             Console.WriteLine (rabin.ToDot ());

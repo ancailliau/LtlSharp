@@ -5,6 +5,7 @@ using LtlSharp.Buchi;
 using LtlSharp;
 using LtlSharp.Buchi.Automata;
 using LtlSharp.Automata;
+using LtlSharp.Automata.OmegaAutomata;
 
 namespace LittleSharp.Buchi
 {
@@ -14,12 +15,12 @@ namespace LittleSharp.Buchi
 	/// </summary>
 	public class OnTheFlyEmptinessChecker
     {
-        public BuchiAutomata LTS {
+        public BuchiAutomaton LTS {
             get;
             private set;
         }
         
-        public BuchiAutomata LTLAutomata {
+        public BuchiAutomaton LTLAutomata {
 			get;
 			private set;
 		}
@@ -30,7 +31,7 @@ namespace LittleSharp.Buchi
         public List<AutomatonNode> counterexample_prefix;
         public List<AutomatonNode> counterexample_loop;
         		
-        public OnTheFlyEmptinessChecker (BuchiAutomata ltlAutomata, BuchiAutomata lts)
+        public OnTheFlyEmptinessChecker (BuchiAutomaton ltlAutomata, BuchiAutomaton lts)
 		{
             LTLAutomata = ltlAutomata;
             LTS = lts;

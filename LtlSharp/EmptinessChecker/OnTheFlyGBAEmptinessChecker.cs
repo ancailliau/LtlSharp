@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LtlSharp.Automata;
+using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Buchi.Automata;
 
 namespace LtlSharp.Buchi
@@ -18,9 +19,9 @@ namespace LtlSharp.Buchi
         // index of the node, index of the acceptance set
         
         TransitionGeneralizedBuchiAutomata a;
-        BuchiAutomata ba;
+        BuchiAutomaton ba;
         
-        public OnTheFlyGBAEmptinessChecker (TransitionGeneralizedBuchiAutomata a, BuchiAutomata ba)
+        public OnTheFlyGBAEmptinessChecker (TransitionGeneralizedBuchiAutomata a, BuchiAutomaton ba)
         {
             this.a = a;
             this.ba = ba;

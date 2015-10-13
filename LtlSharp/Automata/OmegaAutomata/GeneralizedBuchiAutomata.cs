@@ -6,7 +6,7 @@ using LtlSharp.Automata;
 using LtlSharp.Buchi.Automata;
 using QuickGraph;
 
-namespace LtlSharp.Buchi
+namespace LtlSharp.Automata.OmegaAutomata
 {
     public class GBAAcceptanceSet {
         public int Id;

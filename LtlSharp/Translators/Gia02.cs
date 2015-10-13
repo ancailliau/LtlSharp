@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LtlSharp.Automata;
+using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Buchi.Automata;
 using QuickGraph;
 using QuickGraph.Graphviz;
@@ -473,7 +474,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         
         public HashSet<Node> CreateGraph (ITLFormula phi) { return null; }
         
-        public BuchiAutomata GetAutomaton (ITLFormula phi) { 
+        public BuchiAutomaton GetAutomaton (ITLFormula phi) { 
             phi = phi.Normalize ();
             
             var init = InternalNode.CreateInitial (phi);
@@ -519,10 +520,10 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return SynchrounousProduct (automaton, degeneralizer); 
         }
 
-        BuchiAutomata SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
+        BuchiAutomaton SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
         {
             var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, LabelledAutomataNode> ();
-            var ba = new BuchiAutomata ();
+            var ba = new BuchiAutomaton ();
 
             var n0 = tgba.InitialNodes.Single ();
             var n1 = degeneralizer.InitialNodes.Single ();
@@ -534,7 +535,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return ba;
         }
 
-        void DFSSynchrounousProduct (BuchiAutomata ba, TGBA tgba, Degeneralizer degeneralizer,
+        void DFSSynchrounousProduct (BuchiAutomaton ba, TGBA tgba, Degeneralizer degeneralizer,
                                      Dictionary<Tuple<AutomatonNode, AutomatonNode>, LabelledAutomataNode> cache, 
                                      AutomatonNode n0, AutomatonNode n1) {
             
@@ -597,7 +598,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        LabelledAutomataNode Get (BuchiAutomata ba, TGBA automaton, Degeneralizer degeneralizer,
+        LabelledAutomataNode Get (BuchiAutomaton ba, TGBA automaton, Degeneralizer degeneralizer,
                                   Dictionary<Tuple<AutomatonNode, AutomatonNode>, LabelledAutomataNode> cache, 
                                   AutomatonNode n0, AutomatonNode n1)
         {

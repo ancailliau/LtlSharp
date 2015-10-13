@@ -7,9 +7,9 @@ using QuickGraph.Graphviz.Dot;
 using LtlSharp.Utils;
 using LtlSharp.Automata.AcceptanceConditions;
 
-namespace LtlSharp.Automata
+namespace LtlSharp.Automata.OmegaAutomata
 {
-    public class RabinAutomata : OmegaAutomaton
+    public class RabinAutomaton : OmegaAutomaton
     {
         RabinAcceptance<AutomatonNode> _acceptanceCondition;
         
@@ -20,7 +20,7 @@ namespace LtlSharp.Automata
             }
         }
         
-        public RabinAutomata () : base ()
+        public RabinAutomaton () : base ()
         {
             _acceptanceCondition = new RabinAcceptance<AutomatonNode> ();
         }

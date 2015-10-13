@@ -5,6 +5,7 @@ using LtlSharp.Buchi;
 using LtlSharp.Buchi.Automata;
 using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
+using LtlSharp.Automata.OmegaAutomata;
 
 namespace LtlSharp.Buchi.Translators
 {
@@ -20,7 +21,7 @@ namespace LtlSharp.Buchi.Translators
         /// Returns the Büchi Automata corresponding to the specified GBA.
         /// </summary>
         /// <param name="gba">A Generalized Büchi Automata.</param>
-        public static BuchiAutomata Transform (TransitionGeneralizedBuchiAutomata gba)
+        public static BuchiAutomaton Transform (TransitionGeneralizedBuchiAutomata gba)
         {
             // A GBA without acceptance set the same than a GBA with one acceptance set containing all nodes.
             if (gba.AcceptanceSets.Length == 0) {
@@ -31,7 +32,7 @@ namespace LtlSharp.Buchi.Translators
             
             // If the GBA contains only one acceptance set, then it is a BA.
             if (gba.AcceptanceSets.Length == 1) {
-                var automata = new BuchiAutomata ();
+                var automata = new BuchiAutomaton ();
                 automata.AddNodes (gba.Vertices);
                 automata.AddTransitions (gba.Edges);
                 automata.SetInitialNode (gba.InitialNodes.Single ());
@@ -44,7 +45,7 @@ namespace LtlSharp.Buchi.Translators
                 mapping [i] = new Dictionary<AutomatonNode, AutomatonNode> ();
             }
             
-            var ba = new BuchiAutomata ();
+            var ba = new BuchiAutomaton ();
             foreach (var qi in gba.InitialNodes) {
                 Recur (qi, ba, 0, gba);
             }
@@ -59,7 +60,7 @@ namespace LtlSharp.Buchi.Translators
             return ba;
         }
         
-        static AutomatonNode Recur (AutomatonNode root, BuchiAutomata ba, int acceptanceIndex, TransitionGeneralizedBuchiAutomata gba)
+        static AutomatonNode Recur (AutomatonNode root, BuchiAutomaton ba, int acceptanceIndex, TransitionGeneralizedBuchiAutomata gba)
         {
             if (mapping[acceptanceIndex].ContainsKey(root)) {
                 return mapping [acceptanceIndex][root];

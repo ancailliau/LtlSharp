@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using LtlSharp.Automata;
+using LtlSharp.Automata.OmegaAutomata;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
     public interface ILTLTranslator
     {
-        BuchiAutomata GetAutomaton (ITLFormula phi);
+        BuchiAutomaton GetAutomaton (ITLFormula phi);
     }
 }
 

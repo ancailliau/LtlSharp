@@ -7,6 +7,7 @@ using System.Linq;
 using LtlSharp.Automata;
 using QuickGraph;
 using LtlSharp.Automata.AcceptanceConditions;
+using LtlSharp.Automata.OmegaAutomata;
 
 namespace LtlSharp.Translators
 {
@@ -33,7 +34,7 @@ namespace LtlSharp.Translators
         /// automata and <c>y</c> is the corresponding node in the specified Markov Chain for the initial state of 
         /// the Buchï Automata.</param>
         public static MarkovChain<ProductMarkovNode<T>> Product<T> (this MarkovChain<T> mc, 
-                                                                    BuchiAutomata ba, 
+                                                                    BuchiAutomaton ba, 
                                                                     IEnumerable<T> initials,
                                                                     out IAcceptanceCondition<ProductMarkovNode<T>> condition,
                                                                     out Dictionary<T, ProductMarkovNode<T>> correspondingNodes)
@@ -69,7 +70,7 @@ namespace LtlSharp.Translators
         /// automata and <c>y</c> is the corresponding node in the specified Markov Chain for the initial state of 
         /// the Rabin Automata.</param>
         public static MarkovChain<ProductMarkovNode<T>> Product<T> (this MarkovChain<T> mc, 
-                                                                    RabinAutomata rabin, 
+                                                                    RabinAutomaton rabin, 
                                                                     IEnumerable<T> initials, 
                                                                     out IAcceptanceCondition<ProductMarkovNode<T>> condition,
                                                                     out Dictionary<T, ProductMarkovNode<T>> correspondingNodes)

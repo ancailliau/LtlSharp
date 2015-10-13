@@ -8,9 +8,9 @@ using QuickGraph;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 
-namespace LtlSharp.Automata
+namespace LtlSharp.Automata.OmegaAutomata
 {
-    public class BuchiAutomata : OmegaAutomaton
+    public class BuchiAutomaton : OmegaAutomaton
     {
         BuchiAcceptance<AutomatonNode> _acceptanceCondition;
         
@@ -18,7 +18,7 @@ namespace LtlSharp.Automata
             get { return _acceptanceCondition; }
         }
 
-		public BuchiAutomata () : base ()
+		public BuchiAutomaton () : base ()
         {
             _acceptanceCondition = new BuchiAcceptance<AutomatonNode> ();
         }

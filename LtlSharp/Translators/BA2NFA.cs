@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using LittleSharp.Buchi;
 using LtlSharp.Automata;
+using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Buchi.Automata;
 
 namespace LtlSharp.Buchi.Translators
 {
     public static class BA2NFA
     {
-        public static NFA Transform (BuchiAutomata automata)
+        public static NFA Transform (BuchiAutomaton automata)
         {
             var emptinessChecker = new EmptinessChecker (automata);
 

@@ -6,24 +6,25 @@ using System.Collections.Generic;
 using LtlSharp.Buchi;
 using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
+using LtlSharp.Automata.OmegaAutomata;
 
 namespace LtlSharp.Translators
 {
-    public class Unfold : Transformer<BuchiAutomata, BuchiAutomata>
+    public class Unfold : Transformer<BuchiAutomaton, BuchiAutomaton>
     {
         public Unfold ()
         {
         }
         
-        public override BuchiAutomata Transform (BuchiAutomata t)
+        public override BuchiAutomaton Transform (BuchiAutomaton t)
         {
             var alphabet = t.Edges.SelectMany (x => x.Labels).Select (x => x is Negation ? ((ILiteral)((Negation)x).Enclosed) : x).Distinct ();
             return Transform (t, alphabet);
         }
         
-        public BuchiAutomata Transform (BuchiAutomata t, IEnumerable<ILiteral> alphabet)
+        public BuchiAutomaton Transform (BuchiAutomaton t, IEnumerable<ILiteral> alphabet)
         {        
-            var automata = new BuchiAutomata ();
+            var automata = new BuchiAutomaton ();
             automata.AddNodes (t.Vertices);
             automata.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode>((BuchiAcceptance<AutomatonNode>) t.AcceptanceCondition));
             automata.SetInitialNode (t.InitialNode);

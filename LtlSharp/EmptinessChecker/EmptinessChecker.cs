@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using LtlSharp.Buchi;
 using LtlSharp.Buchi.Automata;
 using LtlSharp.Automata;
+using LtlSharp.Automata.OmegaAutomata;
 
 namespace LittleSharp.Buchi
 {
@@ -13,7 +14,7 @@ namespace LittleSharp.Buchi
 	/// </summary>
 	public class EmptinessChecker
 	{
-        public BuchiAutomata Automaton {
+        public BuchiAutomaton Automaton {
 			get;
 			private set;
 		}
@@ -21,7 +22,7 @@ namespace LittleSharp.Buchi
         public Stack<AutomatonNode> dfsStack1;
         public Stack<AutomatonNode> dfsStack2;
 		
-        public EmptinessChecker (BuchiAutomata automaton)
+        public EmptinessChecker (BuchiAutomaton automaton)
         {
             dfsStack1 = new Stack<AutomatonNode> ();
 			Automaton = automaton;

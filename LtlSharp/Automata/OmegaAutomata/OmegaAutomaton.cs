@@ -5,7 +5,7 @@ using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Buchi.Automata;
 using QuickGraph;
 
-namespace LtlSharp.Automata
+namespace LtlSharp.Automata.OmegaAutomata
 {
     public abstract class OmegaAutomaton
     {
