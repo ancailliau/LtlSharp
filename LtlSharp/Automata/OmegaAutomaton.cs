@@ -6,21 +6,13 @@ using QuickGraph;
 
 namespace LtlSharp.Automata
 {
-    public interface IOmegaAutomaton 
-    {
-        IAcceptanceCondition<AutomataNode> AcceptanceCondition {
-            get;
-        }
-    }
-    
-    public abstract class OmegaAutomaton : IOmegaAutomaton
+    public abstract class OmegaAutomaton
     {
         protected AdjacencyGraph<AutomataNode, LabeledAutomataTransition<AutomataNode>> graph;
         
         public AutomataNode InitialNode { get; protected set; }
 
         public abstract IAcceptanceCondition<AutomataNode> AcceptanceCondition { get; }
-        
         
         public IEnumerable<AutomataNode> Vertices { 
             get {
