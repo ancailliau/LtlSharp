@@ -31,8 +31,8 @@ namespace LtlSharp.Buchi.Translators
             // If the GBA contains only one acceptance set, then it is a BA.
             if (gba.AcceptanceSets.Length == 1) {
                 var automata = new BuchiAutomata ();
-                automata.AddVertexRange (gba.Vertices);
-                automata.AddEdgeRange (gba.Edges);
+                automata.AddNodes (gba.Vertices);
+                automata.AddTransitions (gba.Edges);
                 automata.SetInitialNode (gba.InitialNodes.Single ());
                 automata.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> (gba.AcceptanceSets [0].Nodes));
                 return automata;
@@ -66,7 +66,7 @@ namespace LtlSharp.Buchi.Translators
             
             var bANode = new AutomataNode (root.Name + " x " + acceptanceIndex);
             mapping [acceptanceIndex].Add(root, bANode);
-            ba.AddVertex (bANode);
+            ba.AddNode (bANode);
             if (gba.InitialNodes.Single ().Equals (root) & acceptanceIndex == 0) {
                 ba.SetInitialNode (bANode);
             }
@@ -79,7 +79,7 @@ namespace LtlSharp.Buchi.Translators
             foreach (var t in gba.OutEdges (root)) {
                 var n2 = Recur (t.Target, ba, newAI, gba);
                 var t2 = new LabeledAutomataTransition<AutomataNode> (bANode, n2, t.Labels);
-                ba.AddEdge (t2);
+                ba.AddTransition (t2);
             }
             
             return bANode;

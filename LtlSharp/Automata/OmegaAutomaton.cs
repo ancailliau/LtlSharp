@@ -26,14 +26,18 @@ namespace LtlSharp.Automata
             }
         }
 
-        internal void RemoveEdge (LabeledAutomataTransition<AutomataNode> e)
-        {
-            graph.RemoveEdge (e);
-        }
-        
         public OmegaAutomaton ()
         {
             graph = new AdjacencyGraph<AutomataNode, LabeledAutomataTransition<AutomataNode>> ();
+        }
+
+        /// <summary>
+        /// Sets the initial node.
+        /// </summary>
+        /// <param name="node">Node.</param>
+        public void SetInitialNode (AutomataNode node)
+        {
+            InitialNode = node;
         }
 
         /// <summary>
@@ -108,37 +112,65 @@ namespace LtlSharp.Automata
             return nodes.SelectMany (node => Post(node, labels));
         }
         
+        /// <summary>
+        /// Returns all the outgoing transitions for the specified node.
+        /// </summary>
+        /// <returns>The transitions.</returns>
+        /// <param name="node">Node.</param>
+        public IEnumerable<LabeledAutomataTransition<AutomataNode>> OutTransitions (AutomataNode node)
+        {
+            return graph.OutEdges (node);
+        }
+
+        /// <summary>
+        /// Adds the specified transition to the automaton.
+        /// </summary>
+        /// <param name="transition">Transition.</param>
+        public void AddTransition (LabeledAutomataTransition<AutomataNode> transition)
+        {
+            graph.AddEdge (transition);
+        }
+
+        /// <summary>
+        /// Removes the transition.
+        /// </summary>
+        /// <param name="transition">Transition.</param>
+        public void RemoveTransition (LabeledAutomataTransition<AutomataNode> transition)
+        {
+            graph.RemoveEdge (transition);
+        }
+
+        /// <summary>
+        /// Adds the transitions.
+        /// </summary>
+        /// <param name="transitions">Transitions.</param>
+        public void AddTransitions (IEnumerable<LabeledAutomataTransition<AutomataNode>> transitions)
+        {
+            graph.AddEdgeRange (transitions);
+        }
         
-        public IEnumerable<LabeledAutomataTransition<AutomataNode>> OutTransitions (AutomataNode n)
+        /// <summary>
+        /// Adds the node.
+        /// </summary>
+        /// <param name="node">Node.</param>
+        public void AddNode (AutomataNode node)
         {
-            return graph.OutEdges (n);
+            graph.AddVertex (node);
         }
 
-        public void AddEdgeRange (IEnumerable<LabeledAutomataTransition<AutomataNode>> edges)
+        /// <summary>
+        /// Adds all the nodes.
+        /// </summary>
+        /// <param name="nodes">Nodes.</param>
+        public void AddNodes (IEnumerable<AutomataNode> nodes)
         {
-            graph.AddEdgeRange (edges);
+            graph.AddVertexRange (nodes);
         }
 
-        public void AddVertexRange (IEnumerable<AutomataNode> vertices)
-        {
-            graph.AddVertexRange (vertices);
-        }
-
-        public void AddVertex (AutomataNode bANode)
-        {
-            graph.AddVertex (bANode);
-        }
-
-        public void SetInitialNode (AutomataNode bANode)
-        {
-            InitialNode = bANode;
-        }
-
-        public void AddEdge (LabeledAutomataTransition<AutomataNode> t2)
-        {
-            graph.AddEdge (t2);
-        }
-        
+        /// <summary>
+        /// Returns whether the omega automaton is deterministic.
+        /// </summary>
+        /// <returns><c>True</c> if deterministic, <c>False</c> otherwise.</returns>
         public bool IsDeterministic ()
         {
             var pending = new Stack<AutomataNode> (new [] { InitialNode });
@@ -149,16 +181,13 @@ namespace LtlSharp.Automata
                 visited.Add (s0);
 
                 var transitions = graph.OutEdges (s0);
-
                 foreach (var c in transitions.Select (x => x.Labels)) {
-                    // TODO Remove assumption that transitions were unfolded
-                    var succ = transitions.Where (t => t.Labels.SetEquals (c)).Select (t => t.Target);
-                    if (succ.Count () > 1) {
+                    var succ = transitions.Where (t => c.IsSubsetOf(t.Labels)).Select (t => t.Target);
+                    if (succ.Count () > 1)
                         return false;
-                    } else {
-                        foreach (var s in succ.Where (node => !visited.Contains (node))) {
-                            pending.Push (s);
-                        }
+                    
+                    foreach (var s in succ.Except (visited)) {
+                        pending.Push (s);
                     }
                 }
             }

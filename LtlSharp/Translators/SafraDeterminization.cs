@@ -368,7 +368,7 @@ namespace LtlSharp.Translators
             int i = 0;
             foreach (var t in Transitions.Keys) {
                 var n = new AutomataNode ("s" + (i++));
-                rabin.AddVertex (n);
+                rabin.AddNode (n);
                 mapping.Add (t, n);
             }
             
@@ -378,7 +378,7 @@ namespace LtlSharp.Translators
                 foreach (var e in t.Value) {
                     var edge = new LabeledAutomataTransition<AutomataNode> (mapping [t.Key], mapping [e.Target], e.Labels);
                     if (!rabin.OutTransitions (mapping [t.Key]).Contains (edge)) {
-                        rabin.AddEdge (edge);
+                        rabin.AddTransition (edge);
                     }
                 }
             }

@@ -574,7 +574,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     var next = Get (ba, tgba, degeneralizer, cache, next0, next1);
 
                     var t = new LabeledAutomataTransition<AutomataNode> (n, next, e0.Labels);
-                    ba.AddEdge (t);
+                    ba.AddTransition (t);
                     
                     if (newNext) {
                         DFSSynchrounousProduct (ba, tgba, degeneralizer, cache, next0, next1);
@@ -594,7 +594,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 if (degeneralizer.AcceptanceSet.Contains (n1)) {
                     ba.AddToAcceptance (cachedNode);
                 }
-                ba.AddVertex (cachedNode);
+                ba.AddNode (cachedNode);
                 cache.Add (key, cachedNode);
             }
 

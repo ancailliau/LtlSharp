@@ -23,14 +23,14 @@ namespace LtlSharp.Translators
         public BuchiAutomata Transform (BuchiAutomata t, IEnumerable<ILiteral> alphabet)
         {        
             var automata = new BuchiAutomata ();
-            automata.AddVertexRange (t.Vertices);
+            automata.AddNodes (t.Vertices);
             automata.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> ((BuchiAcceptance<AutomataNode>) t.AcceptanceCondition));
             automata.SetInitialNode (t.InitialNode);
 
             foreach (var trans in t.Edges) {
                 var labels = UnfoldLabels (trans.Labels, alphabet);
                 foreach (var label in labels) {
-                    automata.AddEdge (new LabeledAutomataTransition<AutomataNode> (trans.Source, trans.Target, label));
+                    automata.AddTransition (new LabeledAutomataTransition<AutomataNode> (trans.Source, trans.Target, label));
                 }
             }
             return automata;

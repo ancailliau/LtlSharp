@@ -69,17 +69,17 @@ namespace CheckMyModels.Tests
             ILiteral nmob = new Negation (mob);
             
             var lts = new BuchiAutomata ();
-            var n0 = new AutomataNode ("i"); lts.AddVertex (n0);
-            var n1 = new AutomataNode ("s0");lts.AddVertex (n1);
-            var n2 = new AutomataNode ("s1");lts.AddVertex (n2);
-            var n3 = new AutomataNode ("s2");lts.AddVertex (n3);
+            var n0 = new AutomataNode ("i"); lts.AddNode (n0);
+            var n1 = new AutomataNode ("s0");lts.AddNode (n1);
+            var n2 = new AutomataNode ("s1");lts.AddNode (n2);
+            var n3 = new AutomataNode ("s2");lts.AddNode (n3);
 
             lts.SetInitialNode (n0);
                
-            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
-            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
-            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
-            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddTransition (new LabeledAutomataTransition<AutomataNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddTransition (new LabeledAutomataTransition<AutomataNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
+            lts.AddTransition (new LabeledAutomataTransition<AutomataNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
+            lts.AddTransition (new LabeledAutomataTransition<AutomataNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
             
             lts.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> (lts.Vertices));
             
@@ -117,17 +117,17 @@ namespace CheckMyModels.Tests
             ILiteral nmob = new Negation (mob);
             
             var lts = new BuchiAutomata ();
-            var n0 = new AutomataNode ("i"); lts.AddVertex (n0);
-            var n1 = new AutomataNode ("s0");lts.AddVertex (n1);
-            var n2 = new AutomataNode ("s1");lts.AddVertex (n2);
-            var n3 = new AutomataNode ("s2");lts.AddVertex (n3);
+            var n0 = new AutomataNode ("i"); lts.AddNode (n0);
+            var n1 = new AutomataNode ("s0");lts.AddNode (n1);
+            var n2 = new AutomataNode ("s1");lts.AddNode (n2);
+            var n3 = new AutomataNode ("s2");lts.AddNode (n3);
 
             lts.SetInitialNode (n0);
 
-            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
-            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
-            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
-            lts.AddEdge (new LabeledAutomataTransition<AutomataNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddTransition (new LabeledAutomataTransition<AutomataNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddTransition (new LabeledAutomataTransition<AutomataNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
+            lts.AddTransition (new LabeledAutomataTransition<AutomataNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
+            lts.AddTransition (new LabeledAutomataTransition<AutomataNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
 
             lts.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> (lts.Vertices));
 

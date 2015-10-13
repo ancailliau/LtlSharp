@@ -16,9 +16,9 @@ namespace CheckMyModels.Tests
         public void TestSafraExampleInPaper ()
         {
             var ba = new BuchiAutomata ();
-            var q = new AutomataNode ("qI"); ba.AddVertex (q);
-            var f = new AutomataNode ("f"); ba.AddVertex (f);
-            var g = new AutomataNode ("g"); ba.AddVertex (g);
+            var q = new AutomataNode ("qI"); ba.AddNode (q);
+            var f = new AutomataNode ("f"); ba.AddNode (f);
+            var g = new AutomataNode ("g"); ba.AddNode (g);
 
             var pa = new Proposition ("a");
             var pb = new Proposition ("b");
@@ -29,23 +29,23 @@ namespace CheckMyModels.Tests
             var c = new HashSet<ILiteral> (new ILiteral[] { pc });
 
             // a,b from qI to qI
-            ba.AddEdge (new LabeledAutomataTransition<AutomataNode> (q, q, a));
-            ba.AddEdge (new LabeledAutomataTransition<AutomataNode> (q, q, b));
+            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (q, q, a));
+            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (q, q, b));
 
             // c from f to f
-            ba.AddEdge (new LabeledAutomataTransition<AutomataNode> (f, f, c));
+            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (f, f, c));
 
             // a from qI to f
-            ba.AddEdge (new LabeledAutomataTransition<AutomataNode> (q, f, a));
+            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (q, f, a));
 
             // a from f to g
-            ba.AddEdge (new LabeledAutomataTransition<AutomataNode> (f, g, a));
+            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (f, g, a));
 
             // a from g to g
-            ba.AddEdge (new LabeledAutomataTransition<AutomataNode> (g, g, a));
+            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (g, g, a));
 
             // a from g to f
-            ba.AddEdge (new LabeledAutomataTransition<AutomataNode> (g, f, a));
+            ba.AddTransition (new LabeledAutomataTransition<AutomataNode> (g, f, a));
 
             ba.SetInitialNode (q);
             ba.SetAcceptanceCondition (new BuchiAcceptance<AutomataNode> (new [] { f, g }));
