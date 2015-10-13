@@ -63,13 +63,13 @@
     <Compile Include="Automata\Node.cs" />
     <Compile Include="Translators\GPVW.cs" />
     <Compile Include="EmptinessChecker\GBAEmptinessChecker.cs" />
-    <Compile Include="Automata\GeneralizedBuchiAutomata.cs" />
+    <Compile Include="Automata\OmegaAutomata\GeneralizedBuchiAutomata.cs" />
     <Compile Include="Automata\OmegaAutomata\BuchiAutomaton.cs" />
     <Compile Include="EmptinessChecker\EmptinessChecker.cs" />
     <Compile Include="Translators\GBA2BA.cs" />
     <Compile Include="EmptinessChecker\OnTheFlyEmptinessChecker.cs" />
     <Compile Include="EmptinessChecker\OnTheFlyGBAEmptinessChecker.cs" />
-    <Compile Include="Automata\NFA.cs" />
+    <Compile Include="Automata\FiniteAutomata\NFA.cs" />
     <Compile Include="Automata\AutomatonNode.cs" />
     <Compile Include="Automata\AutomatonTransition.cs" />
     <Compile Include="Translators\BA2NFA.cs" />
@@ -91,8 +91,8 @@
     <Compile Include="Utils\CollectionUtils.cs" />
     <Compile Include="Translators\Unfold.cs" />
     <Compile Include="Translators\ProductAutomata.cs" />
-    <Compile Include="Automata\OmegaAutomaton.cs" />
-    <Compile Include="Automata\IAcceptanceCondition.cs" />
+    <Compile Include="Automata\OmegaAutomata\OmegaAutomaton.cs" />
+    <Compile Include="Automata\AcceptanceConditions\IAcceptanceCondition.cs" />
     <Compile Include="Automata\AcceptanceConditions\BuchiAcceptance.cs" />
     <Compile Include="Automata\AcceptanceConditions\RabinAcceptance.cs" />
   </ItemGroup>
