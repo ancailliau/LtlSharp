@@ -74,7 +74,7 @@ namespace LtlSharp.ProbabilisticSystems
             var A = new double[Stilde.Length,Stilde.Length];
             for (int i = 0; i < Stilde.Length; i++) {
                 for (int j = 0; j < Stilde.Length; j++) {
-                    var a = mc.GetEdge (Stilde[i], Stilde[j])?.Probability ?? 0;
+                    var a = mc.GetProbability (Stilde[i], Stilde[j]);
                     if (iterative) {
                         A [i, j] = a;
                     } else {
@@ -87,7 +87,7 @@ namespace LtlSharp.ProbabilisticSystems
             double [] b = new double[Stilde.Length];
             for (int i = 0; i < Stilde.Length; i++) {
                 var s = Stilde [i];
-                b [i] = B.Sum (u => mc.GetEdge (s, u)?.Probability ?? 0);
+                b [i] = B.Sum (u => mc.GetProbability (s, u));
             }
             
             var x = new double[Stilde.Length];
@@ -164,11 +164,7 @@ namespace LtlSharp.ProbabilisticSystems
             var absorbing = B.Union (mcprime.ExceptNodes (C.Union (B))); // B U (S \ (B U C))
             foreach (var s in absorbing) {
                 foreach (var t in mcprime.Nodes) {
-                    var transition = mcprime.GetEdge (s, t);
-                    if (transition == null) {
-                        transition = mcprime.AddEdge (s, 0, t);
-                    }
-                    transition.Probability = s.Equals(t) ? 1 : 0;
+                    mcprime.SetProbability (s, t, s.Equals (t) ? 1 : 0);
                 }
             }
             
@@ -283,7 +279,7 @@ namespace LtlSharp.ProbabilisticSystems
             for (int i = 0; i < len; i++) {
                 for (int j = 0; j < len; j++) {
                     if (!absorbing.Contains (nodes [i])) {
-                        var a = mc.GetEdge (nodes [i], nodes [j])?.Probability ?? 0;
+                        var a = mc.GetProbability (nodes [i], nodes [j]);
                         A [i, j] = a;
                         
                     } else if (i == j) {

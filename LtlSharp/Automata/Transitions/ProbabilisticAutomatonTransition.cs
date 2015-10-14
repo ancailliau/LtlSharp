@@ -10,8 +10,18 @@ namespace LtlSharp.Automata
     /// A Markov Transition has a source Markov node and a target Markov node. 
     /// The transition is decorated with its probability.
     /// </description>
-    public class MarkovTransition : Edge<int>
+    public class MarkovTransition : IAutomatonTransition<int>
     {
+        public int Source {
+            get;
+            set;
+        }
+        
+        public int Target {
+            get;
+            set;
+        }
+        
         /// <summary>
         /// Gets or sets the probability of the transition.
         /// </summary>
@@ -27,10 +37,11 @@ namespace LtlSharp.Automata
         /// <param name="source">Source node.</param>
         /// <param name="probability">Transition probability.</param>
         /// <param name="target">Target node.</param>
-        public MarkovTransition (int source, double probability, int target) 
-            : base (source, target)
+        public MarkovTransition (int source, double probability, int target)
         {
             Probability = probability;
+            Source = source;
+            Target = target;
         }
 
         public override bool Equals (object obj)
@@ -57,7 +68,10 @@ namespace LtlSharp.Automata
             }
         }
 
-
+        public IAutomatonTransition<int> Clone ()
+        {
+            return new MarkovTransition (Source, Probability, Target);
+        }
     }
 }
 

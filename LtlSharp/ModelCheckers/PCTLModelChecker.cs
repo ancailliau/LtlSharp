@@ -108,7 +108,7 @@ namespace LtlSharp.ModelCheckers
                 var po = (ProbabilisticOperator)phi;
                 var enclosed = po.Enclosed;
                 if (enclosed is Next) {
-                    var nodes = mc.Nodes.Where (n => po.IsSatisfied (sat [enclosed].Sum (s => mc.GetEdge (n, s)?.Probability ?? 0), epsilon));
+                    var nodes = mc.Nodes.Where (n => po.IsSatisfied (sat [enclosed].Sum (s => mc.GetProbability (n, s)), epsilon));
                     return new HashSet<T> (nodes);
                     
                 } else if (enclosed is Until) {

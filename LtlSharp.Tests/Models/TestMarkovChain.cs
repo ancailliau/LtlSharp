@@ -257,12 +257,16 @@ namespace LtlSharp.Tests.Models
         {
             var mc = GetExample (example);
             var start = mc.GetVertex (source);
+            
+            Console.WriteLine (mc.ToDot ());
 
             var post = mc.AllPre (start);
             var expectedPost = expected.Select (v => mc.GetVertex (v));
             
             Assert.That (post.All (v => expectedPost.Contains (v)), "Not all nodes were expected.");
-            Assert.That (expectedPost.All (v => post.Contains (v)), "All expected nodes not contained in post.");
+            Assert.That (expectedPost.All (v => post.Contains (v)), "All expected nodes not contained in post.\n" +
+                         "Expected : {" + string.Join (",", expectedPost.Select (t => t.Name)) + "}\n" +
+                         "But was : {" + string.Join (",", post.Select (t => t.Name)) + "}");
         }
 
         [TestCase (@"101", "start",     new [] { "delivered" })]

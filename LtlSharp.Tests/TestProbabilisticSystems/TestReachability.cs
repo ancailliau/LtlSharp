@@ -115,6 +115,8 @@ namespace LtlSharp.Tests.Models
             var B = new HashSet<AutomatonNode> (new [] { s3, s4 });
             var C = new HashSet<AutomatonNode> (new [] { s5 });
 
+            Console.WriteLine ("1");
+            
             var dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<AutomatonNode> (B.Union (C)));
             Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in B Union C.");
             Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in B Union C.");
@@ -129,6 +131,8 @@ namespace LtlSharp.Tests.Models
             Assert.AreEqual (dict [s4], 1);
             Assert.AreEqual (dict [s5], 1);
             
+            Console.WriteLine ("2");
+            
             dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<AutomatonNode> (B));
             Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in B.");
             Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in B.");
@@ -138,8 +142,9 @@ namespace LtlSharp.Tests.Models
             Assert.AreEqual (dict [s1], 2d/3, 1e-5);
             Assert.AreEqual (dict [s3], 1);
             Assert.AreEqual (dict [s4], 1);
-            
 
+            Console.WriteLine ("3");
+            
             dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<AutomatonNode> (C));
             Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in C.");
             Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in C.");
