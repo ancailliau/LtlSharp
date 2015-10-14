@@ -2,10 +2,11 @@
 using LtlSharp;
 using NUnit.Framework;
 using LtlSharp.ModelCheckers;
-using CheckMyModels.Tests.Models;
+using LtlSharp.Tests.Models;
 using LtlSharp.Models;
+using LtlSharp.Automata;
 
-namespace CheckMyModels.Tests.TestProbabilisticSystems
+namespace LtlSharp.Tests.TestProbabilisticSystems
 {
     [TestFixture()]
     public class TestPCTL
@@ -39,15 +40,15 @@ namespace CheckMyModels.Tests.TestProbabilisticSystems
             var p2 = new ProbabilisticOperator (new Until (neg, won, 5), .32, 1);
             var p3 = new ProbabilisticOperator (new Until (neg, new ProbabilisticOperator (new Globally (won), 1), 5), .32, 1);
 
-            var checker = new PCTLModelChecker<MarkovNode> (mc, p1, 1e-10);
+            var checker = new PCTLModelChecker<AutomatonNode> (mc, p1, 1e-10);
             var sat = checker.Check ();
             Assert.That (sat.Contains (mc.GetVertex ("start")));
             
-            checker = new PCTLModelChecker<MarkovNode> (mc, p2, 1e-10);
+            checker = new PCTLModelChecker<AutomatonNode> (mc, p2, 1e-10);
             sat = checker.Check ();
             Assert.That (sat.Contains (mc.GetVertex ("start")));
             
-            checker = new PCTLModelChecker<MarkovNode> (mc, p3, 1e-10);
+            checker = new PCTLModelChecker<AutomatonNode> (mc, p3, 1e-10);
             sat = checker.Check ();
             Assert.That (sat.Contains (mc.GetVertex ("start")));
         }
@@ -70,7 +71,7 @@ namespace CheckMyModels.Tests.TestProbabilisticSystems
             );
     
             var mc = TestMarkovChain.GetExampleFig101 ();
-            var mchecker = new PCTLModelChecker<MarkovNode> (mc, formula, 1e-5);
+            var mchecker = new PCTLModelChecker<AutomatonNode> (mc, formula, 1e-5);
     
             var result = mchecker.Check ();
             Assert.That (result.SetEquals (mc.Nodes));

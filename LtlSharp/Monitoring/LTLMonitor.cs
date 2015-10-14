@@ -19,7 +19,7 @@ namespace LtlSharp.Monitoring
     public class LTLMonitor
     {
         
-        private class NFAProduct : AdjacencyGraph<MonitorNode, LabeledAutomataTransition<MonitorNode>>
+        private class NFAProduct : AdjacencyGraph<MonitorNode, AutomatonTransition<MonitorNode>>
         {
             public HashSet<MonitorNode> InitialNodes;
 
@@ -41,7 +41,7 @@ namespace LtlSharp.Monitoring
                             RemoveEdge (e);
                         }
                         foreach (var nl in newLabels) {
-                            AddEdge (new LabeledAutomataTransition<MonitorNode> (trans.Source, trans.Target, nl));
+                            AddEdge (new AutomatonTransition<MonitorNode> (trans.Source, trans.Target, nl));
                         }
                     }
                 }
@@ -137,16 +137,16 @@ namespace LtlSharp.Monitoring
             Console.WriteLine (output);
         }
 
-        GraphvizAlgorithm<MonitorNode, LabeledAutomataTransition<MonitorNode>> GetEngine (NFAProduct automata)
+        GraphvizAlgorithm<MonitorNode, AutomatonTransition<MonitorNode>> GetEngine (NFAProduct automata)
         {
-            var graphviz = new GraphvizAlgorithm<MonitorNode, LabeledAutomataTransition<MonitorNode>> (automata);
+            var graphviz = new GraphvizAlgorithm<MonitorNode, AutomatonTransition<MonitorNode>> (automata);
             graphviz.FormatVertex += (object sender, FormatVertexEventArgs<MonitorNode> e) => {
                 e.VertexFormatter.Label = e.Vertex.Status.ToString ();
                 if (automata.InitialNodes.Contains (e.Vertex)) {
                     e.VertexFormatter.Style = QuickGraph.Graphviz.Dot.GraphvizVertexStyle.Bold;
                 }
             };
-            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<MonitorNode, LabeledAutomataTransition<MonitorNode>> e) => {
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<MonitorNode, AutomatonTransition<MonitorNode>> e) => {
                 e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
             };
             return graphviz;
@@ -177,7 +177,7 @@ namespace LtlSharp.Monitoring
             positive = positive.Unfold ();
             negative = negative.Unfold ();
 
-            //            var graphviz = new GraphvizAlgorithm<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> (positive);
+            //            var graphviz = new GraphvizAlgorithm<AutomatonNode, AutomatonTransition<AutomatonNode>> (positive);
             //            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomatonNode> e) => {
             //                e.VertexFormatter.Label = e.Vertex.Name;
             //                if (positive.InitialNodes.Contains (e.Vertex))
@@ -185,12 +185,12 @@ namespace LtlSharp.Monitoring
             //                if (positive.AcceptanceSet.Contains (e.Vertex))
             //                    e.VertexFormatter.Shape = GraphvizVertexShape.DoubleCircle;
             //            };
-            //            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> e) => {
+            //            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, AutomatonTransition<AutomatonNode>> e) => {
             //                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
             //            };
             //            Console.WriteLine (graphviz.Generate ());
             //
-            //            graphviz = new GraphvizAlgorithm<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> (negative);
+            //            graphviz = new GraphvizAlgorithm<AutomatonNode, AutomatonTransition<AutomatonNode>> (negative);
             //            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomatonNode> e) => {
             //                e.VertexFormatter.Label = e.Vertex.Name;
             //                if (negative.InitialNodes.Contains (e.Vertex))
@@ -198,7 +198,7 @@ namespace LtlSharp.Monitoring
             //                if (negative.AcceptanceSet.Contains (e.Vertex))
             //                    e.VertexFormatter.Shape = GraphvizVertexShape.DoubleCircle;
             //            };
-            //            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> e) => {
+            //            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, AutomatonTransition<AutomatonNode>> e) => {
             //                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
             //            };
             //            Console.WriteLine (graphviz.Generate ());
@@ -230,7 +230,7 @@ namespace LtlSharp.Monitoring
                 var commonTransitions = from t1 in positive.OutEdges (current.Item1)
                     from t2 in negative.OutEdges (current.Item2)
                         where t1.Labels.SetEquals (t2.Labels)
-                    select new Tuple<LabeledAutomataTransition<AutomatonNode>, LabeledAutomataTransition<AutomatonNode>> (t1, t2);
+                    select new Tuple<AutomatonTransition<AutomatonNode>, AutomatonTransition<AutomatonNode>> (t1, t2);
 
                 foreach (var t in commonTransitions) {
                     //                    Console.WriteLine ("Transition : " + t);
@@ -243,15 +243,15 @@ namespace LtlSharp.Monitoring
                     var target = mapping[tuple];
 
                     //                    Console.WriteLine ("Transition from " + mapping[current] + " to " + target + " with " + string.Join (",", t.Item1.Labels));
-                    product.AddEdge (new LabeledAutomataTransition<MonitorNode> (mapping[current], target, t.Item1.Labels));
+                    product.AddEdge (new AutomatonTransition<MonitorNode> (mapping[current], target, t.Item1.Labels));
                 }
 
                 foreach (var t in positive.OutEdges (current.Item1).Except (commonTransitions.Select (tt => tt.Item1))) {
-                    product.AddEdge (new LabeledAutomataTransition<MonitorNode> (mapping[current], acceptingNode, t.Labels));
+                    product.AddEdge (new AutomatonTransition<MonitorNode> (mapping[current], acceptingNode, t.Labels));
                 }
 
                 foreach (var t in negative.OutEdges (current.Item2).Except (commonTransitions.Select (tt => tt.Item2))) {
-                    product.AddEdge (new LabeledAutomataTransition<MonitorNode> (mapping[current], rejectingNode, t.Labels));
+                    product.AddEdge (new AutomatonTransition<MonitorNode> (mapping[current], rejectingNode, t.Labels));
                 }
             }
 

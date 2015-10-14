@@ -184,7 +184,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var literals = new HashSet<ILiteral> ();
             foreach (Node node in nodesSet) {
                 foreach (var incomingNodeName in node.Incoming) {
-                    var transition = new LabeledAutomataTransition<AutomatonNode> (
+                    var transition = new AutomatonTransition<AutomatonNode> (
                         mapping [incomingNodeName],
                         mapping [node.Name]
                     );

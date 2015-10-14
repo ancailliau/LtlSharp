@@ -32,7 +32,7 @@ namespace LtlSharp.Translators
             foreach (var trans in t.Edges) {
                 var labels = UnfoldLabels (trans.Labels, alphabet);
                 foreach (var label in labels) {
-                    automata.AddTransition (new LabeledAutomataTransition<AutomatonNode>(trans.Source, trans.Target, label));
+                    automata.AddTransition (new AutomatonTransition<AutomatonNode>(trans.Source, trans.Target, label));
                 }
             }
             return automata;

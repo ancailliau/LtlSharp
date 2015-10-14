@@ -3,11 +3,12 @@ using LtlSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using LtlSharp.ProbabilisticSystems;
+using LtlSharp.Automata;
 
 namespace LtlSharp.ModelCheckers
 {
     public class PCTLModelChecker<T>
-        where T : IMarkovNode
+        where T : IAutomatonNode
     {
         MarkovChain<T> mc;
         ITLFormula phi;

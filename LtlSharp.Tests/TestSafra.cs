@@ -9,7 +9,7 @@ using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
 
-namespace CheckMyModels.Tests
+namespace LtlSharp.Tests
 {
     [TestFixture()]
     public class TestSafra
@@ -31,23 +31,23 @@ namespace CheckMyModels.Tests
             var c = new HashSet<ILiteral> (new ILiteral[] { pc });
 
             // a,b from qI to qI
-            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (q, q, a));
-            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (q, q, b));
+            ba.AddTransition (new AutomatonTransition<AutomatonNode> (q, q, a));
+            ba.AddTransition (new AutomatonTransition<AutomatonNode> (q, q, b));
 
             // c from f to f
-            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (f, f, c));
+            ba.AddTransition (new AutomatonTransition<AutomatonNode> (f, f, c));
 
             // a from qI to f
-            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (q, f, a));
+            ba.AddTransition (new AutomatonTransition<AutomatonNode> (q, f, a));
 
             // a from f to g
-            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (f, g, a));
+            ba.AddTransition (new AutomatonTransition<AutomatonNode> (f, g, a));
 
             // a from g to g
-            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (g, g, a));
+            ba.AddTransition (new AutomatonTransition<AutomatonNode> (g, g, a));
 
             // a from g to f
-            ba.AddTransition (new LabeledAutomataTransition<AutomatonNode> (g, f, a));
+            ba.AddTransition (new AutomatonTransition<AutomatonNode> (g, f, a));
 
             ba.SetInitialNode (q);
             ba.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (new [] { f, g }));

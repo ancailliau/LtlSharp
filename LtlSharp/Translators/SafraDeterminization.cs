@@ -377,7 +377,7 @@ namespace LtlSharp.Translators
             
             foreach (var t in Transitions) {
                 foreach (var e in t.Value) {
-                    var edge = new LabeledAutomataTransition<AutomatonNode> (mapping [t.Key], mapping [e.Target], e.Labels);
+                    var edge = new AutomatonTransition<AutomatonNode> (mapping [t.Key], mapping [e.Target], e.Labels);
                     if (!rabin.OutTransitions (mapping [t.Key]).Contains (edge)) {
                         rabin.AddTransition (edge);
                     }

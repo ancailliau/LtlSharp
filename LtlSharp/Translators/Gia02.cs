@@ -11,6 +11,38 @@ using QuickGraph.Graphviz;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
+    public class DegeneralizerAutomataTransition<T> : AutomatonTransition<T>
+        where T : AutomatonNode
+    {   
+        public new HashSet<int> Labels;
+        public bool Else;
+
+        public DegeneralizerAutomataTransition (T source, T target)
+            : base (source, target)
+        {
+            Labels = new HashSet<int> ();
+            Else = false;
+        }
+
+        public override bool Equals (object obj)
+        {
+            if (obj == null)
+                return false;
+            if (ReferenceEquals (this, obj))
+                return true;
+            if (obj.GetType () != typeof(DegeneralizerAutomataTransition<T>))
+                return false;
+            var other = (DegeneralizerAutomataTransition<T>)obj;
+            return base.Equals(obj) && Labels.All (l => other.Labels.Contains (l))
+                       && other.Labels.All (l => Labels.Contains (l)) & Else == other.Else;
+        }
+
+        public override int GetHashCode ()
+        {
+            return 17 + 23 * (base.GetHashCode () + 23 * (Labels.GetHashCode () + 23 * Else.GetHashCode ()));
+        }
+    }
+    
     public class InternalNode
     {
         public int NodeId {
@@ -499,7 +531,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             foreach (var state in states) {
                 foreach (var transition in state.Transitions) {
                     foreach (var source in transition.Source) {
-                        var ltrans = new LabeledAutomataTransition<AutomatonNode> (
+                        var ltrans = new AutomatonTransition<AutomatonNode> (
                             correspondingState[source],
                             correspondingState[state.StateId],
                             transition.Label
@@ -588,7 +620,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     var newNext = !cache.ContainsKey (new Tuple<AutomatonNode, AutomatonNode> (next0, next1));
                     var next = Get (ba, tgba, degeneralizer, cache, next0, next1);
 
-                    var t = new LabeledAutomataTransition<AutomatonNode> (n, next, e0.Labels);
+                    var t = new AutomatonTransition<AutomatonNode> (n, next, e0.Labels);
                     ba.AddTransition (t);
                     
                     if (newNext) {

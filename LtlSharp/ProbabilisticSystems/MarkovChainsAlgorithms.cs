@@ -38,7 +38,7 @@ namespace LtlSharp.ProbabilisticSystems
                                                                        IEnumerable<T> B,
                                                                     bool iterative = false, 
                                                                     double epsilon = 1e-5,
-                                                                       int n = -1) where T : IMarkovNode
+                                                                       int n = -1) where T : IAutomatonNode
         {
             return mc.ConstrainedReachability (mc.Nodes, B, iterative, epsilon, n);
         }
@@ -64,7 +64,7 @@ namespace LtlSharp.ProbabilisticSystems
                                                                                   IEnumerable<T> B,
                                                                                bool iterative = false, 
                                                                                double epsilon = 1e-5, 
-                                                                                  int n = -1) where T : IMarkovNode
+                                                                                  int n = -1) where T : IAutomatonNode
         {
             var S0 = ComputeS0 (mc, C, B);
             var S1 = ComputeS1 (mc, C, B);
@@ -134,7 +134,7 @@ namespace LtlSharp.ProbabilisticSystems
         
         static IEnumerable<T> ComputeS0<T> (MarkovChain<T> mc, 
                                                   IEnumerable<T> C, 
-                                                     IEnumerable<T> B) where T : IMarkovNode
+                                                     IEnumerable<T> B) where T : IAutomatonNode
         {
             // For detailled discussion about the following algorithm, check "Principles of Model Checking", p767ff.
             
@@ -157,7 +157,7 @@ namespace LtlSharp.ProbabilisticSystems
         
         static IEnumerable<T> ComputeS1<T> (MarkovChain<T> mc,
                                                   IEnumerable<T> C, 
-                                                     IEnumerable<T> B) where T : IMarkovNode
+                                                     IEnumerable<T> B) where T : IAutomatonNode
         {
             // For detailled discussion about the following algorithm, check "Principles of Model Checking", p767ff.
             var mcprime = new MarkovChain<T> (mc);
@@ -183,7 +183,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <param name="mc">Markov Chain.</param>
         /// <param name="B">B.</param>
         public static IEnumerable<T> GlobalAlmostSureReachability<T> (this MarkovChain<T> mc, 
-                                                                      IEnumerable<T> B) where T : IMarkovNode
+                                                                      IEnumerable<T> B) where T : IAutomatonNode
         {
             // See "Principles of model checking", p 766ff.
             var mcprime = new MarkovChain<T> (mc);
@@ -202,7 +202,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <param name="mc">Markov Chain.</param>
         /// <param name="B">B.</param>
         public static IEnumerable<T> QualitativeRepeatedReachability<T> (this MarkovChain<T> mc, 
-                                                                               IEnumerable<T> B) where T : IMarkovNode
+                                                                               IEnumerable<T> B) where T : IAutomatonNode
         {
             var bsccs = mc.GetBSCC ();
             return mc.Nodes.Where (n => bsccs.Where (bscc => mc.AllPre (bscc).Contains (n))
@@ -216,7 +216,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <param name="mc">Mc.</param>
         /// <param name="B">B.</param>
         public static IDictionary<T, double> QuantitativeRepeatedReachability<T>(this MarkovChain<T> mc,
-                                                                                 IAcceptanceCondition<T> B) where T : IMarkovNode
+                                                                                 IAcceptanceCondition<T> B) where T : IAutomatonNode
         {
             var U = mc.GetBSCC ().Where (bscc => B.Accept(bscc)).SelectMany (x => x);
             return mc.Reachability (U);
@@ -230,7 +230,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <param name="mc">Mc.</param>
         /// <param name="B">B.</param>
         public static IDictionary<T, double> QuantitativeRepeatedReachability<T> (this MarkovChain<T> mc, 
-                                                                                  RabinAcceptance<T> conditions) where T : IMarkovNode
+                                                                                  RabinAcceptance<T> conditions) where T : IAutomatonNode
         {
             var U = mc.GetBSCC ().Where (u => conditions.Accept (u)).SelectMany (x => x);
             return mc.Reachability (U);
@@ -245,7 +245,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <param name="n">Number of steps.</param>
         public static double TransientReachability<T> (this MarkovChain<T> mc,
                                                     IEnumerable<T> B,
-                                                    int n) where T : IMarkovNode
+                                                    int n) where T : IAutomatonNode
         {
             // F(B) is equivalent to true U B
             return TransientConstrainedReachability (mc, mc.Nodes, B, n);
@@ -263,7 +263,7 @@ namespace LtlSharp.ProbabilisticSystems
         public static double TransientConstrainedReachability<T> (this MarkovChain<T> mc, 
                                                                IEnumerable<T> C,
                                                                IEnumerable<T> B,
-                                                                  int n) where T : IMarkovNode
+                                                                  int n) where T : IAutomatonNode
         {
             if (mc.Initial.Count == 0) {
                 Debug.Print ("No initial node. Transient probability will be zero.");
@@ -312,15 +312,15 @@ namespace LtlSharp.ProbabilisticSystems
         }
         
         public static Dictionary<T, double> QuantitativeLinearProperty<T> (this MarkovChain<T> mc, 
-                                                                                 ITLFormula formula) where T : IMarkovNode
+                                                                                 ITLFormula formula) where T : IAutomatonNode
         {
             // For more details, see "Principles of Model Checking", p785ff
             
             Console.WriteLine ("QuantitativeLinearProperty");
             
-            MarkovChain<ProductMarkovNode<T>> productMC;
-            Dictionary<T, ProductMarkovNode<T>> correspondingNodes;
-            IDictionary<ProductMarkovNode<T>, double> probabilities;
+            MarkovChain<ProductAutomatonNode<T>> productMC;
+            Dictionary<T, ProductAutomatonNode<T>> correspondingNodes;
+            IDictionary<ProductAutomatonNode<T>, double> probabilities;
             Dictionary<T, double> dict;
             
             var buchi = (new Gia02 ()).GetAutomaton (formula);
@@ -332,13 +332,13 @@ namespace LtlSharp.ProbabilisticSystems
             // If buchi automaton is deterministic, no need for transforming to rabin automaton. 
             // This save a little computation.
             if (buchi.IsDeterministic()) {
-                IAcceptanceCondition<ProductMarkovNode<T>> condition = null;
+                IAcceptanceCondition<ProductAutomatonNode<T>> condition = null;
                 productMC = mc.Product (buchi, mc.Nodes, out condition, out correspondingNodes);
                 probabilities = productMC.QuantitativeRepeatedReachability (condition);
                 
                 dict = new Dictionary<T, double> ();
                 foreach (var k in correspondingNodes.Values) {
-                    Console.WriteLine (k.MarkovNode + " -> " + probabilities[k]);
+                    Console.WriteLine (k.AutomatonNode + " -> " + probabilities[k]);
                     dict.Add (k.MarkovNode, probabilities [k]);
                 }
                 return dict;
@@ -349,7 +349,7 @@ namespace LtlSharp.ProbabilisticSystems
             
             Console.WriteLine (rabin.AcceptanceCondition);
 
-            IAcceptanceCondition<ProductMarkovNode<T>> conditions;
+            IAcceptanceCondition<ProductAutomatonNode<T>> conditions;
             productMC = mc.Product (rabin, mc.Nodes, out conditions, out correspondingNodes);
             probabilities = productMC.QuantitativeRepeatedReachability (conditions);
             

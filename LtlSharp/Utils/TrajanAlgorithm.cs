@@ -2,19 +2,20 @@
 using LtlSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
+using LtlSharp.Automata;
 
 namespace LtlSharp.Utils
 {
     public static class TrajanAlgorithm
     {
-        public static IEnumerable<HashSet<T>> GetBSCC<T> (this MarkovChain<T> mc) where T : IMarkovNode
+        public static IEnumerable<HashSet<T>> GetBSCC<T> (this MarkovChain<T> mc) where T : IAutomatonNode
         {
             // A SCC is a Bottom SCC if all successors of the nodes in the SCC are also in the SCC
             // (or no nodes outside the scc can be reached)
             return GetSCC (mc).Where (scc => scc.IsSupersetOf (mc.Post (scc)));
         }
         
-        public static IEnumerable<HashSet<T>> GetSCC<T> (this MarkovChain<T> mc) where T : IMarkovNode
+        public static IEnumerable<HashSet<T>> GetSCC<T> (this MarkovChain<T> mc) where T : IAutomatonNode
         {
             // Implements Trajan algorithm
             var sccs = new List<HashSet<T>> ();
@@ -40,7 +41,7 @@ namespace LtlSharp.Utils
             HashSet<T> onstack,
             Stack<T> S,
             ref int currentIndex,
-                                      List<HashSet<T>> sccs)  where T : IMarkovNode {
+                                      List<HashSet<T>> sccs)  where T : IAutomatonNode {
             
             if (index.ContainsKey (v))
                 index[v] = currentIndex;

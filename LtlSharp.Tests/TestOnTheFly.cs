@@ -12,7 +12,7 @@ using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
 
-namespace CheckMyModels.Tests
+namespace LtlSharp.Tests
 {
     [TestFixture()]
     public class TestOnTheFly
@@ -78,10 +78,10 @@ namespace CheckMyModels.Tests
 
             lts.SetInitialNode (n0);
                
-            lts.AddTransition (new LabeledAutomataTransition<AutomatonNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
-            lts.AddTransition (new LabeledAutomataTransition<AutomatonNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
-            lts.AddTransition (new LabeledAutomataTransition<AutomatonNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
-            lts.AddTransition (new LabeledAutomataTransition<AutomatonNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
+            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
+            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
             
             lts.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (lts.Vertices));
             
@@ -126,10 +126,10 @@ namespace CheckMyModels.Tests
 
             lts.SetInitialNode (n0);
 
-            lts.AddTransition (new LabeledAutomataTransition<AutomatonNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
-            lts.AddTransition (new LabeledAutomataTransition<AutomatonNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
-            lts.AddTransition (new LabeledAutomataTransition<AutomatonNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
-            lts.AddTransition (new LabeledAutomataTransition<AutomatonNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
+            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
+            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
 
             lts.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (lts.Vertices));
 

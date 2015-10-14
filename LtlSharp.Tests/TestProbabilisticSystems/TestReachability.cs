@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
 
-namespace CheckMyModels.Tests.Models
+namespace LtlSharp.Tests.Models
 {
     [TestFixture()]
     public class TestReachability
@@ -92,8 +92,8 @@ namespace CheckMyModels.Tests.Models
             var s4 = mc.GetVertex ("s4");
             var s5 = mc.GetVertex ("s5");
             
-            var B = new HashSet<MarkovNode> (new [] { s3, s4 });
-            var C = new HashSet<MarkovNode> (new [] { s5 });
+            var B = new HashSet<AutomatonNode> (new [] { s3, s4 });
+            var C = new HashSet<AutomatonNode> (new [] { s5 });
             
             Assert.That (mc.QualitativeRepeatedReachability (B.Union (C)).Contains (s0));
             Assert.That (!mc.QualitativeRepeatedReachability (B).Contains (s0));
@@ -112,10 +112,10 @@ namespace CheckMyModels.Tests.Models
             var s4 = mc.GetVertex ("s4");
             var s5 = mc.GetVertex ("s5");
 
-            var B = new HashSet<MarkovNode> (new [] { s3, s4 });
-            var C = new HashSet<MarkovNode> (new [] { s5 });
+            var B = new HashSet<AutomatonNode> (new [] { s3, s4 });
+            var C = new HashSet<AutomatonNode> (new [] { s5 });
 
-            var dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<MarkovNode> (B.Union (C)));
+            var dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<AutomatonNode> (B.Union (C)));
             Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in B Union C.");
             Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in B Union C.");
             Assert.That (dict.ContainsKey (s2), "State 's2' cannot repeatly reach a state in B Union C.");
@@ -129,7 +129,7 @@ namespace CheckMyModels.Tests.Models
             Assert.AreEqual (dict [s4], 1);
             Assert.AreEqual (dict [s5], 1);
             
-            dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<MarkovNode> (B));
+            dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<AutomatonNode> (B));
             Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in B.");
             Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in B.");
             Assert.That (dict.ContainsKey (s3), "State 's3' cannot repeatly reach a state in B.");
@@ -140,7 +140,7 @@ namespace CheckMyModels.Tests.Models
             Assert.AreEqual (dict [s4], 1);
             
 
-            dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<MarkovNode> (C));
+            dict = mc.QuantitativeRepeatedReachability (new BuchiAcceptance<AutomatonNode> (C));
             Assert.That (dict.ContainsKey (s0), "State 's0' cannot repeatly reach a state in C.");
             Assert.That (dict.ContainsKey (s1), "State 's1' cannot repeatly reach a state in C.");
             Assert.That (dict.ContainsKey (s5), "State 's5' cannot repeatly reach a state in C.");

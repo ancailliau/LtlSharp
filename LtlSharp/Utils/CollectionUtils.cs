@@ -5,7 +5,7 @@ namespace LtlSharp.Utils
 {
     public static class CollectionUtils
     {
-        public static int GetHashCodeForElements<T> (this HashSet<T> hashset)
+        public static int GetHashCodeForElements<T> (this ISet<T> hashset)
         {
             // See http://stackoverflow.com/questions/670063/getting-hash-of-a-list-of-strings-regardless-of-order
             // for more details

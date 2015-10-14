@@ -36,7 +36,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         
         public string ToDot ()
         {
-            var graphviz = new GraphvizAlgorithm<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> (graph);
+            var graphviz = new GraphvizAlgorithm<AutomatonNode, AutomatonTransition<AutomatonNode>> (graph);
             graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomatonNode> e) => {
                 e.VertexFormatter.Label = e.Vertex.Name;
                 if (this.InitialNode.Equals (e.Vertex))
@@ -44,7 +44,7 @@ namespace LtlSharp.Automata.OmegaAutomata
                 if (AcceptanceCondition.Accept (e.Vertex))
                     e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.DoubleCircle;
             };
-            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> e) => {
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, AutomatonTransition<AutomatonNode>> e) => {
                 e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
             };
             return graphviz.Generate ();

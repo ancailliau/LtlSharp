@@ -80,7 +80,7 @@ namespace LtlSharp.Buchi.Translators
             
             foreach (var t in gba.OutEdges (root)) {
                 var n2 = Recur (t.Target, ba, newAI, gba);
-                var t2 = new LabeledAutomataTransition<AutomatonNode> (bANode, n2, t.Labels);
+                var t2 = new AutomatonTransition<AutomatonNode> (bANode, n2, t.Labels);
                 ba.AddTransition (t2);
             }
             

@@ -8,6 +8,7 @@ using LtlSharp.Automata;
 using QuickGraph;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
+using LtlSharp.Automata.Nodes.Factories;
 
 namespace LtlSharp.Translators
 {
@@ -33,16 +34,16 @@ namespace LtlSharp.Translators
         /// <param name="correspondingNodes">Mapping table <c>(x,y)</c> where <c>x</c> is the node in product 
         /// automata and <c>y</c> is the corresponding node in the specified Markov Chain for the initial state of 
         /// the Buchï Automata.</param>
-        public static MarkovChain<ProductMarkovNode<T>> Product<T> (this MarkovChain<T> mc, 
+        public static MarkovChain<ProductAutomatonNode<T>> Product<T> (this MarkovChain<T> mc, 
                                                                     BuchiAutomaton ba, 
                                                                     IEnumerable<T> initials,
-                                                                    out IAcceptanceCondition<ProductMarkovNode<T>> condition,
-                                                                    out Dictionary<T, ProductMarkovNode<T>> correspondingNodes)
-            where T : IMarkovNode
+                                                                    out IAcceptanceCondition<ProductAutomatonNode<T>> condition,
+                                                                    out Dictionary<T, ProductAutomatonNode<T>> correspondingNodes)
+            where T : IAutomatonNode
         {
             var product = mc.Product<T> (ba, initials, out correspondingNodes);
             
-            condition = ba.AcceptanceCondition.Map<ProductMarkovNode<T>> (x => product.Nodes.Where (t => t.AutomatonNode.Equals (x)));
+            condition = ba.AcceptanceCondition.Map<ProductAutomatonNode<T>> (x => product.Nodes.Where (t => t.AutomatonNode.Equals (x)));
 
             return product;
         }
@@ -69,41 +70,41 @@ namespace LtlSharp.Translators
         /// <param name="correspondingNodes">Mapping table <c>(x,y)</c> where <c>x</c> is the node in product 
         /// automata and <c>y</c> is the corresponding node in the specified Markov Chain for the initial state of 
         /// the Rabin Automata.</param>
-        public static MarkovChain<ProductMarkovNode<T>> Product<T> (this MarkovChain<T> mc, 
+        public static MarkovChain<ProductAutomatonNode<T>> Product<T> (this MarkovChain<T> mc, 
                                                                     RabinAutomaton rabin, 
                                                                     IEnumerable<T> initials, 
-                                                                    out IAcceptanceCondition<ProductMarkovNode<T>> condition,
-                                                                    out Dictionary<T, ProductMarkovNode<T>> correspondingNodes)
-            where T : IMarkovNode
+                                                                    out IAcceptanceCondition<ProductAutomatonNode<T>> condition,
+                                                                    out Dictionary<T, ProductAutomatonNode<T>> correspondingNodes)
+            where T : IAutomatonNode
         {
             var product = mc.Product<T> (rabin, initials, out correspondingNodes);
 
-            condition = rabin.AcceptanceCondition.Map<ProductMarkovNode<T>> (x => {
+            condition = rabin.AcceptanceCondition.Map<ProductAutomatonNode<T>> (x => {
                 return product.Nodes.Where (t => t.AutomatonNode.Equals (x));
             });
 
             return product;
         }
         
-        static MarkovChain<ProductMarkovNode<T>> Product<T> (this MarkovChain<T> mc,
+        static MarkovChain<ProductAutomatonNode<T>> Product<T> (this MarkovChain<T> mc,
                                                              OmegaAutomaton automaton,
                                                              IEnumerable<T> initials,
-                                                             out Dictionary<T, ProductMarkovNode<T>> correspondingNodes)
-            where T : IMarkovNode
+                                                             out Dictionary<T, ProductAutomatonNode<T>> correspondingNodes)
+            where T : IAutomatonNode
         {
             // For more details about the product algorithm, see "Principles of Model Checking", p787ff
 
-            var unique = new Dictionary<Tuple<T,AutomatonNode>, ProductMarkovNode<T>> ();
-            correspondingNodes = new Dictionary<T, ProductMarkovNode<T>> ();
+            var unique = new Dictionary<Tuple<T,AutomatonNode>, ProductAutomatonNode<T>> ();
+            correspondingNodes = new Dictionary<T, ProductAutomatonNode<T>> ();
             
-            var product = new MarkovChain<ProductMarkovNode<T>> (new MarkovNodeProductFactory<T> ());
-            var pending = new Stack<ProductMarkovNode<T>> ();
-            var visited = new HashSet<ProductMarkovNode<T>> ();
+            var product = new MarkovChain<ProductAutomatonNode<T>> (new AutomatonNodeProductFactory<T> ());
+            var pending = new Stack<ProductAutomatonNode<T>> ();
+            var visited = new HashSet<ProductAutomatonNode<T>> ();
 
             var initWA = automaton.InitialNode;
             IEnumerable<AutomatonNode> successorsInWA;
             AutomatonNode successorInWA;
-            ProductMarkovNode<T> newNode;
+            ProductAutomatonNode<T> newNode;
 
             foreach (var initial in initials) {
                 successorsInWA = automaton.Post (initWA, initial.Labels);

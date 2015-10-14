@@ -29,7 +29,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         }
     }
 
-    public class TransitionGeneralizedBuchiAutomata : AdjacencyGraph<AutomatonNode, LabeledAutomataTransition<AutomatonNode>>
+    public class TransitionGeneralizedBuchiAutomata : AdjacencyGraph<AutomatonNode, AutomatonTransition<AutomatonNode>>
     {
         public GBAAcceptanceSet[] AcceptanceSets;
         public HashSet<AutomatonNode> InitialNodes;
@@ -41,7 +41,7 @@ namespace LtlSharp.Automata.OmegaAutomata
     }
     
     
-    public class TGBA : AdjacencyGraph<AutomatonNode, LabeledAutomataTransition<AutomatonNode>>
+    public class TGBA : AdjacencyGraph<AutomatonNode, AutomatonTransition<AutomatonNode>>
     {
         public TGBAAcceptanceSet[] AcceptanceSets;
         public HashSet<AutomatonNode> InitialNodes;
@@ -54,13 +54,13 @@ namespace LtlSharp.Automata.OmegaAutomata
     
     public class TGBAAcceptanceSet {
         public int Id;
-        public HashSet<LabeledAutomataTransition<AutomatonNode>> Transitions;
+        public HashSet<AutomatonTransition<AutomatonNode>> Transitions;
         public TGBAAcceptanceSet (int id)
         {
             Id = id;
-            Transitions = new HashSet<LabeledAutomataTransition<AutomatonNode>> ();
+            Transitions = new HashSet<AutomatonTransition<AutomatonNode>> ();
         }
-        public void Add (LabeledAutomataTransition<AutomatonNode> n)
+        public void Add (AutomatonTransition<AutomatonNode> n)
         {
             Transitions.Add (n);
         }

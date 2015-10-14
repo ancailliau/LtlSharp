@@ -18,7 +18,7 @@ namespace LtlSharp.Buchi.Automata
     /// <description>
     /// See Andreas Bauer et al, Runtime Verification for LTL and TLTL, TOSEM.
     /// </description>
-    public class NFA : AdjacencyGraph<AutomatonNode, LabeledAutomataTransition<AutomatonNode>>
+    public class NFA : AdjacencyGraph<AutomatonNode, AutomatonTransition<AutomatonNode>>
     {
         public HashSet<AutomatonNode> AcceptanceSet;
         public HashSet<AutomatonNode> InitialNodes;
@@ -41,7 +41,7 @@ namespace LtlSharp.Buchi.Automata
             foreach (var initialState in InitialNodes.ToList ()) {
                 //Console.WriteLine (OutDegree (initialState));
                 foreach (var otransition in OutEdges (initialState)) {
-                    var newTransition = new LabeledAutomataTransition<AutomatonNode> (
+                    var newTransition = new AutomatonTransition<AutomatonNode> (
                         newInitialState, 
                         otransition.Target, 
                         otransition.Labels
@@ -100,7 +100,7 @@ namespace LtlSharp.Buchi.Automata
                         RemoveEdge (e);
                     }
                     foreach (var nl in newLabels) {
-                        AddEdge (new LabeledAutomataTransition<AutomatonNode> (trans.Source, trans.Target, nl));
+                        AddEdge (new AutomatonTransition<AutomatonNode> (trans.Source, trans.Target, nl));
                     }
                 }
             }
@@ -126,7 +126,7 @@ namespace LtlSharp.Buchi.Automata
             foreach (var trans in Edges) {
                 var labels = UnfoldLabels (trans.Labels, alphabet);
                 foreach (var label in labels) {
-                    nnfa.AddEdge (new LabeledAutomataTransition<AutomatonNode> (trans.Source, trans.Target, label));
+                    nnfa.AddEdge (new AutomatonTransition<AutomatonNode> (trans.Source, trans.Target, label));
                 }
             }
             return nnfa;
@@ -247,7 +247,7 @@ namespace LtlSharp.Buchi.Automata
             
             foreach (var key in transitions.Keys) {
                 foreach (var tadam in transitions [key]) {
-                    dfa.AddEdge (new LabeledAutomataTransition<AutomatonNode> (mapping [key.Item1], 
+                    dfa.AddEdge (new AutomatonTransition<AutomatonNode> (mapping [key.Item1], 
                                                                               mapping [key.Item2],
                                                                               tadam)
                                 );

@@ -10,7 +10,7 @@ using LtlSharp.Buchi.Automata;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 
-namespace CheckMyModels.Tests
+namespace LtlSharp.Tests
 {
     [TestFixture()]
     public class TestEmptiness

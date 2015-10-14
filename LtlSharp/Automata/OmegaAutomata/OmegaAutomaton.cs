@@ -9,7 +9,7 @@ namespace LtlSharp.Automata.OmegaAutomata
 {
     public abstract class OmegaAutomaton
     {
-        protected AdjacencyGraph<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> graph;
+        protected AdjacencyGraph<AutomatonNode, AutomatonTransition<AutomatonNode>> graph;
         
         public AutomatonNode InitialNode { get; protected set; }
 
@@ -21,7 +21,7 @@ namespace LtlSharp.Automata.OmegaAutomata
             }
         }
 
-        public IEnumerable<LabeledAutomataTransition<AutomatonNode>> Edges { 
+        public IEnumerable<AutomatonTransition<AutomatonNode>> Edges { 
             get {
                 return graph.Edges;
             }
@@ -29,7 +29,7 @@ namespace LtlSharp.Automata.OmegaAutomata
 
         public OmegaAutomaton ()
         {
-            graph = new AdjacencyGraph<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> ();
+            graph = new AdjacencyGraph<AutomatonNode, AutomatonTransition<AutomatonNode>> ();
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         /// </summary>
         /// <returns>The transitions.</returns>
         /// <param name="node">Node.</param>
-        public IEnumerable<LabeledAutomataTransition<AutomatonNode>> OutTransitions (AutomatonNode node)
+        public IEnumerable<AutomatonTransition<AutomatonNode>> OutTransitions (AutomatonNode node)
         {
             return graph.OutEdges (node);
         }
@@ -127,7 +127,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         /// Adds the specified transition to the automaton.
         /// </summary>
         /// <param name="transition">Transition.</param>
-        public void AddTransition (LabeledAutomataTransition<AutomatonNode> transition)
+        public void AddTransition (AutomatonTransition<AutomatonNode> transition)
         {
             graph.AddEdge (transition);
         }
@@ -136,7 +136,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         /// Removes the transition.
         /// </summary>
         /// <param name="transition">Transition.</param>
-        public void RemoveTransition (LabeledAutomataTransition<AutomatonNode> transition)
+        public void RemoveTransition (AutomatonTransition<AutomatonNode> transition)
         {
             graph.RemoveEdge (transition);
         }
@@ -145,7 +145,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         /// Adds the transitions.
         /// </summary>
         /// <param name="transitions">Transitions.</param>
-        public void AddTransitions (IEnumerable<LabeledAutomataTransition<AutomatonNode>> transitions)
+        public void AddTransitions (IEnumerable<AutomatonTransition<AutomatonNode>> transitions)
         {
             graph.AddEdgeRange (transitions);
         }

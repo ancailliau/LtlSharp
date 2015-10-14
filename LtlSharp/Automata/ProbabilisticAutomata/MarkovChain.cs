@@ -6,248 +6,21 @@ using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 using LtlSharp.Buchi.Automata;
 using LtlSharp.Automata;
+using LtlSharp.Automata.Nodes.Factories;
 
 namespace LtlSharp.Models
 {
-    /// <summary>
-    /// Represents a Markov Node
-    /// </summary>
-    public class MarkovNode : IMarkovNode
-    {
-        static int currentId = 0;
-        
-        /// <summary>
-        /// Gets the identifier of the node.
-        /// </summary>
-        /// <value>The identifier.</value>
-        public int Id {
-            get;
-            private set;
-        }
-        
-        /// <summary>
-        /// Gets or sets the name of the node.
-        /// </summary>
-        /// <value>The name.</value>
-        public string Name {
-            get;
-            set;
-        }
-        
-        /// <summary>
-        /// Gets the labels attached to the node.
-        /// </summary>
-        /// <value>The labels.</value>
-        public ISet<ILiteral> Labels {
-            get;
-            set;
-        }
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovNode"/> class.
-        /// </summary>
-        public MarkovNode ()
-        {
-            Id = currentId++;
-            Labels = new HashSet<ILiteral> ();
-        }
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovNode"/> class.
-        /// </summary>
-        /// <param name="name">The name of the node.</param>
-        public MarkovNode (string name) : this ()
-        {
-            this.Name = name;
-        }
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovNode"/> class. Every property is copied
-        /// except the identifier of the node.
-        /// </summary>
-        /// <param name="node">Node.</param>
-        public MarkovNode (MarkovNode node) : this ()
-        {
-            Name = node.Name;
-            Labels = new HashSet<ILiteral> (node.Labels);
-        }
-        
-        public override bool Equals (object obj)
-        {
-            if (obj == null)
-                return false;
-            if (ReferenceEquals (this, obj))
-                return true;
-            if (obj.GetType () != typeof(MarkovNode))
-                return false;
-            MarkovNode other = (MarkovNode)obj;
-            // TODO Is it required to check for id?
-            return Id == other.Id && Name == other.Name && Labels.SetEquals (other.Labels);
-        }
-        
-        public override int GetHashCode ()
-        {
-            unchecked {
-                // TODO Is it required to check for id?
-                return Id.GetHashCode () 
-                    ^ (Name != null ? Name.GetHashCode () : 0) 
-                    ^ (Labels != null ? Labels.GetHashCode () : 0);
-            }
-        }
-        
-    }
     
-    /// <summary>
-    /// Represents a Markov Transition.
-    /// </summary>
-    /// <description>
-    /// A Markov Transition has a source Markov node and a target Markov node. 
-    /// The transition is decorated with its probability.
-    /// </description>
-    public class MarkovTransition : Edge<int>
-    {
-        /// <summary>
-        /// Gets or sets the probability of the transition.
-        /// </summary>
-        /// <value>The probability.</value>
-        public double Probability {
-            get;
-            set;
-        }
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovTransition"/> class.
-        /// </summary>
-        /// <param name="source">Source node.</param>
-        /// <param name="probability">Transition probability.</param>
-        /// <param name="target">Target node.</param>
-        public MarkovTransition (int source, double probability, int target) 
-            : base (source, target)
-        {
-            Probability = probability;
-        }
-        
-        public override bool Equals (object obj)
-        {
-            if (obj == null)
-                return false;
-            if (ReferenceEquals (this, obj))
-                return true;
-            if (obj.GetType () != typeof(MarkovTransition))
-                return false;
-            MarkovTransition other = (MarkovTransition)obj;
-            return Probability == other.Probability 
-                && Source.Equals (other.Source) 
-                && Target.Equals (other.Target);
-        }
-        
-
-        public override int GetHashCode ()
-        {
-            unchecked {
-                return Probability.GetHashCode ()
-                    ^ Source.GetHashCode ()
-                    ^ Target.GetHashCode ();
-            }
-        }
-        
-        
-    }
-    
-    public interface IMarkovNode {
-        int Id { get; }
-        ISet<ILiteral> Labels { get; set; }
-        string Name { get; set; }
-    }
-
-    public class ProductMarkovNode<T> : IMarkovNode where T : IMarkovNode
-    {
-        public T MarkovNode {
-            get;
-            set;
-        }
-        public AutomatonNode AutomatonNode {
-            get;
-            set;
-        }
-        public int Id {
-            get; private set; 
-        }
-
-        public ISet<ILiteral> Labels {
-            get {
-                return MarkovNode.Labels;
-            }
-
-            set {
-                MarkovNode.Labels = value;
-            }
-        }
-        static int currentId;
-        public string Name {
-            get; set;
-        }
-        public ProductMarkovNode ()
-        {
-            this.Id = currentId++;
-        }
-        public ProductMarkovNode (string name) : this()
-        {
-            this.Name = name;
-        }
-        public override string ToString ()
-        {
-            return string.Format ("[ProductMarkovNode: MarkovNode={0}, AutomatonNode={1}]", MarkovNode.Name, AutomatonNode.Name);
-        }
-
-        public void SetNodes (T markovNode, AutomatonNode automataNode)
-        {
-            this.MarkovNode = markovNode;
-            this.AutomatonNode = automataNode;
-            Name = string.Format ("{0} x {1}", markovNode.Name, automataNode.Name);
-        }
-    }
-
-    public interface MarkovNodeFactory<T> {
-        T Create ();
-        T Create (string name);
-    }
-
-    public class MarkovNodeDefaultFactory : MarkovNodeFactory<MarkovNode>
-    {
-        public MarkovNode Create ()
-        {
-            return new MarkovNode ();
-        }
-        public MarkovNode Create (string name)
-        {
-            return new MarkovNode (name);
-        }
-    }
-
-    public class MarkovNodeProductFactory<T> : MarkovNodeFactory<ProductMarkovNode<T>> where T : IMarkovNode
-    {
-        public ProductMarkovNode<T> Create ()
-        {
-            return new ProductMarkovNode<T> ();
-        }
-        public ProductMarkovNode<T> Create (string name)
-        {
-            return new ProductMarkovNode<T> (name);
-        }
-    }
-
     /// <summary>
     /// Represents a Markov Chain.
     /// </summary>
-    public class MarkovChain<T>
-        where T : IMarkovNode
+    public class MarkovChain<T> where T : IAutomatonNode
     {
         AdjacencyGraph<int, MarkovTransition> graph;
 
         Dictionary<int, T> nodes;
 
-        MarkovNodeFactory<T> factory;
+        IAutomatonNodeFactory<T> factory;
 
         public IEnumerable<T> Nodes {
             get { return nodes.Values; }
@@ -270,7 +43,7 @@ namespace LtlSharp.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovChain"/> class.
         /// </summary>
-        public MarkovChain (MarkovNodeFactory<T> factory)
+        public MarkovChain (IAutomatonNodeFactory<T> factory)
         {
             graph = new AdjacencyGraph<int, MarkovTransition> (false);
             nodes = new Dictionary<int, T> ();
