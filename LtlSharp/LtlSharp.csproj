@@ -113,5 +113,6 @@
     <Folder Include="Automata\AcceptanceConditions\" />
     <Folder Include="Automata\OmegaAutomata\" />
     <Folder Include="Automata\FiniteAutomata\" />
+    <Folder Include="Automata\ProbabilisticAutomata\" />
   </ItemGroup>
 </Project>
