@@ -138,7 +138,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        public BuchiAutomaton GetAutomaton (ITLFormula phi) {
+        public BuchiAutomaton<AutomatonNode> GetAutomaton (ITLFormula phi) {
             return GBA2BA.Transform (GetGBA (phi));
         }
         

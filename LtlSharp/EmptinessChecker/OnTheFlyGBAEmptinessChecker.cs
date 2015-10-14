@@ -19,9 +19,9 @@ namespace LtlSharp.Buchi
         // index of the node, index of the acceptance set
         
         TransitionGeneralizedBuchiAutomata a;
-        BuchiAutomaton ba;
+        BuchiAutomaton<AutomatonNode> ba;
         
-        public OnTheFlyGBAEmptinessChecker (TransitionGeneralizedBuchiAutomata a, BuchiAutomaton ba)
+        public OnTheFlyGBAEmptinessChecker (TransitionGeneralizedBuchiAutomata a, BuchiAutomaton<AutomatonNode> ba)
         {
             this.a = a;
             this.ba = ba;

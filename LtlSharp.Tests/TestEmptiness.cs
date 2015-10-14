@@ -9,6 +9,7 @@ using System.Linq;
 using LtlSharp.Buchi.Automata;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
+using LtlSharp.Automata;
 
 namespace LtlSharp.Tests
 {
@@ -25,8 +26,8 @@ namespace LtlSharp.Tests
             var ba2 = ltl2buchi.GetAutomaton (f);
 
             var ec = new GBAEmptinessChecker ();
-            var ec2 = new EmptinessChecker (ba);
-            var ec3 = new EmptinessChecker (ba2);
+            var ec2 = new EmptinessChecker<AutomatonNode> (ba);
+            var ec3 = new EmptinessChecker<AutomatonNode> (ba2);
             
             var e1 = ec.EmptinessSearch (gba);
             var e2 = ec2.Emptiness ();

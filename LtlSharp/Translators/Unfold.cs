@@ -10,21 +10,21 @@ using LtlSharp.Automata.OmegaAutomata;
 
 namespace LtlSharp.Translators
 {
-    public class Unfold : Transformer<BuchiAutomaton, BuchiAutomaton>
+    public class Unfold : Transformer<BuchiAutomaton<AutomatonNode>, BuchiAutomaton<AutomatonNode>>
     {
         public Unfold ()
         {
         }
         
-        public override BuchiAutomaton Transform (BuchiAutomaton t)
+        public override BuchiAutomaton<AutomatonNode> Transform (BuchiAutomaton<AutomatonNode> t)
         {
             var alphabet = t.Edges.SelectMany (x => x.Labels).Select (x => x is Negation ? ((ILiteral)((Negation)x).Enclosed) : x).Distinct ();
             return Transform (t, alphabet);
         }
         
-        public BuchiAutomaton Transform (BuchiAutomaton t, IEnumerable<ILiteral> alphabet)
+        public BuchiAutomaton<AutomatonNode> Transform (BuchiAutomaton<AutomatonNode> t, IEnumerable<ILiteral> alphabet)
         {        
-            var automata = new BuchiAutomaton ();
+            var automata = new BuchiAutomaton<AutomatonNode> ();
             automata.AddNodes (t.Vertices);
             automata.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode>((BuchiAcceptance<AutomatonNode>) t.AcceptanceCondition));
             automata.SetInitialNode (t.InitialNode);

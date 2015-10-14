@@ -13,25 +13,27 @@ namespace LittleSharp.Buchi
 	/// <summary>
 	/// The emptiness checker.
 	/// </summary>
-	public class OnTheFlyEmptinessChecker
+    public class OnTheFlyEmptinessChecker<T1,T2> 
+        where T1 : IAutomatonNode 
+        where T2 : IAutomatonNode
     {
-        public BuchiAutomaton LTS {
+        public BuchiAutomaton<T1> LTS {
             get;
             private set;
         }
         
-        public BuchiAutomaton LTLAutomata {
+        public BuchiAutomaton<T2> LTLAutomata {
 			get;
 			private set;
 		}
 		
-        Stack<Tuple<AutomatonNode, AutomatonNode>> dfsStack1;
-        Stack<Tuple<AutomatonNode, AutomatonNode>> dfsStack2;
+        Stack<Tuple<T2, T1>> dfsStack1;
+        Stack<Tuple<T2, T1>> dfsStack2;
         
-        public List<AutomatonNode> counterexample_prefix;
-        public List<AutomatonNode> counterexample_loop;
+        public List<T2> counterexample_prefix;
+        public List<T2> counterexample_loop;
         		
-        public OnTheFlyEmptinessChecker (BuchiAutomaton ltlAutomata, BuchiAutomaton lts)
+        public OnTheFlyEmptinessChecker (BuchiAutomaton<T2> ltlAutomata, BuchiAutomaton<T1> lts)
 		{
             LTLAutomata = ltlAutomata;
             LTS = lts;
@@ -44,7 +46,7 @@ namespace LittleSharp.Buchi
 
             var node = LTLAutomata.InitialNode;
             var node2 = LTS.InitialNode;
-            dfsStack1 = new Stack<Tuple<AutomatonNode, AutomatonNode>> ();
+            dfsStack1 = new Stack<Tuple<T2, T1>> ();
         
             if (dfs1 (node, node2)) {
                 return true;
@@ -53,14 +55,14 @@ namespace LittleSharp.Buchi
 			return false;
 		}
         
-        bool dfs1(AutomatonNode n, AutomatonNode n2)
+        bool dfs1(T2 n, T1 n2)
 		{
-            dfsStack1.Push (new Tuple<AutomatonNode, AutomatonNode>(n, n2));
+            dfsStack1.Push (new Tuple<T2, T1>(n, n2));
             
             foreach (var succ in LTLAutomata.OutTransitions (n)) {
                 foreach (var succ2 in LTS.OutTransitions (n2)) {
                     if (succ.Labels.IsSubsetOf (succ2.Labels)) {
-                        if (!dfsStack1.Contains (new Tuple<AutomatonNode,AutomatonNode> (succ.Target, succ2.Target))) {
+                        if (!dfsStack1.Contains (new Tuple<T2,T1> (succ.Target, succ2.Target))) {
                             if (dfs1 (succ.Target, succ2.Target)) {
                                 return true;
                             }
@@ -69,7 +71,7 @@ namespace LittleSharp.Buchi
                 }
             }
             
-            dfsStack2 = new Stack<Tuple<AutomatonNode, AutomatonNode>>();
+            dfsStack2 = new Stack<Tuple<T2, T1>>();
             if (LTLAutomata.AcceptanceCondition.Accept (n)) {
                 if (dfs2 (n, n2)) {
                     return true;
@@ -81,12 +83,12 @@ namespace LittleSharp.Buchi
             return false;
 		}
         
-        bool dfs2(AutomatonNode n, AutomatonNode n2) {
-            dfsStack2.Push(new Tuple<AutomatonNode, AutomatonNode> (n, n2));
+        bool dfs2(T2 n, T1 n2) {
+            dfsStack2.Push(new Tuple<T2, T1> (n, n2));
             foreach (var succ in LTLAutomata.OutTransitions (n)) {
                 foreach (var succ2 in LTS.OutTransitions (n2)) {
                     if (succ2.Labels.IsSubsetOf (succ.Labels)) {
-                        var tuple = new Tuple<AutomatonNode, AutomatonNode> (succ.Target, succ2.Target);
+                        var tuple = new Tuple<T2, T1> (succ.Target, succ2.Target);
                         if (dfsStack1.Contains (tuple)) {
                             dfsStack2.Push (tuple);
                             BuildCounterExample ();
@@ -106,8 +108,8 @@ namespace LittleSharp.Buchi
         
         void BuildCounterExample ()
         {
-            counterexample_prefix = new List<AutomatonNode> ();
-            counterexample_loop = new List<AutomatonNode> ();
+            counterexample_prefix = new List<T2> ();
+            counterexample_loop = new List<T2> ();
                         
             var last_pair = dfsStack2.Pop ();
             bool toggle = true;

@@ -12,7 +12,7 @@ namespace LtlSharp.Translators
     /// <summary>
     /// Determinize Non-Deterministic Buchï Automata into Rabin Automata using Safra construction.
     /// </summary>
-    public class SafraDeterminization : Transformer<BuchiAutomaton, RabinAutomaton>
+    public class SafraDeterminization : Transformer<BuchiAutomaton<AutomatonNode>, RabinAutomaton<AutomatonNode>>
     {
         /// <summary>
         /// Represents a node (and a tree if the node is the root) of a Safra Tree.
@@ -56,7 +56,7 @@ namespace LtlSharp.Translators
             }
             
             // The Buchi Automata to determinize
-            BuchiAutomaton ba;
+            BuchiAutomaton<AutomatonNode> ba;
             
             // The last identifier used for creating Safra Tree nodes.
             public static int CurrentId = 1;
@@ -67,7 +67,7 @@ namespace LtlSharp.Translators
             /// </summary>
             /// <param name="nodes">Nodes of the Macro State.</param>
             /// <param name="ba">Buchi Automata.</param>
-            public SafraTree (IEnumerable<AutomatonNode> nodes, BuchiAutomaton ba) : this (0, nodes, ba)
+            public SafraTree (IEnumerable<AutomatonNode> nodes, BuchiAutomaton<AutomatonNode> ba) : this (0, nodes, ba)
             {
                 Id = CurrentId++;
             }
@@ -80,7 +80,7 @@ namespace LtlSharp.Translators
             /// <param name="Id">Identifier.</param>
             /// <param name="nodes">Nodes of the Macro State.</param>
             /// <param name="ba">Buchi Automata.</param>
-            public SafraTree (int Id, IEnumerable<AutomatonNode> nodes, BuchiAutomaton ba)
+            public SafraTree (int Id, IEnumerable<AutomatonNode> nodes, BuchiAutomaton<AutomatonNode> ba)
             {
                 MacroState = new HashSet<AutomatonNode> (nodes);
                 Children = new List<SafraTree> ();
@@ -325,7 +325,7 @@ namespace LtlSharp.Translators
         /// Transform the specified Non-Deterministic Buchi Automata into a Deterministic Rabin Automata.
         /// </summary>
         /// <param name="ba">Buchi Automata.</param>
-        public override RabinAutomaton Transform (BuchiAutomaton ba)
+        public override RabinAutomaton<AutomatonNode> Transform (BuchiAutomaton<AutomatonNode> ba)
         {
             Transitions = new Dictionary<SafraTree, List<SafraTransition>> ();
             // For more details about the algorithm, check "Determinization of Büchi-Automata" by Markus Roggenbach
@@ -364,7 +364,7 @@ namespace LtlSharp.Translators
                 }
             }
             
-            var rabin = new RabinAutomaton ();
+            var rabin = new RabinAutomaton<AutomatonNode> ();
             var mapping = new Dictionary<SafraTree, AutomatonNode> ();
             int i = 0;
             foreach (var t in Transitions.Keys) {

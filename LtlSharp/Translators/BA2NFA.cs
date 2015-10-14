@@ -9,9 +9,9 @@ namespace LtlSharp.Buchi.Translators
 {
     public static class BA2NFA
     {
-        public static NFA Transform (BuchiAutomaton automata)
+        public static NFA Transform (BuchiAutomaton<AutomatonNode> automata)
         {
-            var emptinessChecker = new EmptinessChecker (automata);
+            var emptinessChecker = new EmptinessChecker<AutomatonNode> (automata);
 
             var newAcceptanceSet = new HashSet<AutomatonNode> ();
             foreach (var n in automata.Vertices) {

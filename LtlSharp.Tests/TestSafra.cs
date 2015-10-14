@@ -17,7 +17,7 @@ namespace LtlSharp.Tests
         [Test()]
         public void TestSafraExampleInPaper ()
         {
-            var ba = new BuchiAutomaton ();
+            var ba = new BuchiAutomaton<AutomatonNode> ();
             var q = new AutomatonNode ("qI"); ba.AddNode (q);
             var f = new AutomatonNode ("f"); ba.AddNode (f);
             var g = new AutomatonNode ("g"); ba.AddNode (g);
@@ -55,7 +55,7 @@ namespace LtlSharp.Tests
             var safra = new SafraDeterminization ();
             var rabin = safra.Transform (ba);
 
-            var folder = new Fold<RabinAutomaton> ();
+            var folder = new Fold<RabinAutomaton<AutomatonNode>, AutomatonNode> ();
             rabin = folder.Transform (rabin);
 
             Console.WriteLine (rabin.ToDot ());

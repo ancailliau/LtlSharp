@@ -28,7 +28,7 @@ namespace LtlSharp.Tests
             var e1 = ec.EmptinessSearch (gba);
 //            Console.WriteLine (e1 ? "Empty" : "Not empty");
 
-            var ec2 = new EmptinessChecker (ba);
+            var ec2 = new EmptinessChecker<AutomatonNode> (ba);
             var e2 = ec2.Emptiness ();
 //            Console.WriteLine (e2 ? "Empty" : "Not empty");
             
@@ -70,7 +70,7 @@ namespace LtlSharp.Tests
             ILiteral nalloc = new Negation (alloc);
             ILiteral nmob = new Negation (mob);
             
-            var lts = new BuchiAutomaton ();
+            var lts = new BuchiAutomaton<AutomatonNode> ();
             var n0 = new AutomatonNode ("i"); lts.AddNode (n0);
             var n1 = new AutomatonNode ("s0");lts.AddNode (n1);
             var n2 = new AutomatonNode ("s1");lts.AddNode (n2);
@@ -91,7 +91,7 @@ namespace LtlSharp.Tests
             var gba = t.GetGBA (f);
             var ba = GBA2BA.Transform (gba);
             
-            var otfec = new OnTheFlyEmptinessChecker (ba, lts);
+            var otfec = new OnTheFlyEmptinessChecker<AutomatonNode,AutomatonNode> (ba, lts);
             var e1 = otfec.Emptiness ();
             
             if (e1) {
@@ -118,7 +118,7 @@ namespace LtlSharp.Tests
             ILiteral nalloc = new Negation (alloc);
             ILiteral nmob = new Negation (mob);
             
-            var lts = new BuchiAutomaton ();
+            var lts = new BuchiAutomaton<AutomatonNode> ();
             var n0 = new AutomatonNode ("i"); lts.AddNode (n0);
             var n1 = new AutomatonNode ("s0");lts.AddNode (n1);
             var n2 = new AutomatonNode ("s1");lts.AddNode (n2);

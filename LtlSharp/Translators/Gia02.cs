@@ -506,7 +506,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         
         public HashSet<Node> CreateGraph (ITLFormula phi) { return null; }
         
-        public BuchiAutomaton GetAutomaton (ITLFormula phi) { 
+        public BuchiAutomaton<AutomatonNode> GetAutomaton (ITLFormula phi) { 
             phi = phi.Normalize ();
             
             var init = InternalNode.CreateInitial (phi);
@@ -552,10 +552,10 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return SynchrounousProduct (automaton, degeneralizer); 
         }
 
-        BuchiAutomaton SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
+        BuchiAutomaton<AutomatonNode> SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
         {
             var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> ();
-            var ba = new BuchiAutomaton ();
+            var ba = new BuchiAutomaton<AutomatonNode> ();
 
             var n0 = tgba.InitialNodes.Single ();
             var n1 = degeneralizer.InitialNodes.Single ();
@@ -567,7 +567,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return ba;
         }
 
-        void DFSSynchrounousProduct (BuchiAutomaton ba, TGBA tgba, Degeneralizer degeneralizer,
+        void DFSSynchrounousProduct (BuchiAutomaton<AutomatonNode> ba, TGBA tgba, Degeneralizer degeneralizer,
                                      Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> cache, 
                                      AutomatonNode n0, AutomatonNode n1) {
             
@@ -630,7 +630,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        AutomatonNode Get (BuchiAutomaton ba, TGBA automaton, Degeneralizer degeneralizer,
+        AutomatonNode Get (BuchiAutomaton<AutomatonNode> ba, TGBA automaton, Degeneralizer degeneralizer,
                                   Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> cache, 
                                   AutomatonNode n0, AutomatonNode n1)
         {

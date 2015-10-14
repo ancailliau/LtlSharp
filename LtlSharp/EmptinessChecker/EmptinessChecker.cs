@@ -12,19 +12,19 @@ namespace LittleSharp.Buchi
 	/// <summary>
 	/// The emptiness checker.
 	/// </summary>
-	public class EmptinessChecker
+    public class EmptinessChecker<T> where T : IAutomatonNode
 	{
-        public BuchiAutomaton Automaton {
+        public BuchiAutomaton<T> Automaton {
 			get;
 			private set;
 		}
 		
-        public Stack<AutomatonNode> dfsStack1;
-        public Stack<AutomatonNode> dfsStack2;
+        public Stack<T> dfsStack1;
+        public Stack<T> dfsStack2;
 		
-        public EmptinessChecker (BuchiAutomaton automaton)
+        public EmptinessChecker (BuchiAutomaton<T> automaton)
         {
-            dfsStack1 = new Stack<AutomatonNode> ();
+            dfsStack1 = new Stack<T> ();
 			Automaton = automaton;
 		}
 		
@@ -34,7 +34,7 @@ namespace LittleSharp.Buchi
                 return false;
             }
             
-            dfsStack1 = new Stack<AutomatonNode> ();
+            dfsStack1 = new Stack<T> ();
             if (dfs1(Automaton.InitialNode)) {
 				return true;
             }
@@ -42,13 +42,13 @@ namespace LittleSharp.Buchi
 			return false;
 		}
         
-        public bool Emptiness (AutomatonNode n)
+        public bool Emptiness (T n)
         {
-            dfsStack1 = new Stack<AutomatonNode> ();
+            dfsStack1 = new Stack<T> ();
             return dfs1 (n);
         }
         
-        bool dfs1(AutomatonNode n)
+        bool dfs1(T n)
 		{
             dfsStack1.Push (n);
             foreach (var succ in Automaton.Post(n)) {
@@ -59,7 +59,7 @@ namespace LittleSharp.Buchi
                 }
             }
             
-            dfsStack2 = new Stack<AutomatonNode>();
+            dfsStack2 = new Stack<T>();
             if (Automaton.AcceptanceCondition.Accept (n)) {
                 if (dfs2 (n)) {
                     return true;
@@ -71,7 +71,7 @@ namespace LittleSharp.Buchi
             return false;
 		}
         
-        bool dfs2(AutomatonNode n) {
+        bool dfs2(T n) {
             dfsStack2.Push(n);
             foreach (var succ in Automaton.Post(n)) {
                 if (dfsStack1.Contains (succ)) {

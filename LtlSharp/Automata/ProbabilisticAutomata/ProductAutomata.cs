@@ -35,7 +35,7 @@ namespace LtlSharp.Translators
         /// automata and <c>y</c> is the corresponding node in the specified Markov Chain for the initial state of 
         /// the Buchï Automata.</param>
         public static MarkovChain<ProductAutomatonNode<T>> Product<T> (this MarkovChain<T> mc, 
-                                                                    BuchiAutomaton ba, 
+                                                                       BuchiAutomaton<AutomatonNode> ba, 
                                                                     IEnumerable<T> initials,
                                                                     out IAcceptanceCondition<ProductAutomatonNode<T>> condition,
                                                                     out Dictionary<T, ProductAutomatonNode<T>> correspondingNodes)
@@ -71,7 +71,7 @@ namespace LtlSharp.Translators
         /// automata and <c>y</c> is the corresponding node in the specified Markov Chain for the initial state of 
         /// the Rabin Automata.</param>
         public static MarkovChain<ProductAutomatonNode<T>> Product<T> (this MarkovChain<T> mc, 
-                                                                    RabinAutomaton rabin, 
+                                                                       RabinAutomaton<AutomatonNode> rabin, 
                                                                     IEnumerable<T> initials, 
                                                                     out IAcceptanceCondition<ProductAutomatonNode<T>> condition,
                                                                     out Dictionary<T, ProductAutomatonNode<T>> correspondingNodes)
@@ -87,7 +87,7 @@ namespace LtlSharp.Translators
         }
         
         static MarkovChain<ProductAutomatonNode<T>> Product<T> (this MarkovChain<T> mc,
-                                                             OmegaAutomaton automaton,
+                                                                OmegaAutomaton<AutomatonNode> automaton,
                                                              IEnumerable<T> initials,
                                                              out Dictionary<T, ProductAutomatonNode<T>> correspondingNodes)
             where T : IAutomatonNode

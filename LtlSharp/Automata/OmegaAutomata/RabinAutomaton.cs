@@ -9,12 +9,12 @@ using LtlSharp.Automata.AcceptanceConditions;
 
 namespace LtlSharp.Automata.OmegaAutomata
 {
-    public class RabinAutomaton : OmegaAutomaton
+    public class RabinAutomaton<T> : OmegaAutomaton<T> where T : IAutomatonNode
     {
-        RabinAcceptance<AutomatonNode> _acceptanceCondition;
+        RabinAcceptance<T> _acceptanceCondition;
         
 
-        public override IAcceptanceCondition<AutomatonNode> AcceptanceCondition {
+        public override IAcceptanceCondition<T> AcceptanceCondition {
             get {
                 return _acceptanceCondition;
             }
@@ -22,10 +22,10 @@ namespace LtlSharp.Automata.OmegaAutomata
         
         public RabinAutomaton () : base ()
         {
-            _acceptanceCondition = new RabinAcceptance<AutomatonNode> ();
+            _acceptanceCondition = new RabinAcceptance<T> ();
         }
 
-        public void AddToAcceptance (IEnumerable<AutomatonNode> e, IEnumerable<AutomatonNode> f)
+        public void AddToAcceptance (IEnumerable<T> e, IEnumerable<T> f)
         {
             // not a big fan of that design...
             _acceptanceCondition.Add (e, f);
@@ -33,15 +33,15 @@ namespace LtlSharp.Automata.OmegaAutomata
 
         public string ToDot ()
         {
-            var graphviz = new GraphvizAlgorithm<AutomatonNode, AutomatonTransition<AutomatonNode>> (this.graph);
-            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomatonNode> e) => {
+            var graphviz = new GraphvizAlgorithm<T, AutomatonTransition<T>> (this.graph);
+            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<T> e) => {
                 e.VertexFormatter.Label = e.Vertex.Name;
                 if (this.InitialNode.Equals (e.Vertex))
                     e.VertexFormatter.Style = GraphvizVertexStyle.Bold;
                 //                if (rabin.AcceptanceSet.Contains (e.Vertex))
                 //                    e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.DoubleCircle;
             };
-            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, AutomatonTransition<AutomatonNode>> e) => {
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<T, AutomatonTransition<T>> e) => {
                 e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
             };
             return graphviz.Generate ();
