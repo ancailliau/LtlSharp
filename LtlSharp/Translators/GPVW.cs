@@ -265,10 +265,10 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var automaton = new GeneralizedBuchiAutomata (nodesSet.Count);
             
             int i = 0;
-            var mapping = new Dictionary<string, LabelledAutomataNode> ();
+            var mapping = new Dictionary<string, AutomatonNode> ();
             var literals = new HashSet<ILiteral> ();
             foreach (var n in nodesSet) {
-                var newNode = new LabelledAutomataNode ("s" + i);
+                var newNode = new AutomatonNode ("s" + i);
                 automaton.AddVertex (newNode);
                 if (n.Incoming.Contains ("init"))
                     automaton.InitialNodes.Add (newNode);
@@ -299,7 +299,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             foreach (Node node in nodesSet) {
                 foreach (var incomingNodeName in node.Incoming.Except (new [] { "init" })) {
                     automaton.AddEdge (
-                        new AutomataTransition<LabelledAutomataNode> (
+                        new AutomataTransition<AutomatonNode> (
                             mapping [incomingNodeName],
                             mapping [node.Name]
                         )
@@ -325,7 +325,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
 
                 if (considered is Until) {
                     Until consideredUntil = considered as Until;
-                    var set = new HashSet<AutomataNode>();
+                    var set = new HashSet<AutomatonNode>();
 
                     // Adds all nodes containing right member of until
                     // or not the until in their old set.

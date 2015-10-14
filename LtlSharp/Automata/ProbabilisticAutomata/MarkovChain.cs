@@ -166,7 +166,7 @@ namespace LtlSharp.Models
             get;
             set;
         }
-        public AutomatonNode AutomataNode {
+        public AutomatonNode AutomatonNode {
             get;
             set;
         }
@@ -197,13 +197,13 @@ namespace LtlSharp.Models
         }
         public override string ToString ()
         {
-            return string.Format ("[ProductMarkovNode: MarkovNode={0}, AutomataNode={1}]", MarkovNode.Name, AutomataNode.Name);
+            return string.Format ("[ProductMarkovNode: MarkovNode={0}, AutomatonNode={1}]", MarkovNode.Name, AutomatonNode.Name);
         }
 
         public void SetNodes (T markovNode, AutomatonNode automataNode)
         {
             this.MarkovNode = markovNode;
-            this.AutomataNode = automataNode;
+            this.AutomatonNode = automataNode;
             Name = string.Format ("{0} x {1}", markovNode.Name, automataNode.Name);
         }
     }

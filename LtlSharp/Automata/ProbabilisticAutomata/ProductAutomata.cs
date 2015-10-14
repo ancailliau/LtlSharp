@@ -42,7 +42,7 @@ namespace LtlSharp.Translators
         {
             var product = mc.Product<T> (ba, initials, out correspondingNodes);
             
-            condition = ba.AcceptanceCondition.Map<ProductMarkovNode<T>> (x => product.Nodes.Where (t => t.AutomataNode.Equals (x)));
+            condition = ba.AcceptanceCondition.Map<ProductMarkovNode<T>> (x => product.Nodes.Where (t => t.AutomatonNode.Equals (x)));
 
             return product;
         }
@@ -79,7 +79,7 @@ namespace LtlSharp.Translators
             var product = mc.Product<T> (rabin, initials, out correspondingNodes);
 
             condition = rabin.AcceptanceCondition.Map<ProductMarkovNode<T>> (x => {
-                return product.Nodes.Where (t => t.AutomataNode.Equals (x));
+                return product.Nodes.Where (t => t.AutomatonNode.Equals (x));
             });
 
             return product;
@@ -129,7 +129,7 @@ namespace LtlSharp.Translators
             while (pending.Count > 0) {
                 var current = pending.Pop ();
                 var currentNodeInMC = current.MarkovNode;
-                var currentNodeInWA = current.AutomataNode;
+                var currentNodeInWA = current.AutomatonNode;
                 var currentNodeInPA = current;
                 visited.Add (current);
 

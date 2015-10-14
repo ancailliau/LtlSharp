@@ -522,7 +522,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
 
         BuchiAutomaton SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
         {
-            var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, LabelledAutomataNode> ();
+            var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> ();
             var ba = new BuchiAutomaton ();
 
             var n0 = tgba.InitialNodes.Single ();
@@ -536,7 +536,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         }
 
         void DFSSynchrounousProduct (BuchiAutomaton ba, TGBA tgba, Degeneralizer degeneralizer,
-                                     Dictionary<Tuple<AutomatonNode, AutomatonNode>, LabelledAutomataNode> cache, 
+                                     Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> cache, 
                                      AutomatonNode n0, AutomatonNode n1) {
             
             var n = Get (ba, tgba, degeneralizer, cache, n0, n1);
@@ -598,14 +598,14 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        LabelledAutomataNode Get (BuchiAutomaton ba, TGBA automaton, Degeneralizer degeneralizer,
-                                  Dictionary<Tuple<AutomatonNode, AutomatonNode>, LabelledAutomataNode> cache, 
+        AutomatonNode Get (BuchiAutomaton ba, TGBA automaton, Degeneralizer degeneralizer,
+                                  Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> cache, 
                                   AutomatonNode n0, AutomatonNode n1)
         {
-            LabelledAutomataNode cachedNode = null;
+            AutomatonNode cachedNode = null;
             var key = new Tuple<AutomatonNode, AutomatonNode> (n0, n1);
             if (!cache.TryGetValue (key, out cachedNode)) {
-                cachedNode = new LabelledAutomataNode (n0.Name + " x " + n1.Name);
+                cachedNode = new AutomatonNode (n0.Name + " x " + n1.Name);
                 if (degeneralizer.AcceptanceSet.Contains (n1)) {
                     ba.AddToAcceptance (cachedNode);
                 }

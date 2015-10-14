@@ -36,31 +36,31 @@ namespace LtlSharp.Monitoring
             positiveNFA.ToSingleInitialState ();
             negativeNFA.ToSingleInitialState ();
 
-            currentNegative = new HashSet<AutomataNode> (negativeNFA.InitialNodes);
-            currentPositive = new HashSet<AutomataNode> (positiveNFA.InitialNodes);
+            currentNegative = new HashSet<AutomatonNode> (negativeNFA.InitialNodes);
+            currentPositive = new HashSet<AutomatonNode> (positiveNFA.InitialNodes);
             
-            var graphviz = new GraphvizAlgorithm<AutomataNode,AutomataTransition>(positiveNFA);
-            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
+            var graphviz = new GraphvizAlgorithm<AutomatonNode,AutomataTransition>(positiveNFA);
+            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomatonNode> e) => {
                 e.VertexFormatter.Label = e.Vertex.Name + "(" + string.Join (",", e.Vertex.Labels) + ")";;
                 if (positiveNFA.InitialNodes.Contains (e.Vertex)) {
                     e.VertexFormatter.FillColor = QuickGraph.Graphviz.Dot.GraphvizColor.LightYellow;
                 }
             };
-            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, AutomataTransition> e) => {
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, AutomataTransition> e) => {
                 e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
             };
             string output = graphviz.Generate();
             Console.WriteLine (output);
             
             
-            graphviz = new GraphvizAlgorithm<AutomataNode,AutomataTransition>(negativeNFA);
-            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
+            graphviz = new GraphvizAlgorithm<AutomatonNode,AutomataTransition>(negativeNFA);
+            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomatonNode> e) => {
                 e.VertexFormatter.Label = e.Vertex.Name + "(" + string.Join (",", e.Vertex.Labels) + ")";
                 if (positiveNFA.InitialNodes.Contains (e.Vertex)) {
                     e.VertexFormatter.FillColor = QuickGraph.Graphviz.Dot.GraphvizColor.LightYellow;
                 }
             };
-            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, AutomataTransition> e) => {
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, AutomataTransition> e) => {
                 e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
             };
             output = graphviz.Generate();

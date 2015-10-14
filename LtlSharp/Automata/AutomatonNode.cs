@@ -7,15 +7,17 @@ namespace LtlSharp.Automata
     public class AutomatonNode
     {
         public string Name;
+        public HashSet<ILiteral> Labels;
         
         public AutomatonNode (string name)
         {
             Name = name;
+            Labels = new HashSet<ILiteral> ();
         }
         
         public override string ToString ()
         {
-            return string.Format ("[AutomataNode: Name=\"{0}\"]", Name);
+            return string.Format ("[AutomatonNode: Name=\"{0}\"]", Name);
         }
         
         public override bool Equals (object obj)
@@ -33,16 +35,6 @@ namespace LtlSharp.Automata
         public override int GetHashCode ()
         {
             return Name.GetHashCode ();
-        }
-    }
-    
-    public class LabelledAutomataNode : AutomatonNode 
-    {   
-        public HashSet<ILiteral> Labels;
-
-        public LabelledAutomataNode (string name) : base (name)
-        {
-            Labels = new HashSet<ILiteral> ();
         }
     }
 

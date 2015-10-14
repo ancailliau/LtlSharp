@@ -3,13 +3,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{AA561918-B98E-40DA-93B1-A6BFE524AF42}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>LtlSharp</RootNamespace>
     <AssemblyName>LtlSharp</AssemblyName>
-    <UseMSBuildEngine>False</UseMSBuildEngine>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -60,7 +60,7 @@
     <Compile Include="Utils\ExtractAlphabet.cs" />
     <Compile Include="Utils\CanonicToString.cs" />
     <Compile Include="Utils\TexToString.cs" />
-    <Compile Include="Automata\Node.cs" />
+    <Compile Include="Translators\Node.cs" />
     <Compile Include="Translators\GPVW.cs" />
     <Compile Include="EmptinessChecker\GBAEmptinessChecker.cs" />
     <Compile Include="Automata\OmegaAutomata\GeneralizedBuchiAutomata.cs" />
@@ -79,7 +79,7 @@
     <Compile Include="Monitoring\LTLMonitor.cs" />
     <Compile Include="Language\LiteralSimplifier.cs" />
     <Compile Include="Translators\ILTLTranslator.cs" />
-    <Compile Include="Models\MarkovChain.cs" />
+    <Compile Include="Automata\ProbabilisticAutomata\MarkovChain.cs" />
     <Compile Include="ProbabilisticSystems\MarkovChainsAlgorithms.cs" />
     <Compile Include="Utils\TrajanAlgorithm.cs" />
     <Compile Include="Language\ITLFormula.cs" />
@@ -90,13 +90,12 @@
     <Compile Include="Translators\Fold.cs" />
     <Compile Include="Utils\CollectionUtils.cs" />
     <Compile Include="Translators\Unfold.cs" />
-    <Compile Include="Translators\ProductAutomata.cs" />
+    <Compile Include="Automata\ProbabilisticAutomata\ProductAutomata.cs" />
     <Compile Include="Automata\OmegaAutomata\OmegaAutomaton.cs" />
     <Compile Include="Automata\AcceptanceConditions\IAcceptanceCondition.cs" />
     <Compile Include="Automata\AcceptanceConditions\BuchiAcceptance.cs" />
     <Compile Include="Automata\AcceptanceConditions\RabinAcceptance.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="Language\LTL.g" />
     <None Include="packages.config" />
@@ -115,4 +114,5 @@
     <Folder Include="Automata\FiniteAutomata\" />
     <Folder Include="Automata\ProbabilisticAutomata\" />
   </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

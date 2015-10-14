@@ -177,28 +177,28 @@ namespace LtlSharp.Monitoring
             positive = positive.Unfold ();
             negative = negative.Unfold ();
 
-            //            var graphviz = new GraphvizAlgorithm<AutomataNode, LabeledAutomataTransition<AutomataNode>> (positive);
-            //            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
+            //            var graphviz = new GraphvizAlgorithm<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> (positive);
+            //            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomatonNode> e) => {
             //                e.VertexFormatter.Label = e.Vertex.Name;
             //                if (positive.InitialNodes.Contains (e.Vertex))
             //                    e.VertexFormatter.Style = GraphvizVertexStyle.Bold;
             //                if (positive.AcceptanceSet.Contains (e.Vertex))
             //                    e.VertexFormatter.Shape = GraphvizVertexShape.DoubleCircle;
             //            };
-            //            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, LabeledAutomataTransition<AutomataNode>> e) => {
+            //            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> e) => {
             //                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
             //            };
             //            Console.WriteLine (graphviz.Generate ());
             //
-            //            graphviz = new GraphvizAlgorithm<AutomataNode, LabeledAutomataTransition<AutomataNode>> (negative);
-            //            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomataNode> e) => {
+            //            graphviz = new GraphvizAlgorithm<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> (negative);
+            //            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<AutomatonNode> e) => {
             //                e.VertexFormatter.Label = e.Vertex.Name;
             //                if (negative.InitialNodes.Contains (e.Vertex))
             //                    e.VertexFormatter.Style = GraphvizVertexStyle.Bold;
             //                if (negative.AcceptanceSet.Contains (e.Vertex))
             //                    e.VertexFormatter.Shape = GraphvizVertexShape.DoubleCircle;
             //            };
-            //            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomataNode, LabeledAutomataTransition<AutomataNode>> e) => {
+            //            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<AutomatonNode, LabeledAutomataTransition<AutomatonNode>> e) => {
             //                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
             //            };
             //            Console.WriteLine (graphviz.Generate ());

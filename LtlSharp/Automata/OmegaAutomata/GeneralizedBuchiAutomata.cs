@@ -18,7 +18,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         }
     }
     
-    public class GeneralizedBuchiAutomata : AdjacencyGraph<LabelledAutomataNode, AutomatonTransition<LabelledAutomataNode>>
+    public class GeneralizedBuchiAutomata : AdjacencyGraph<AutomatonNode, AutomatonTransition<AutomatonNode>>
     {
         public GBAAcceptanceSet[] AcceptanceSets;
         public HashSet<AutomatonNode> InitialNodes;
