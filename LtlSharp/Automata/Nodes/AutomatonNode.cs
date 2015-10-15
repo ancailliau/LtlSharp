@@ -50,7 +50,7 @@ namespace LtlSharp.Automata
         public AutomatonNode (string name, IEnumerable<ILiteral> labels)
         {
             Id = currentId++;
-            Name = name;
+            Name = string.IsNullOrEmpty (name) ? "s" + Id : name;
             Labels = new LiteralsSet (labels);
         }
         

@@ -122,7 +122,7 @@ namespace LtlSharp.Translators
                 
                 if (successorsInWA.Any ()) {
                     successorInWA = successorsInWA.Single ();
-                    newNode = product.AddVertex ();
+                    newNode = product.AddVertex (string.Format ("{0} x {1}", initial, successorInWA), initial.Labels);
                     newNode.SetNodes (initial, successorInWA);
                     
                     var tuple = new Tuple<T, AutomatonNode> (initial, successorInWA);
@@ -154,7 +154,7 @@ namespace LtlSharp.Translators
                         var tuple = new Tuple<T, AutomatonNode> (successorInMC, successorInWA);
 
                         if (!unique.ContainsKey (tuple)) {
-                            newNode = product.AddVertex ();
+                            newNode = product.AddVertex (string.Format ("{0} x {1}", successorInMC, successorInWA), successorInMC.Labels);
                             newNode.SetNodes (successorInMC, successorInWA);
                             unique.Add (tuple, newNode);
 

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Automata
 {
-    public class ProductAutomatonNode<T> : IAutomatonNode where T : IAutomatonNode
+    public class ProductAutomatonNode<T> : AutomatonNode where T : IAutomatonNode
     {
         public T MarkovNode {
             get;
@@ -14,37 +15,19 @@ namespace LtlSharp.Automata
             get;
             set;
         }
-        public int Id {
-            get; private set; 
-        }
-
-        public LiteralsSet Labels {
-            get {
-                return MarkovNode.Labels;
-            }
-
-            set {
-                MarkovNode.Labels = value;
-            }
-        }
-        static int currentId;
-        public string Name {
-            get; set;
-        }
-        public ProductAutomatonNode ()
-        {
-            this.Id = currentId++;
-        }
-        public ProductAutomatonNode (string name) : this()
-        {
-            this.Name = name;
-        }
-        public ProductAutomatonNode (string name, IEnumerable<ILiteral> labels) : this()
-        {
-            // Todo fix and use this
-            throw new NotImplementedException ();
-            this.Name = name;
-        }
+        
+        public ProductAutomatonNode () 
+            : base ()
+        {}
+        
+        public ProductAutomatonNode (string name) 
+            : base(name)
+        {}
+        
+        public ProductAutomatonNode (string name, IEnumerable<ILiteral> labels)
+            : base (name, labels)
+        {}
+        
         public override string ToString ()
         {
             return string.Format ("[ProductAutomatonNode: AutomatonNode={0}, AutomatonNode={1}]", AutomatonNode.Name, AutomatonNode.Name);
@@ -54,7 +37,6 @@ namespace LtlSharp.Automata
         {
             this.MarkovNode = markovNode;
             this.AutomatonNode = automataNode;
-            Name = string.Format ("{0} x {1}", markovNode.Name, automataNode.Name);
         }
     }
 }
