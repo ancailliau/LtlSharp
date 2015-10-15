@@ -17,7 +17,7 @@ namespace LtlSharp.Tests
         [Test()]
         public void TestSafraExampleInPaper ()
         {
-            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeDefaultFactory ());
+            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
             var q = new AutomatonNode ("qI"); ba.AddNode (q);
             var f = new AutomatonNode ("f"); ba.AddNode (f);
             var g = new AutomatonNode ("g"); ba.AddNode (g);

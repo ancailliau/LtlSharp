@@ -555,7 +555,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         BuchiAutomaton<AutomatonNode> SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
         {
             var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> ();
-            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeDefaultFactory ());
+            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
 
             var n0 = tgba.InitialNodes.Single ();
             var n1 = degeneralizer.InitialNodes.Single ();

@@ -70,7 +70,7 @@ namespace LtlSharp.Tests
             ILiteral nalloc = new Negation (alloc);
             ILiteral nmob = new Negation (mob);
             
-            var lts = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeDefaultFactory ());
+            var lts = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
             var n0 = new AutomatonNode ("i"); lts.AddNode (n0);
             var n1 = new AutomatonNode ("s0");lts.AddNode (n1);
             var n2 = new AutomatonNode ("s1");lts.AddNode (n2);
@@ -118,7 +118,7 @@ namespace LtlSharp.Tests
             ILiteral nalloc = new Negation (alloc);
             ILiteral nmob = new Negation (mob);
             
-            var lts = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeDefaultFactory ());
+            var lts = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
             var n0 = new AutomatonNode ("i"); lts.AddNode (n0);
             var n1 = new AutomatonNode ("s0");lts.AddNode (n1);
             var n2 = new AutomatonNode ("s1");lts.AddNode (n2);

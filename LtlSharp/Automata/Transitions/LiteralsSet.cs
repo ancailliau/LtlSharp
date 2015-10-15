@@ -77,7 +77,7 @@ namespace LtlSharp.Automata.Transitions
             return _literals.SetEquals (other._literals);
         }
 
-        public override int GetHashCode ()
+		public override int GetHashCode ()
         {
             return _literals.GetHashCodeForElements ();
         }

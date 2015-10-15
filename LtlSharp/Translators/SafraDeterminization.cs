@@ -366,7 +366,7 @@ namespace LtlSharp.Translators
                 }
             }
             
-            var rabin = new RabinAutomaton<AutomatonNode> (new AutomatonNodeDefaultFactory ());
+            var rabin = new RabinAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
             var mapping = new Dictionary<SafraTree, AutomatonNode> ();
             int i = 0;
             foreach (var t in Transitions.Keys) {
