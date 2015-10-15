@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
-using LtlSharp.Buchi.Automata;
 using LtlSharp.Automata;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Utils;

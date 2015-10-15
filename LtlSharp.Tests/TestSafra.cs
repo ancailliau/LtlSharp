@@ -2,12 +2,12 @@
 using NUnit.Framework;
 using LtlSharp.Buchi;
 using LtlSharp;
-using LtlSharp.Buchi.Automata;
 using System.Collections.Generic;
 using LtlSharp.Translators;
 using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
+using LtlSharp.Automata.Nodes.Factories;
 
 namespace LtlSharp.Tests
 {
@@ -17,7 +17,7 @@ namespace LtlSharp.Tests
         [Test()]
         public void TestSafraExampleInPaper ()
         {
-            var ba = new BuchiAutomaton<AutomatonNode> ();
+            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeDefaultFactory ());
             var q = new AutomatonNode ("qI"); ba.AddNode (q);
             var f = new AutomatonNode ("f"); ba.AddNode (f);
             var g = new AutomatonNode ("g"); ba.AddNode (g);

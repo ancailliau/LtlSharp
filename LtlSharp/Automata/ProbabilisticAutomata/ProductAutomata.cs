@@ -2,7 +2,6 @@
 using LtlSharp.Buchi;
 using LtlSharp.Models;
 using System.Collections.Generic;
-using LtlSharp.Buchi.Automata;
 using System.Linq;
 using LtlSharp.Automata;
 using QuickGraph;

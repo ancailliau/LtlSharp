@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LtlSharp.Automata;
+using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Automata.OmegaAutomata;
-using LtlSharp.Buchi.Automata;
 using QuickGraph;
 using QuickGraph.Graphviz;
 
@@ -555,7 +555,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         BuchiAutomaton<AutomatonNode> SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
         {
             var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> ();
-            var ba = new BuchiAutomaton<AutomatonNode> ();
+            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeDefaultFactory ());
 
             var n0 = tgba.InitialNodes.Single ();
             var n1 = degeneralizer.InitialNodes.Single ();

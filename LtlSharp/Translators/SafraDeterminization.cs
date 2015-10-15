@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using LtlSharp.Buchi;
 using LtlSharp.Automata;
-using LtlSharp.Buchi.Automata;
 using System.Linq;
 using LtlSharp.Utils;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.AcceptanceConditions;
+using LtlSharp.Automata.Nodes.Factories;
 
 namespace LtlSharp.Translators
 {
@@ -366,7 +366,7 @@ namespace LtlSharp.Translators
                 }
             }
             
-            var rabin = new RabinAutomaton<AutomatonNode> ();
+            var rabin = new RabinAutomaton<AutomatonNode> (new AutomatonNodeDefaultFactory ());
             var mapping = new Dictionary<SafraTree, AutomatonNode> ();
             int i = 0;
             foreach (var t in Transitions.Keys) {

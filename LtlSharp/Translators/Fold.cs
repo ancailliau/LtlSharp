@@ -1,6 +1,5 @@
 ﻿using System;
 using QuickGraph;
-using LtlSharp.Buchi.Automata;
 using System.Linq;
 using LtlSharp.Language;
 using LtlSharp.Automata;

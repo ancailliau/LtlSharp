@@ -1,12 +1,12 @@
 ﻿using System;
 using QuickGraph;
 using System.Collections.Generic;
-using LtlSharp.Buchi.Automata;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 using LtlSharp.Utils;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.Transitions;
+using LtlSharp.Automata.Nodes.Factories;
 
 namespace LtlSharp.Automata.OmegaAutomata
 {
@@ -21,7 +21,7 @@ namespace LtlSharp.Automata.OmegaAutomata
             }
         }
         
-        public RabinAutomaton () : base ()
+        public RabinAutomaton (IAutomatonNodeFactory<T> factory) : base (factory)
         {
             _acceptanceCondition = new RabinAcceptance<T> ();
         }

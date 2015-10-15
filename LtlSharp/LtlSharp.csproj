@@ -99,11 +99,14 @@
     <Compile Include="Automata\Transitions\IAutomatonTransition.cs" />
     <Compile Include="Automata\Transitions\ProbabilisticAutomatonTransition.cs" />
     <Compile Include="Automata\Nodes\ProductAutomatonNode.cs" />
+    <Compile Include="Automata\Nodes\PowerSetAutomatonNode.cs" />
     <Compile Include="Automata\Nodes\Factories\IAutomatonNodeFactory.cs" />
     <Compile Include="Automata\Nodes\Factories\AutomatonNodeFactory.cs" />
     <Compile Include="Automata\Nodes\Factories\ProductAutomatonNodeFactory.cs" />
+    <Compile Include="Automata\Nodes\Factories\PowerSetAutomatonNodeFactory.cs" />
     <Compile Include="Utils\QuickGraphUtils.cs" />
     <Compile Include="Automata\Transitions\LiteralsSet.cs" />
+    <Compile Include="Automata\Automata.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Language\LTL.g" />

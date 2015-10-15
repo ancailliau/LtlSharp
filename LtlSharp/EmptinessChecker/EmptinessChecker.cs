@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
-using LtlSharp.Buchi.Automata;
 using LtlSharp.Automata;
 using LtlSharp.Automata.OmegaAutomata;
 

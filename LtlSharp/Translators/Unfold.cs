@@ -1,6 +1,5 @@
 ﻿using System;
 using QuickGraph;
-using LtlSharp.Buchi.Automata;
 using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
@@ -9,6 +8,7 @@ using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Transitions;
 using System.ComponentModel;
+using LtlSharp.Automata.Nodes.Factories;
 
 namespace LtlSharp.Translators
 {
@@ -30,7 +30,7 @@ namespace LtlSharp.Translators
         [Obsolete()]
         public BuchiAutomaton<AutomatonNode> Transform (BuchiAutomaton<AutomatonNode> t, IEnumerable<ILiteral> alphabet)
         {        
-            var automata = new BuchiAutomaton<AutomatonNode> ();
+            var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeDefaultFactory ());
             automata.AddNodes (t.Vertices);
             automata.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode>((BuchiAcceptance<AutomatonNode>) t.AcceptanceCondition));
             automata.SetInitialNode (t.InitialNode);

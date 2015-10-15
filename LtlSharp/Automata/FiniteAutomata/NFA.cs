@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using LtlSharp.Buchi.Automata;
 using LtlSharp.Language;
 using QuickGraph;
 using LtlSharp.Monitoring;
@@ -10,257 +9,108 @@ using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 using LtlSharp.Automata;
 using LtlSharp.Automata.Transitions;
+using LtlSharp.Utils;
+using LtlSharp.Automata.Nodes.Factories;
 
-namespace LtlSharp.Buchi.Automata
+namespace LtlSharp.Automata.FiniteAutomata
 {
     /// <summary>
-    /// This class represents a non-deterministic finite automata.
+    /// Defines a generic non-deterministic finite automata with node of type <c>T</c>.
     /// </summary>
-    /// <description>
-    /// See Andreas Bauer et al, Runtime Verification for LTL and TLTL, TOSEM.
-    /// </description>
-    public class NFA : AdjacencyGraph<AutomatonNode, AutomatonTransition<AutomatonNode>>
-    {
-        public HashSet<AutomatonNode> AcceptanceSet;
-        public HashSet<AutomatonNode> InitialNodes;
-        
-        public NFA ()
-        {
-            AcceptanceSet = new HashSet<AutomatonNode> ();
-            InitialNodes = new HashSet<AutomatonNode> ();
+    /// <remarks>
+    /// The implementation was modelling LTL monitors. See "Andreas Bauer et al, Runtime Verification for LTL and TLTL,
+    /// TOSEM" for more details.
+    /// </remarks>
+    /// <typeparam name="T">Type of nodes</typeparam>
+    public class NFA<T> 
+        : Automata<T>
+        where T : IAutomatonNode
+    {   
+        /// <summary>
+        /// Gets the set of node accepting the finite word.
+        /// </summary>
+        /// <value>The set of accepting nodes.</value>
+        public HashSet<T> AcceptingNodes {
+            get;
+            private set;
         }
         
-        public void ToSingleInitialState ()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.FiniteAutomata.NFA`1"/> class with the
+        /// specified factory and an empty set of accepting nodes.
+        /// </summary>
+        /// <param name="factory">Factory.</param>
+        public NFA (IAutomatonNodeFactory<T> factory) 
+            : base (factory)
         {
-            Console.WriteLine (InitialNodes.Count);
-            if (InitialNodes.Count == 1)
-                return;
+            AcceptingNodes = new HashSet<T> ();
+        }
+        
+        /// <summary>
+        /// Determinize the automaton using the power set construction.
+        /// </summary>
+        public NFA<PowerSetAutomatonNode<T>> Determinize ()
+        {
+            UnfoldTransitions ();
+
+            var factory = new PowerSetAutomatonNodeFactory<T> ();
             
-            var newInitialState = new AutomatonNode ("init");
-            this.AddVertex (newInitialState);
+            var deterministicAutomaton = new NFA<PowerSetAutomatonNode<T>> (factory);
+
+            var initialPowerSet = new [] { InitialNode };
+
+            var mapping = new Dictionary<HashSet<T>, PowerSetAutomatonNode<T>> (HashSet<T>.CreateSetComparer ());
+            var node = factory.Create (initialPowerSet);
+            mapping.Add (new HashSet<T> (initialPowerSet), node);
             
-            foreach (var initialState in InitialNodes.ToList ()) {
-                //Console.WriteLine (OutDegree (initialState));
-                foreach (var otransition in OutEdges (initialState)) {
-                    var newTransition = new AutomatonTransition<AutomatonNode> (
-                        newInitialState, 
-                        otransition.Target, 
-                        otransition.Labels
-                    );
-                    //Console.WriteLine (newTransition);
-                    this.AddEdge (newTransition);
-                }
-                InitialNodes.Remove (initialState);
-                //Console.WriteLine ("*>" + this.Edges.All (e => this.ContainsVertex(e.Target)));
+            deterministicAutomaton.AddNode (node);
+            deterministicAutomaton.SetInitialNode (node);
+            
+            if (AcceptingNodes.Contains (InitialNode)) {
+                deterministicAutomaton.AcceptingNodes.Add (node);
             }
 
-            InitialNodes.Add (newInitialState);
-            //Console.WriteLine ("^^^^^^^^^^^^");
-        }
-        
-        public bool IsDeterministic ()
-        {
-            var pending = new Stack<AutomatonNode> (InitialNodes);
-            var visited = new HashSet<AutomatonNode> ();
+            var pending = new Stack<PowerSetAutomatonNode<T>> ();
+            pending.Push (node);
             
-            while (pending.Count > 0) {
-                var s0 = pending.Pop ();
-                visited.Add (s0);
-                
-                //Console.WriteLine ("*" + s0);
-                //Console.WriteLine (string.Join("\n--", Edges));
-                
-                var transitions = OutEdges (s0);
-                
-                foreach (var c in transitions.SelectMany (x => x.Labels)) {
-                    var succ = transitions.Where (t => t.Labels.Contains (c)).Select (t => t.Target);
-                    if (succ.Count () > 1) {
-                        return false;
-                    } else {
-                        foreach (var s in succ.Where (node => !visited.Contains (node))) {
-                            //Console.WriteLine (ContainsVertex (s));
-                            pending.Push (s);
-                        }
-                    }
-                }
-            }
-
-            return true;
-        }
-        
-        public NFA Fold ()
-        {
-            foreach (var node in Vertices) {
-                var transitions = OutEdges (node);
-                foreach (var trans in transitions.ToList ()) {
-                    var sameTarget = transitions.Where (t => t.Target.Equals (trans.Target)).ToList ();
-                    var labels = sameTarget.Select (x => x.Labels);
-                    var lf = new LiteralFormula (labels);
-                    var newLabels = lf.Simplify ();
-                    foreach (var e in sameTarget) {
-                        RemoveEdge (e);
-                    }
-                    foreach (var nl in newLabels) {
-                        AddEdge (new AutomatonTransition<AutomatonNode> (trans.Source, trans.Target, nl));
-                    }
-                }
-            }
-
-            return this;
-        }
-        
-        public void ResetNames () 
-        {
-            // Don't
-            // Changing names changes hashcode and nothing is found again in hashtables :-)
-        }
-        
-        public NFA Unfold ()
-        {
-            var alphabet = Edges.SelectMany (x => x.Labels).Select (x => x is Negation ? ((ILiteral)((Negation)x).Enclosed) : x).Distinct ();
+            var visited = new HashSet<PowerSetAutomatonNode<T>> ();
             
-            var nnfa = new NFA ();
-            nnfa.AddVertexRange (Vertices);
-            nnfa.AcceptanceSet = new HashSet<AutomatonNode> (AcceptanceSet);
-            nnfa.InitialNodes = new HashSet<AutomatonNode> (InitialNodes);
-            
-            foreach (var trans in Edges) {
-                var labels = UnfoldLabels (trans.Labels, alphabet);
-                foreach (var label in labels) {
-                    nnfa.AddEdge (new AutomatonTransition<AutomatonNode> (trans.Source, trans.Target, label));
-                }
-            }
-            return nnfa;
-        }
-        
-        [Obsolete]
-        private HashSet<LiteralsSet> UnfoldLabels (LiteralsSet trans, IEnumerable<ILiteral> alphabet)
-        {
-            var s = new HashSet<LiteralsSet> ();
-            s.Add (new LiteralsSet ());
-            
-            var pending = new Stack<ILiteral> (alphabet);
             while (pending.Count > 0) {
                 var current = pending.Pop ();
-                if (trans.Contains (current)) {
-                        foreach (var e in s) {
-                            e.Add (current);
-                        }
-                    
-                } else if (trans.Contains (current.Negate ())) {
-                    s = new HashSet<LiteralsSet> (s.Where (l => !l.Contains (current)));
-                    
-                } else {
-                        foreach (var e in s.ToList ()) {
-                        var ns = new LiteralsSet (e);
-                            ns.Add (current);
-                            s.Add (ns);
-                        }
-                }
-            }
-            
-            foreach (var a in alphabet) {
-                foreach (var ss in s) {
-                    if (!ss.Contains (a)) {
-                        ss.Add ((ILiteral)a.Negate ());
-                    }
-                }
-            }
-            
-            return s;
-        }
-        
-        public NFA Determinize ()
-        {
-            if (InitialNodes.Count > 1) {
-                throw new NotImplementedException ();
-            }
-
-            var unfoldedAutomata = Unfold ();
-            var initialNode = unfoldedAutomata.InitialNodes.Single ();
-            
-            var dfa = new NFA ();
-            
-            var ss0 = new HashSet<AutomatonNode> (new [] { initialNode });
-
-            var pending = new Stack<HashSet<AutomatonNode>> ();
-            pending.Push (ss0);
-
-            var mapping = new Dictionary<HashSet<AutomatonNode>, AutomatonNode> (HashSet<AutomatonNode>.CreateSetComparer ());
-            var node = new AutomatonNode (string.Join (",", ss0.Select (s => s.Name)));
-            mapping.Add (ss0, node);
-            dfa.AddVertex (node);
-            dfa.InitialNodes.Add (node);
-            
-            if (unfoldedAutomata.AcceptanceSet.Contains (initialNode)) {
-                dfa.AcceptanceSet.Add (initialNode);
-            }
-
-            var transitions = new Dictionary<Tuple<HashSet<AutomatonNode>, HashSet<AutomatonNode>>, HashSet<LiteralsSet>> ();
-            while (pending.Count > 0) {
-                var ss = pending.Pop ();
-                var cc = new HashSet<LiteralsSet> (ss.SelectMany (s => unfoldedAutomata.OutEdges (s).Select (x => x.Labels)));
+                visited.Add (current);
                 
-//                Console.WriteLine (string.Join (",", ss));
-//                foreach (var c in cc) {
-//                    Console.WriteLine (string.Join (",", c));
-//                }
-//                Console.WriteLine ("--");
+                var currentPowerSet = current.Nodes;
+                var outLabels = OutAlphabet (currentPowerSet);
                 
-                foreach (var c in cc) {
-
-                    var succs = new HashSet<AutomatonNode> ();
-                    
-                    foreach (var s in ss) {
-//                        Console.WriteLine ("Successor of " + s);
-                        var enumerable = unfoldedAutomata.OutEdges (s).Where (x => {
-//                            Console.WriteLine (string.Join (",", x.Labels) + " == " + string.Join (",", c) + " = " + x.Labels.SetEquals (c));
-                            return x.Labels.Equals (c);   
-                        });
-//                        Console.WriteLine (string.Join (",", enumerable));
-                        foreach (var t in enumerable) {
-                            succs.Add (t.Target);
+                foreach (var label in outLabels) {
+                    var successorPowerSet = new HashSet<T> ();
+                    foreach (var state in currentPowerSet) {
+                        foreach (var successor in Post (state, label)) {
+                            successorPowerSet.Add (successor);
                         }
                     }
                     
-//                    Console.WriteLine ("Successors with [" + string.Join (",", c) + "] : " + string.Join (",", succs));
-                    
-                    if (!mapping.ContainsKey (succs)) {
-                        node = new AutomatonNode (string.Join (",", succs.Select (s => s.Name)));
-                        var vs = new HashSet<AutomatonNode> (succs);
-                        mapping.Add (vs, node);
-                        dfa.AddVertex (node);
-
-                        pending.Push (succs);
-
-                        if (succs.Any (succ => unfoldedAutomata.AcceptanceSet.Contains (succ))) {
-                            dfa.AcceptanceSet.Add (node);
+                    node = factory.Create (successorPowerSet);
+                    if (!visited.Contains (node)) {
+                        deterministicAutomaton.AddNode (node);
+                        
+                        if (successorPowerSet.Any (succ => AcceptingNodes.Contains (succ))) {
+                            deterministicAutomaton.AcceptingNodes.Add (node);
                         }
                     }
-
-                    var skey = new Tuple<HashSet<AutomatonNode>, HashSet<AutomatonNode>> (ss, succs);
-                    if (!transitions.ContainsKey (skey)) {
-                        transitions.Add (skey, new HashSet<LiteralsSet> ());
+                    
+                    if (!visited.Contains (node) & !pending.Contains (node)) {
+                        pending.Push (node);
                     }
-                    transitions[skey].Add (c);
+
+                    deterministicAutomaton.AddTransition (current, node, label);
                 }   
             }
             
-            foreach (var key in transitions.Keys) {
-                foreach (var tadam in transitions [key]) {
-                    dfa.AddEdge (new AutomatonTransition<AutomatonNode> (mapping [key.Item1], 
-                                                                              mapping [key.Item2],
-                                                                              tadam)
-                                );
-                }
-            }
-
-            dfa.Fold ();
+            deterministicAutomaton.SimplifyTransitions ();
             
-            return dfa;
+            return deterministicAutomaton;
         }
-        
     }
-    
 }
 

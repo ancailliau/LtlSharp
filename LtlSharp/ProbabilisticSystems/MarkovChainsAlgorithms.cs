@@ -8,7 +8,6 @@ using LtlSharp.Automata;
 using LtlSharp.Buchi.LTL2Buchi;
 using LtlSharp.Translators;
 using System.Collections;
-using LtlSharp.Buchi.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
 
 namespace LtlSharp.ProbabilisticSystems

@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using LittleSharp.Buchi;
 using LtlSharp.Automata;
+using LtlSharp.Automata.FiniteAutomata;
 using LtlSharp.Automata.OmegaAutomata;
-using LtlSharp.Buchi.Automata;
+using LtlSharp.Automata.Nodes.Factories;
 
 namespace LtlSharp.Buchi.Translators
 {
     public static class BA2NFA
     {
-        public static NFA Transform (BuchiAutomaton<AutomatonNode> automata)
+        public static NFA<AutomatonNode> Transform (BuchiAutomaton<AutomatonNode> automata)
         {
             var emptinessChecker = new EmptinessChecker<AutomatonNode> (automata);
 
@@ -20,7 +21,7 @@ namespace LtlSharp.Buchi.Translators
                 }
             }
 
-            var nfa = new NFA ();
+            var nfa = new NFA<AutomatonNode> (new AutomatonNodeDefaultFactory ());
             // TODO fixme
             //nfa.AddVertexRange (automata.Vertices);
             //nfa.AddEdgeRange (automata.Edges);

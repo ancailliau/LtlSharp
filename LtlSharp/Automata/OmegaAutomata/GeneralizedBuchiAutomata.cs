@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LtlSharp.Automata;
-using LtlSharp.Buchi.Automata;
 using QuickGraph;
 
 namespace LtlSharp.Automata.OmegaAutomata

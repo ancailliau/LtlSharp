@@ -6,7 +6,6 @@ using LtlSharp.Buchi.Translators;
 using LtlSharp.Buchi;
 using LittleSharp.Buchi;
 using System.Linq;
-using LtlSharp.Buchi.Automata;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 using LtlSharp.Automata;

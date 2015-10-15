@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LtlSharp.Automata;
-using LtlSharp.Buchi.Automata;
+using LtlSharp.Automata.FiniteAutomata;
 using LtlSharp.Buchi.LTL2Buchi;
 using LtlSharp.Buchi.Translators;
 using QuickGraph.Graphviz;
@@ -15,8 +15,8 @@ namespace LtlSharp.Monitoring
         HashSet<AutomatonNode> currentPositive;
         HashSet<AutomatonNode> currentNegative;
         
-        NFA positiveNFA;
-        NFA negativeNFA;
+        NFA<AutomatonNode> positiveNFA;
+        NFA<AutomatonNode> negativeNFA;
 
         public MonitorStatus Status;
 
@@ -82,26 +82,23 @@ namespace LtlSharp.Monitoring
         public void Consume (MonitoredState state)
         {
             foreach (var current in currentPositive.ToList ()) {
-                var transitions = positiveNFA.OutEdges (current).Where (t => state.Evaluate (t.Labels));
+                var successors = positiveNFA.Post (current, (l, t) => state.Evaluate (l));
                 currentPositive.Remove (current);
-                foreach (var nt in transitions.Select (t => t.Target)) {
+                foreach (var nt in successors) {
                     currentPositive.Add (nt);
                 }
             }
-            Console.WriteLine ("Positive: " + string.Join (",", currentPositive.Select (t => t.Name)));
             
             foreach (var current in currentNegative.ToList ()) {
-                var transitions = negativeNFA.OutEdges (current).Where (t => state.Evaluate (t.Labels));
+                var successors = negativeNFA.Post (current, (l, t) => state.Evaluate (l));
                 currentNegative.Remove (current);
-                foreach (var nt in transitions.Select (t => t.Target)) {
+                foreach (var nt in successors) {
                     currentNegative.Add (nt);
                 }
             }
-            Console.WriteLine ("Negative: " + string.Join (",", currentNegative.Select (t => t.Name)));
             
-            
-            var negativeAcceptance = currentNegative.All (t => !negativeNFA.AcceptanceSet.Contains (t));
-            var positiveAcceptance = currentPositive.All (t => !positiveNFA.AcceptanceSet.Contains (t));
+            var negativeAcceptance = currentNegative.All (t => !negativeNFA.AcceptingNodes.Contains (t));
+            var positiveAcceptance = currentPositive.All (t => !positiveNFA.AcceptingNodes.Contains (t));
             
             Status = MonitorStatus.Inconclusive;
             if (negativeAcceptance | currentPositive.Count == 0)
