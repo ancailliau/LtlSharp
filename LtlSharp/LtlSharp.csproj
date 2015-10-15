@@ -105,7 +105,7 @@
     <Compile Include="Automata\Nodes\Factories\ProductAutomatonNodeFactory.cs" />
     <Compile Include="Automata\Nodes\Factories\PowerSetAutomatonNodeFactory.cs" />
     <Compile Include="Utils\QuickGraphUtils.cs" />
-    <Compile Include="Automata\Transitions\LiteralsSet.cs" />
+    <Compile Include="LiteralsSet.cs" />
     <Compile Include="Automata\Automata.cs" />
   </ItemGroup>
   <ItemGroup>
