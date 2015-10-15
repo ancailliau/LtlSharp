@@ -312,29 +312,24 @@ namespace LtlSharp.ProbabilisticSystems
         {
             // For more details, see "Principles of Model Checking", p785ff
             
-            MarkovChain<ProductAutomatonNode<T>> productMC;
-            Dictionary<T, ProductAutomatonNode<T>> correspondingNodes;
-            IDictionary<ProductAutomatonNode<T>, double> probabilities;
+            MarkovChain<ProductAutomatonNode<T, AutomatonNode>> productMC;
+            Dictionary<T, ProductAutomatonNode<T, AutomatonNode>> correspondingNodes;
+            IDictionary<ProductAutomatonNode<T, AutomatonNode>, double> probabilities;
             Dictionary<T, double> dict;
             
             var buchi = (new Gia02 ()).GetAutomaton (formula);
-            //var unfolder = new Unfold ();
-            //buchi = unfolder.Transform (buchi);
             buchi.UnfoldTransitions ();
-            
-            Console.WriteLine (buchi.IsDeterministic ());
 
             // If buchi automaton is deterministic, no need for transforming to rabin automaton. 
             // This save a little computation.
             if (buchi.IsDeterministic()) {
-                IAcceptanceCondition<ProductAutomatonNode<T>> condition = null;
+                IAcceptanceCondition<ProductAutomatonNode<T, AutomatonNode>> condition = null;
                 productMC = mc.Product (buchi, mc.Nodes, out condition, out correspondingNodes);
                 probabilities = productMC.QuantitativeRepeatedReachability (condition);
                 
                 dict = new Dictionary<T, double> ();
                 foreach (var k in correspondingNodes.Values) {
-                    Console.WriteLine (k.AutomatonNode + " -> " + probabilities[k]);
-                    dict.Add (k.MarkovNode, probabilities [k]);
+                    dict.Add (k.Node1, probabilities [k]);
                 }
                 return dict;
             }
@@ -342,19 +337,13 @@ namespace LtlSharp.ProbabilisticSystems
             var safra = new SafraDeterminization ();
             var rabin = safra.Transform (buchi);
             
-            Console.WriteLine (rabin.AcceptanceCondition);
-
-            IAcceptanceCondition<ProductAutomatonNode<T>> conditions;
+            IAcceptanceCondition<ProductAutomatonNode<T, AutomatonNode>> conditions;
             productMC = mc.Product (rabin, mc.Nodes, out conditions, out correspondingNodes);
             probabilities = productMC.QuantitativeRepeatedReachability (conditions);
             
-            Console.WriteLine (productMC.ToDot ());
-            Console.WriteLine (correspondingNodes.Count ());
-            
             dict = new Dictionary<T, double> ();
             foreach (var k in correspondingNodes.Values) {
-                dict.Add (k.MarkovNode, probabilities [k]);
-                Console.WriteLine (k.MarkovNode + " -> " + probabilities[k]);
+                dict.Add (k.Node1, probabilities [k]);
             }
             
             return dict;
