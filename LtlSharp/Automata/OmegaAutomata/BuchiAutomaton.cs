@@ -10,10 +10,11 @@ using LtlSharp.Utils;
 using LtlSharp.Language;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.Nodes.Factories;
+using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Automata.OmegaAutomata
 {
-    public class BuchiAutomaton<T> : OmegaAutomaton<T> where T : IAutomatonNode
+    public class BuchiAutomaton<T> : OmegaAutomaton<T, LiteralsSet> where T : IAutomatonNode
     {
         BuchiAcceptance<T> _acceptanceCondition;
         
@@ -21,7 +22,7 @@ namespace LtlSharp.Automata.OmegaAutomata
             get { return _acceptanceCondition; }
         }
 
-        public BuchiAutomaton (IAutomatonNodeFactory<T> factory) : base (factory)
+        public BuchiAutomaton (IAutomatonNodeFactory<T> factory, IAutomatonTransitionFactory<LiteralsSet> factoryTransition) : base (factory, factoryTransition)
         {
             _acceptanceCondition = new BuchiAcceptance<T> ();
         }

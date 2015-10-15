@@ -37,7 +37,6 @@ namespace LtlSharp.Utils
 
         public override int GetHashCode ()
         {
-            // TODO fixme Encapsulate HashSet<ILiteral> and returns the fucking correct hashCode !!!!!
             return 17 + Source.GetHashCode () + 32 * (Target.GetHashCode () + 32 * Value.GetHashCode ());
         }
     }

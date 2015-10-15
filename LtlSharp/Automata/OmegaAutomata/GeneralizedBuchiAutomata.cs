@@ -4,6 +4,10 @@ using System.IO;
 using System.Linq;
 using LtlSharp.Automata;
 using QuickGraph;
+using LtlSharp.Automata.Nodes.Factories;
+using LtlSharp.Automata.Transitions;
+using LtlSharp.Utils;
+using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Automata.OmegaAutomata
 {
@@ -15,51 +19,84 @@ namespace LtlSharp.Automata.OmegaAutomata
             Id = id;
             Nodes = acceptance_nodes;
         }
+        public override string ToString ()
+        {
+            return string.Format ("[GBAAcceptanceSet {{{0}}}]", string.Join (",", Nodes.AsEnumerable ()));
+        }
     }
     
-    public class GeneralizedBuchiAutomata : AdjacencyGraph<AutomatonNode, AutomatonTransition<AutomatonNode>>
+    public class GeneralizedBuchiAutomata : OmegaAutomaton<AutomatonNode, LiteralsSet>
     {
+        public override AcceptanceConditions.IAcceptanceCondition<AutomatonNode> AcceptanceCondition {
+            get {
+                throw new NotImplementedException ();
+            }
+        }
+        
         public GBAAcceptanceSet[] AcceptanceSets;
         public HashSet<AutomatonNode> InitialNodes;
         
         public GeneralizedBuchiAutomata (int n_nodes)
+            : base (new AutomatonNodeFactory (), new LiteralSetFactory ())
         {
             InitialNodes = new HashSet<AutomatonNode> ();
         }
     }
 
-    public class TransitionGeneralizedBuchiAutomata : AdjacencyGraph<AutomatonNode, AutomatonTransition<AutomatonNode>>
+    public class TransitionGeneralizedBuchiAutomata : OmegaAutomaton<AutomatonNode, LiteralsSet>
     {
+        public override AcceptanceConditions.IAcceptanceCondition<AutomatonNode> AcceptanceCondition {
+            get {
+                throw new NotImplementedException ();
+            }
+        }
         public GBAAcceptanceSet[] AcceptanceSets;
         public HashSet<AutomatonNode> InitialNodes;
 
         public TransitionGeneralizedBuchiAutomata ()
+            : base (new AutomatonNodeFactory (), new LiteralSetFactory ())
         {
             InitialNodes = new HashSet<AutomatonNode> ();
         }
+
+        public IEnumerable<Tuple<LiteralsSet, AutomatonNode>> OutTransitions (AutomatonNode root)
+        {
+            return graph.OutEdges (root).Select (x => new Tuple<LiteralsSet, AutomatonNode> (x.Value, x.Target));
+        }
     }
-    
-    
-    public class TGBA : AdjacencyGraph<AutomatonNode, AutomatonTransition<AutomatonNode>>
+
+
+    public class TGBA : OmegaAutomaton<AutomatonNode, LiteralsSet>
     {
-        public TGBAAcceptanceSet[] AcceptanceSets;
+        public override AcceptanceConditions.IAcceptanceCondition<AutomatonNode> AcceptanceCondition {
+            get {
+                throw new NotImplementedException ();
+            }
+        }
+        public TGBAAcceptanceSet [] AcceptanceSets;
         public HashSet<AutomatonNode> InitialNodes;
 
         public TGBA ()
+            : base (new AutomatonNodeFactory (), new LiteralSetFactory ())
         {
             InitialNodes = new HashSet<AutomatonNode> ();
+        }
+
+        internal IEnumerable<Tuple<AutomatonNode, AutomatonNode, LiteralsSet>> OutEdges (AutomatonNode n0)
+        {
+            return graph.OutEdges (n0).Select (x => new Tuple<AutomatonNode, AutomatonNode, LiteralsSet> (n0, x.Target, x.Value));
         }
     }
     
     public class TGBAAcceptanceSet {
         public int Id;
-        public HashSet<AutomatonTransition<AutomatonNode>> Transitions;
+        public HashSet<Tuple<AutomatonNode, AutomatonNode, LiteralsSet>> Transitions;
         public TGBAAcceptanceSet (int id)
         {
             Id = id;
-            Transitions = new HashSet<AutomatonTransition<AutomatonNode>> ();
+            Transitions = new HashSet<Tuple<AutomatonNode, AutomatonNode, LiteralsSet>> ();
         }
-        public void Add (AutomatonTransition<AutomatonNode> n)
+        public void Add (Tuple<AutomatonNode, AutomatonNode, LiteralsSet> n)
         {
             Transitions.Add (n);
         }

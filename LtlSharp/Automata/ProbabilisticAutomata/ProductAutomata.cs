@@ -8,6 +8,7 @@ using QuickGraph;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Nodes.Factories;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Translators
 {
@@ -86,7 +87,7 @@ namespace LtlSharp.Translators
         }
         
         static MarkovChain<ProductAutomatonNode<T, AutomatonNode>> Product<T> (this MarkovChain<T> mc,
-                                                                OmegaAutomaton<AutomatonNode> automaton,
+                                                                               OmegaAutomaton<AutomatonNode, LiteralsSet> automaton,
                                                              IEnumerable<T> initials,
                                                                 out Dictionary<T, ProductAutomatonNode<T, AutomatonNode>> correspondingNodes)
             where T : IAutomatonNode

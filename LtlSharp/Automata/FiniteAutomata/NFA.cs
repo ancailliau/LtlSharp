@@ -11,6 +11,7 @@ using LtlSharp.Automata;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Utils;
 using LtlSharp.Automata.Nodes.Factories;
+using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Automata.FiniteAutomata
 {
@@ -23,7 +24,7 @@ namespace LtlSharp.Automata.FiniteAutomata
     /// </remarks>
     /// <typeparam name="T">Type of nodes</typeparam>
     public class NFA<T> 
-        : Automata<T>
+        : Automata<T, LiteralsSet>
         where T : IAutomatonNode
     {   
         /// <summary>
@@ -40,8 +41,8 @@ namespace LtlSharp.Automata.FiniteAutomata
         /// specified factory and an empty set of accepting nodes.
         /// </summary>
         /// <param name="factory">Factory.</param>
-        public NFA (IAutomatonNodeFactory<T> factory) 
-            : base (factory)
+        public NFA (IAutomatonNodeFactory<T> factory, IAutomatonTransitionFactory<LiteralsSet> factoryTransition) 
+            : base (factory, factoryTransition)
         {
             AcceptingNodes = new HashSet<T> ();
         }
@@ -54,8 +55,9 @@ namespace LtlSharp.Automata.FiniteAutomata
             UnfoldTransitions ();
 
             var factory = new PowerSetAutomatonNodeFactory<T> ();
+            var factoryT = new LiteralSetFactory ();
             
-            var deterministicAutomaton = new NFA<PowerSetAutomatonNode<T>> (factory);
+            var deterministicAutomaton = new NFA<PowerSetAutomatonNode<T>> (factory, factoryT);
 
             var initialPowerSet = new [] { InitialNode };
 

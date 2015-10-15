@@ -6,7 +6,7 @@ using LtlSharp.Utils;
 
 namespace LtlSharp.Automata.Transitions
 {
-    public class LiteralsSet : IEnumerable<ILiteral>
+    public class LiteralsSet : IEnumerable<ILiteral>, IAutomatonTransitionDecorator<LiteralsSet>
     {
         HashSet<ILiteral> _literals;
         
@@ -59,12 +59,6 @@ namespace LtlSharp.Automata.Transitions
             return "{" + string.Join (", ", _literals) + "}";
         }
         
-        public bool Entails (LiteralsSet literals)
-        {
-            return Project (literals._literals).IsSubsetOf (_literals);
-        }
-        
-        
         public override bool Equals (object obj)
         {
             if (obj == null)
@@ -95,6 +89,58 @@ namespace LtlSharp.Automata.Transitions
         public void Add (ILiteral literal)
         {
             _literals.Add (literal);
+        }
+
+        IEnumerable<ILiteral> IAutomatonTransitionDecorator<LiteralsSet>.GetAlphabet ()
+        {
+            return GetAlphabet ();
+        }
+
+        [Obsolete]
+        LiteralsSet IAutomatonTransitionDecorator<LiteralsSet>.ToLiteralSet ()
+        {
+            return this;
+        }
+
+        bool IAutomatonTransitionDecorator<LiteralsSet>.Entails (LiteralsSet l)
+        {
+            return Project (l._literals).IsSubsetOf (_literals);
+        }
+
+        IEnumerable<LiteralsSet> IAutomatonTransitionDecorator<LiteralsSet>.UnfoldLabels (IEnumerable<ILiteral> alphabet)
+        {
+            var s = new HashSet<LiteralsSet> ();
+            s.Add (new LiteralsSet ());
+
+            var pending = new Stack<ILiteral> (alphabet);
+            while (pending.Count > 0) {
+                var current = pending.Pop ();
+                if (_literals.Contains (current)) {
+                    foreach (var e in s) {
+                        e.Add (current);
+                    }
+
+                } else if (_literals.Contains (current.Negate ())) {
+                    s = new HashSet<LiteralsSet> (s.Where (l => !l.Contains (current)));
+
+                } else {
+                    foreach (var e in s.ToList ()) {
+                        var ns = new LiteralsSet (e);
+                        ns.Add (current);
+                        s.Add (ns);
+                    }
+                }
+            }
+
+            foreach (var a in alphabet) {
+                foreach (var ss in s) {
+                    if (!ss.Contains (a)) {
+                        ss.Add ((ILiteral)a.Negate ());
+                    }
+                }
+            }
+
+            return s;
         }
     }
 }

@@ -58,13 +58,13 @@ namespace LtlSharp.Buchi
                 var q = path.Peek ();
                 //Console.WriteLine ("q={0}", q.Name);
             
-                var succToProcess = a.OutEdges(q).Select (x => x.Target).Except (path.Union (processed));
+                var succToProcess = a.Post(q).Except (path.Union (processed));
                 while (succToProcess.Count () > 0) {
                     var succ = succToProcess.First ();
                     path.Push (succ);
                     label [succ] = new HashSet<int> ();
                     q = succ;
-                    succToProcess = a.OutEdges(q).Select (x => x.Target).Except (path.Union (processed));
+                    succToProcess = a.Post(q).Except (path.Union (processed));
                     //Console.WriteLine ("q={0}", q.Name);
                 }
                 //Console.WriteLine ("----");
@@ -100,7 +100,7 @@ namespace LtlSharp.Buchi
             var nodesToProcess = new Stack<AutomatonNode> (nodes);
             while (nodesToProcess.Count > 0) {
                 var q = nodesToProcess.Pop ();
-                var successors = a.OutEdges (q).Select (x => x.Target).Intersect (path.Union (processed));
+                var successors = a.Post(q).Intersect (path.Union (processed));
                 //Console.WriteLine ("successors : " + string.Join(",", a.OutEdges (q).Select (x => x.Target.Name)));
                 //Console.WriteLine ("successors : " + string.Join(",", successors));
                 foreach (var succ in successors) {

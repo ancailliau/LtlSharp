@@ -6,6 +6,7 @@ using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Nodes.Factories;
+using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Buchi.Translators
 {
@@ -32,22 +33,27 @@ namespace LtlSharp.Buchi.Translators
             
             // If the GBA contains only one acceptance set, then it is a BA.
             if (gba.AcceptanceSets.Length == 1) {
-                var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
+                var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
                 automata.AddNodes (gba.Vertices);
                 foreach (var e in gba.Edges) {
-                    automata.AddTransition (e.Source, e.Target, e.Labels);
+                    automata.AddTransition (e.Item1, e.Item3, e.Item2);
                 }
                 automata.SetInitialNode (gba.InitialNodes.Single ());
                 automata.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (gba.AcceptanceSets [0].Nodes));
                 return automata;
             }
 
+            Console.WriteLine ("* " + gba.AcceptanceSets.Length);
+            foreach (var t in gba.AcceptanceSets) {
+                Console.WriteLine (t);
+            }
+            
             mapping = new Dictionary<int, Dictionary<AutomatonNode,AutomatonNode>> ();
             for (int i = 0; i < gba.AcceptanceSets.Length; i++) {
                 mapping [i] = new Dictionary<AutomatonNode, AutomatonNode> ();
             }
             
-            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
+            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
             foreach (var qi in gba.InitialNodes) {
                 Recur (qi, ba, 0, gba);
             }
@@ -62,31 +68,35 @@ namespace LtlSharp.Buchi.Translators
             return ba;
         }
         
-        static AutomatonNode Recur (AutomatonNode root, BuchiAutomaton<AutomatonNode> ba, int acceptanceIndex, TransitionGeneralizedBuchiAutomata gba)
+        static AutomatonNode Recur (AutomatonNode node, 
+                                    BuchiAutomaton<AutomatonNode> buchiAutomaton, 
+                                    int acceptanceIndex, 
+                                    TransitionGeneralizedBuchiAutomata generalizedBuchiAutomaton)
         {
-            if (mapping[acceptanceIndex].ContainsKey(root)) {
-                return mapping [acceptanceIndex][root];
+            if (mapping[acceptanceIndex].ContainsKey(node)) {
+                return mapping [acceptanceIndex][node];
             }
             
-            var bANode = new AutomatonNode (root.Name + " x " + acceptanceIndex);
-            mapping [acceptanceIndex].Add(root, bANode);
-            ba.AddNode (bANode);
-            if (gba.InitialNodes.Single ().Equals (root) & acceptanceIndex == 0) {
-                ba.SetInitialNode (bANode);
+            var newNode = new AutomatonNode (node.Name + " x " + acceptanceIndex);
+            mapping [acceptanceIndex].Add(node, newNode);
+            buchiAutomaton.AddNode (newNode);
+            
+            if (generalizedBuchiAutomaton.InitialNodes.Single ().Equals (node) & acceptanceIndex == 0) {
+                buchiAutomaton.SetInitialNode (newNode);
             }
             
-            int newAI = acceptanceIndex;
-            if (gba.AcceptanceSets[acceptanceIndex].Nodes.Contains (root)) {
-                newAI = (acceptanceIndex + 1) % gba.AcceptanceSets.Length;
+            int newAcceptanceIndex = acceptanceIndex;
+            if (generalizedBuchiAutomaton.AcceptanceSets[acceptanceIndex].Nodes.Contains (node)) {
+                newAcceptanceIndex = (acceptanceIndex + 1) % generalizedBuchiAutomaton.AcceptanceSets.Length;
             }
             
-            foreach (var t in gba.OutEdges (root)) {
-                var n2 = Recur (t.Target, ba, newAI, gba);
+            foreach (var t in generalizedBuchiAutomaton.OutTransitions (node)) {
+                var n2 = Recur (t.Item2, buchiAutomaton, newAcceptanceIndex, generalizedBuchiAutomaton);
                 //var t2 = new AutomatonTransition<AutomatonNode> (bANode, n2, t.Labels);
-                ba.AddTransition (bANode, n2, t.Labels);
+                buchiAutomaton.AddTransition (newNode, n2, t.Item1);
             }
             
-            return bANode;
+            return newNode;
         }
     }
 }

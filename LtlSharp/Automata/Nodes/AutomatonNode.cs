@@ -109,7 +109,7 @@ namespace LtlSharp.Automata
         
         public override string ToString ()
         {
-            return string.Format ("[AutomatonNode: Name=\"{0}\" - {1}]", Name, GetHashCode ());
+            return Name;
         }
         
         public override bool Equals (object obj)

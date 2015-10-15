@@ -4,45 +4,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using LtlSharp.Automata;
+using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Automata.OmegaAutomata;
+using LtlSharp.Utils;
 using QuickGraph;
 using QuickGraph.Graphviz;
+using LtlSharp.Automata.Transitions;
+using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
-    public class DegeneralizerAutomataTransition<T> : AutomatonTransition<T>
-        where T : AutomatonNode
-    {   
-        public new HashSet<int> Labels;
-        public bool Else;
-
-        public DegeneralizerAutomataTransition (T source, T target)
-            : base (source, target)
-        {
-            Labels = new HashSet<int> ();
-            Else = false;
-        }
-
-        public override bool Equals (object obj)
-        {
-            if (obj == null)
-                return false;
-            if (ReferenceEquals (this, obj))
-                return true;
-            if (obj.GetType () != typeof(DegeneralizerAutomataTransition<T>))
-                return false;
-            var other = (DegeneralizerAutomataTransition<T>)obj;
-            return base.Equals(obj) && Labels.All (l => other.Labels.Contains (l))
-                       && other.Labels.All (l => Labels.Contains (l)) & Else == other.Else;
-        }
-
-        public override int GetHashCode ()
-        {
-            return 17 + 23 * (base.GetHashCode () + 23 * (Labels.GetHashCode () + 23 * Else.GetHashCode ()));
-        }
-    }
-    
     public class InternalNode
     {
         public int NodeId {
@@ -394,7 +366,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             Transitions = new HashSet<InternalTransition> (new [] {
                 new InternalTransition (acc.Length) {
                     Source = new HashSet<int> (node.Incoming),
-                    Label = new HashSet<ILiteral> (node.Old),
+                    Label = new LiteralsSet (node.Old),
                     Accepting = acc
                 }
             });
@@ -406,14 +378,14 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var acc = new BitArray(node.RightOfUntils).Not ().And (node.Untils);
             
             InternalTransition tr;
-            if ((tr = Transitions.SingleOrDefault (t => t.Label.SetEquals(node.Old) &(t.Accepting.Equals (acc)))) != null) {
+            if ((tr = Transitions.SingleOrDefault (t => t.Label.Equals(node.Old) &(t.Accepting.Equals (acc)))) != null) {
                 foreach (var i in node.Incoming)
                     tr.Source.Add (i);
             
             } else {
                 Transitions.Add (new InternalTransition (acc.Length) {
                     Source = new HashSet<int> (node.Incoming),
-                    Label = new HashSet<ILiteral> (node.Old),
+                    Label = new LiteralsSet (node.Old),
                     Accepting = acc
                 });
             }
@@ -450,7 +422,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             set;
         }
 
-        public HashSet<ILiteral> Label {
+        public LiteralsSet Label {
             get;
             set;
         }
@@ -463,7 +435,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         public InternalTransition (int numberOfUntils)
         {
             Source = new HashSet<int> ();
-            Label = new HashSet<ILiteral> ();
+            Label = new LiteralsSet ();
             Accepting = new BitArray (numberOfUntils);
         }
         
@@ -476,7 +448,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             if (obj.GetType () != typeof(InternalTransition))
                 return false;
             InternalTransition other = (InternalTransition)obj;
-            return Source.SetEquals(other.Source) & Label.SetEquals(other.Label) & Accepting.Equals(other.Accepting);
+            return Source.SetEquals(other.Source) & Label.Equals(other.Label) & Accepting.Equals(other.Accepting);
         }
         
         public override int GetHashCode ()
@@ -488,15 +460,26 @@ namespace LtlSharp.Buchi.LTL2Buchi
     public class Gia02 : ILTLTranslator
     {
         
-        private class Degeneralizer : AdjacencyGraph<AutomatonNode, DegeneralizerAutomataTransition<AutomatonNode>> 
+        private class Degeneralizer : OmegaAutomaton<AutomatonNode, DegeneralizerAutomataTransition> 
         {
             public HashSet<AutomatonNode> InitialNodes;
             public HashSet<AutomatonNode> AcceptanceSet;
-    
-            public Degeneralizer () : base ()
+
+            public override IAcceptanceCondition<AutomatonNode> AcceptanceCondition {
+                get {
+                    throw new NotImplementedException ();
+                }
+            }
+
+            public Degeneralizer () : base (new AutomatonNodeFactory (), new DegeneralizerAutomataTransitionFactory ())
             {
                 InitialNodes = new HashSet<AutomatonNode> ();
                 AcceptanceSet = new HashSet<AutomatonNode> ();
+            }
+
+            internal IEnumerable<ParametrizedEdge<AutomatonNode, DegeneralizerAutomataTransition>> OutEdges (AutomatonNode n1)
+            {
+                return graph.OutEdges (n1);
             }
         }
     
@@ -522,7 +505,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             int index = 0;
             foreach (var state in states) {
                 var node = new AutomatonNode ("S" + (index++));
-                automaton.AddVertex (node);
+                automaton.AddNode (node);
                 correspondingState.Add (state.StateId, node);
             }
 
@@ -531,12 +514,12 @@ namespace LtlSharp.Buchi.LTL2Buchi
             foreach (var state in states) {
                 foreach (var transition in state.Transitions) {
                     foreach (var source in transition.Source) {
-                        var ltrans = new AutomatonTransition<AutomatonNode> (
+                        var ltrans = new Tuple<AutomatonNode, AutomatonNode, LiteralsSet> (
                             correspondingState[source],
                             correspondingState[state.StateId],
                             transition.Label
                         );
-                        automaton.AddEdge (ltrans);
+                        automaton.AddTransition (ltrans.Item1, ltrans.Item2, ltrans.Item3);
                         
                         for (int i = 0; i < transition.Accepting.Length; i++) {
                             if (!transition.Accepting.Get (i)) {
@@ -546,16 +529,21 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     }
                 }
             }
+            
+            Console.WriteLine (automaton.ToDot ());
 
             var degeneralizer = Generate (automaton.AcceptanceSets.Length);
 
+            
+            Console.WriteLine (degeneralizer.ToDot ());
+            
             return SynchrounousProduct (automaton, degeneralizer); 
         }
 
         BuchiAutomaton<AutomatonNode> SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
         {
             var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> ();
-            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
+            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
 
             var n0 = tgba.InitialNodes.Single ();
             var n1 = degeneralizer.InitialNodes.Single ();
@@ -575,26 +563,36 @@ namespace LtlSharp.Buchi.LTL2Buchi
 
             var t0 = tgba.OutEdges (n0);
             var t1 = degeneralizer.OutEdges (n1).ToList ();
+            
+            Console.WriteLine ("****");
+            Console.WriteLine ("{"+string.Join (",", t0)+"}");
+            Console.WriteLine ("{"+string.Join (",", t1.Select (x => x.Source + " -> " + x.Target + "{"+string.Join (",", x.Value.Labels)+"}"))+"}");
+            Console.WriteLine ("****");
 
+            //Console.WriteLine ("****");
+            //Console.WriteLine ("{"+string.Join (",", t0)+"}");
+            //Console.WriteLine ("{"+string.Join (",", t1)+"}");
+            //Console.WriteLine ("****");
+			
             // Make sure to go trough edges in the correct order. 
             // See technical report for more details.
             t1.Sort ((x, y) => {
-                if (!x.Else & y.Else) return -1;
-                if (!y.Else & x.Else) return 1;
-                return x.Labels.Count.CompareTo (y.Labels.Count);
+                if (!x.Value.Else & y.Value.Else) return -1;
+                if (!y.Value.Else & x.Value.Else) return 1;
+                return x.Value.Labels.Count.CompareTo (y.Value.Labels.Count);
             });
             
-            DegeneralizerAutomataTransition<AutomatonNode> theEdge = null;
+            ParametrizedEdge<AutomatonNode, DegeneralizerAutomataTransition> theEdge = null;
             
             foreach (var e0 in t0) {
-                var next0 = e0.Target;
+                var next0 = e0.Item2;
                 var found = false;
                 foreach (var e1 in t1) {
                     if (found) {
                         break;
                     }
                     
-                    if (e1.Else) {
+                    if (e1.Value.Else) {
                         if (theEdge == null) {
                             theEdge = e1;
                         }
@@ -602,7 +600,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                         found = true;
                         for (int i = 0; i < tgba.AcceptanceSets.Length; i++) {
                             var b0 = tgba.AcceptanceSets [i].Transitions.Contains (e0);
-                            var b1 = e1.Labels.Contains (i);
+                            var b1 = e1.Value.Labels.Contains (i);
                             if (b1 & !b0) {
                                 found = false;
                                 break;
@@ -621,7 +619,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     var next = Get (ba, tgba, degeneralizer, cache, next0, next1);
 
                     //var t = new AutomatonTransition<AutomatonNode> (n, next, e0.Labels);
-                    ba.AddTransition (n, next, e0.Labels);
+                    ba.AddTransition (n, next, e0.Item3);
                     
                     if (newNext) {
                         DFSSynchrounousProduct (ba, tgba, degeneralizer, cache, next0, next1);
@@ -657,40 +655,57 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var last = nAcceptingSets;
             for (int i = 0; i < nNodes; i++) {
                 nodes[i] = new AutomatonNode ("S" + i);
-                automaton.AddVertex (nodes [i]);
+                automaton.AddNode (nodes [i]);
             }
 
-            DegeneralizerAutomataTransition<AutomatonNode> transition;
+            List<int> l;
+
+            DegeneralizerAutomataTransition transition;
             for (int i = 0; i < last; i++) {
                 for (int j = last; j > i; j--) {
-                    transition = new DegeneralizerAutomataTransition<AutomatonNode> (nodes[i], nodes[j]);
+                    //transition = new DegeneralizerAutomataTransition (nodes[i], nodes[j]);
+                    l = new List<int> ();
                     for (int k = i; k < j; k++) {
-                        transition.Labels.Add (k);
+                        l.Add (k);
                     }
-                    automaton.AddEdge (transition);
+
+                    Console.WriteLine ("-< " + i + j);
+                    Console.WriteLine ("-< ["+string.Join (",", l)+"]");
+                    Console.WriteLine ("-< ["+string.Join (",", Enumerable.Range(i, j-i))+"]");
+                    
+                    automaton.AddTransition (nodes[i], nodes[j], new DegeneralizerAutomataTransition (Enumerable.Range(i, j-i)));
                 }
-                transition = new DegeneralizerAutomataTransition<AutomatonNode> (nodes[i], nodes[i]);
-                transition.Else = true;
-                automaton.AddEdge (transition);
+                //transition = new DegeneralizerAutomataTransition<AutomatonNode> (nodes[i], nodes[i]);
+                //transition.Else = true;
+                automaton.AddTransition (nodes[i], nodes[i], new DegeneralizerAutomataTransition (true));
             }
 
-            transition = new DegeneralizerAutomataTransition<AutomatonNode> (nodes[last], nodes[last]);
+            //transition = new DegeneralizerAutomataTransition<AutomatonNode> ();
+            l = new List<int> ();
             for (int i = 0; i < last; i++) {
-                transition.Labels.Add (i);
+                l.Add (i);
             }
-            automaton.AddEdge (transition);
+            Console.WriteLine ("-< " + 0 + " to " + last);
+            Console.WriteLine ("-< ["+string.Join (",", l)+"]");
+            Console.WriteLine ("-< ["+string.Join (",", Enumerable.Range(0, last))+"]");
+            automaton.AddTransition (nodes[last], nodes[last], new DegeneralizerAutomataTransition (Enumerable.Range(0, last)));
             
             for (int i = last - 1; i >= 0; i--) {
                 if (i == 0) {
-                    transition = new DegeneralizerAutomataTransition<AutomatonNode> (nodes[last], nodes[i]);
-                    transition.Else = true;
-                    automaton.AddEdge (transition);
+                    //transition = new DegeneralizerAutomataTransition<AutomatonNode> (nodes[last], nodes[i]);
+                    //transition.Else = true;
+                    automaton.AddTransition (nodes[last], nodes[i], new DegeneralizerAutomataTransition (true));
                 } else {
-                    transition = new DegeneralizerAutomataTransition<AutomatonNode> (nodes[last], nodes[i]);
+                    //transition = new DegeneralizerAutomataTransition<AutomatonNode> (nodes[last], nodes[i]);
+                    l = new List<int> ();
                     for (int k = 0; k < i; k++) {
-                        transition.Labels.Add (k);
+                        l.Add (k);
                     }
-                    automaton.AddEdge (transition);
+                    Console.WriteLine ("-< " + 0 + " to " + i);
+                    Console.WriteLine ("-< ["+string.Join (",", l)+"]");
+                    Console.WriteLine ("-< ["+string.Join (",", Enumerable.Range(0, i))+"]");
+                    //automaton.AddEdge (transition);
+                    automaton.AddTransition (nodes[last], nodes[i], new DegeneralizerAutomataTransition (Enumerable.Range(0, i)));
                 }
             }
 

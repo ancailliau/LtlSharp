@@ -71,7 +71,6 @@
     <Compile Include="EmptinessChecker\OnTheFlyGBAEmptinessChecker.cs" />
     <Compile Include="Automata\FiniteAutomata\NFA.cs" />
     <Compile Include="Automata\Nodes\AutomatonNode.cs" />
-    <Compile Include="Automata\Transitions\AutomatonTransition.cs" />
     <Compile Include="Translators\BA2NFA.cs" />
     <Compile Include="Monitoring\LTLMonitorHard.cs" />
     <Compile Include="Monitoring\MonitoredState.cs" />
@@ -96,7 +95,7 @@
     <Compile Include="Automata\AcceptanceConditions\BuchiAcceptance.cs" />
     <Compile Include="Automata\AcceptanceConditions\RabinAcceptance.cs" />
     <Compile Include="Automata\Nodes\IAutomatonNode.cs" />
-    <Compile Include="Automata\Transitions\IAutomatonTransition.cs" />
+    <Compile Include="Automata\Transitions\IAutomatonTransitionDecorator.cs" />
     <Compile Include="Automata\Transitions\ProbabilisticAutomatonTransition.cs" />
     <Compile Include="Automata\Nodes\ProductAutomatonNode.cs" />
     <Compile Include="Automata\Nodes\PowerSetAutomatonNode.cs" />
@@ -107,6 +106,10 @@
     <Compile Include="Utils\QuickGraphUtils.cs" />
     <Compile Include="LiteralsSet.cs" />
     <Compile Include="Automata\Automata.cs" />
+    <Compile Include="Automata\Transitions\Factories\IAutomatonTransitionFactory.cs" />
+    <Compile Include="Automata\Transitions\Factories\LiteralSetFactory.cs" />
+    <Compile Include="Automata\Transitions\Factories\DegeneralizerAutomataTransitionFactory.cs" />
+    <Compile Include="Automata\Transitions\DegeneralizerAutomataTransition.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Language\LTL.g" />
@@ -128,6 +131,7 @@
     <Folder Include="Automata\Nodes\" />
     <Folder Include="Automata\Transitions\" />
     <Folder Include="Automata\Nodes\Factories\" />
+    <Folder Include="Automata\Transitions\Factories\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

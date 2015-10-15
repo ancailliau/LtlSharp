@@ -10,7 +10,7 @@ namespace LtlSharp.Automata
     /// A Markov Transition has a source Markov node and a target Markov node. 
     /// The transition is decorated with its probability.
     /// </description>
-    public class MarkovTransition : IAutomatonTransition<int>
+    public class MarkovTransition 
     {
         public int Source {
             get;
@@ -68,7 +68,7 @@ namespace LtlSharp.Automata
             }
         }
 
-        public IAutomatonTransition<int> Clone ()
+        public MarkovTransition Clone ()
         {
             return new MarkovTransition (Source, Probability, Target);
         }

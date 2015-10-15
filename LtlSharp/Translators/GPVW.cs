@@ -171,7 +171,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var mapping = new Dictionary<string, AutomatonNode> ();
             foreach (var n in nodesSet) {
                 var newNode = new AutomatonNode ("s" + i);
-                automaton.AddVertex (newNode);
+                automaton.AddNode (newNode);
                 if (n.Name == "init") {
                     automaton.InitialNodes.Add (newNode);
                 }
@@ -181,15 +181,14 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
 
             // Build the transitions
-            var literals = new HashSet<ILiteral> ();
             foreach (Node node in nodesSet) {
                 foreach (var incomingNodeName in node.Incoming) {
-                    var transition = new AutomatonTransition<AutomatonNode> (
-                        mapping [incomingNodeName],
-                        mapping [node.Name]
-                    );
-                    
-                    literals.Clear ();
+                    //var transition = new AutomatonTransition<AutomatonNode> (
+                    //    mapping [incomingNodeName],
+                    //    mapping [node.Name]
+                    //);
+
+                    var literals = new LiteralsSet ();
                     bool contradiction = false;
                     foreach (var f in node.Old) {
                         if (f is Proposition | f is Negation) {
@@ -204,10 +203,13 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     }
                     
                     if (!contradiction) {
-                        transition.Labels = new LiteralsSet (literals);
+                        // TODO fixme
+                        //transition.Labels = new LiteralsSet (literals);
+						automaton.AddTransition (mapping [incomingNodeName], mapping [node.Name], literals);
+                    } else {
+                        automaton.AddTransition (mapping [incomingNodeName], mapping [node.Name], new ILiteral[] { });   
                     }
                     
-                    automaton.AddEdge (transition);
                 }
             }
 

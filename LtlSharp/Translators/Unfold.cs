@@ -9,6 +9,7 @@ using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Transitions;
 using System.ComponentModel;
 using LtlSharp.Automata.Nodes.Factories;
+using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Translators
 {
@@ -30,7 +31,7 @@ namespace LtlSharp.Translators
         [Obsolete()]
         public BuchiAutomaton<AutomatonNode> Transform (BuchiAutomaton<AutomatonNode> t, IEnumerable<ILiteral> alphabet)
         {        
-            var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
+            var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
             automata.AddNodes (t.Vertices);
             automata.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode>((BuchiAcceptance<AutomatonNode>) t.AcceptanceCondition));
             automata.SetInitialNode (t.InitialNode);

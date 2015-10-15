@@ -4,11 +4,12 @@ using System.Linq;
 using LtlSharp.Language;
 using LtlSharp.Automata;
 using LtlSharp.Automata.OmegaAutomata;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Translators
 {
     public class Fold<T,T2> : Transformer<T,T>
-        where T : OmegaAutomaton<T2>
+        where T : OmegaAutomaton<T2, LiteralsSet>
         where T2 : IAutomatonNode
     {
         public Fold ()

@@ -23,7 +23,10 @@ namespace LtlSharp.Tests
             var gba = gpvw.GetGBA (f);
             var ba = GBA2BA.Transform (gba);
             var ba2 = ltl2buchi.GetAutomaton (f);
-
+            
+            Console.WriteLine (ba.ToDot ());
+            Console.WriteLine (ba2.ToDot ());
+            
             var ec = new GBAEmptinessChecker ();
             var ec2 = new EmptinessChecker<AutomatonNode> (ba);
             var ec3 = new EmptinessChecker<AutomatonNode> (ba2);
@@ -31,6 +34,9 @@ namespace LtlSharp.Tests
             var e1 = ec.EmptinessSearch (gba);
             var e2 = ec2.Emptiness ();
             var e3 = ec3.Emptiness ();
+            
+            Console.WriteLine (e2);
+            Console.WriteLine (e3);
             
             Assert.That (e1 == e2, "GBAEmptinessChecker and EmptinessChecker (on transformed ba) differs");
             Assert.That (e2 == e3, "EmptinessChecker and EmptinessChecker (on transformed ba) differs");
@@ -110,6 +116,7 @@ namespace LtlSharp.Tests
         public void TestF7 ()
         {
             ITLFormula f = new Negation (new Equivalence (new Finally (new Finally (p1)), new Finally (p1)));
+            Console.WriteLine (f);
             AssertEquivalentEmptiness (f);
         }
         

@@ -5,6 +5,7 @@ using LtlSharp.Automata;
 using LtlSharp.Automata.FiniteAutomata;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Nodes.Factories;
+using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Buchi.Translators
 {
@@ -21,7 +22,7 @@ namespace LtlSharp.Buchi.Translators
                 }
             }
 
-            var nfa = new NFA<AutomatonNode> (new AutomatonNodeFactory ());
+            var nfa = new NFA<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
             // TODO fixme
             //nfa.AddVertexRange (automata.Vertices);
             //nfa.AddEdgeRange (automata.Edges);
