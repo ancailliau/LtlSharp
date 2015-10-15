@@ -5,12 +5,12 @@ using System.Linq;
 namespace LtlSharp.Automata.AcceptanceConditions
 {
     /// <summary>
-    /// Represents a Buchï acceptance condition.
+    /// Defines a Buchï acceptance condition.
     /// </summary>
-    /// <description>
+    /// <remarks>
     /// An omega automata with a Buchï condition accepts the words where at least a node in the accepting set
     /// of the Buchï condition is met infinitely often.
-    /// </description>
+    /// </remarks>
     /// <typeparam name="T">Types of the nodes in omega automaton.</typeparam>
     public class BuchiAcceptance<T> : IAcceptanceCondition<T>
     {
@@ -21,13 +21,6 @@ namespace LtlSharp.Automata.AcceptanceConditions
         public HashSet<T> AcceptingSet {
             get;
             private set;
-        }
-
-        public bool IsSatisfiable
-        {
-            get { 
-                return AcceptingSet.Count > 0;
-            }
         }
 
         /// <summary>
@@ -59,30 +52,49 @@ namespace LtlSharp.Automata.AcceptanceConditions
             AcceptingSet = new HashSet<T> (nodes);
         }
 
-        public bool Accept (T node)
-        {
-            return AcceptingSet.Contains (node);
-        }
-
-        public bool Accept (IEnumerable<T> nodes)
-        {
-            return AcceptingSet.Intersect (nodes).Any ();
-        }
-
+        /// <summary>
+        /// Add the specified node to the accepting set.
+        /// </summary>
+        /// <param name="node">Node.</param>
         public void Add (T node)
         {
             AcceptingSet.Add (node);
         }
-
+        
+        /// <summary>
+        /// Returns the subset of nodes that are accepted by the acceptance condition when repeatedly reached.
+        /// </summary>
+        /// <returns>The accepting nodes.</returns>
+        /// <param name="nodes">Nodes.</param>
         public IEnumerable<T> GetAcceptingNodes (HashSet<T> nodes)
         {
             return AcceptingSet.Intersect (nodes);
         }
+        
+        #region IAcceptanceCondition<T> Members
 
-        public IAcceptanceCondition<T1> Map<T1>(Func<T, IEnumerable<T1>> map)
+        bool IAcceptanceCondition<T>.IsSatisfiable {
+            get {
+                return AcceptingSet.Count > 0;
+            }
+        }
+
+        bool IAcceptanceCondition<T>.Accept (T node)
+        {
+            return AcceptingSet.Contains (node);
+        }
+
+        bool IAcceptanceCondition<T>.Accept (IEnumerable<T> nodes)
+        {
+            return AcceptingSet.Intersect (nodes).Any ();
+        }
+
+        IAcceptanceCondition<T1> IAcceptanceCondition<T>.Map<T1>(Func<T, IEnumerable<T1>> map)
         {
             return new BuchiAcceptance<T1> (AcceptingSet.SelectMany (map));
         }
+        
+        #endregion
 
         public override string ToString ()
         {

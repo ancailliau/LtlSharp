@@ -6,12 +6,12 @@ using LtlSharp.Utils;
 namespace LtlSharp.Automata.AcceptanceConditions
 {
     /// <summary>
-    /// Represents a Rabin Acceptance condition.
+    /// Defines a Rabin Acceptance condition.
     /// </summary>
-    /// <description>
+    /// <remarks>
     /// An omega automata with a Rabin condition accepts the words where there is at least a rabin condition
     /// that is met.
-    /// </description>
+    /// </remarks>
     /// <typeparam name="T">Types of the nodes in omega automaton.</typeparam>
     public class RabinAcceptance<T> : IAcceptanceCondition<T> {
 
@@ -24,12 +24,6 @@ namespace LtlSharp.Automata.AcceptanceConditions
             private set;
         }
 
-        public bool IsSatisfiable {
-            get {
-                throw new NotImplementedException ();
-            }
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.AcceptanceConditions.RabinAcceptance`1"/> 
         /// class with no rabin condition.
@@ -38,34 +32,7 @@ namespace LtlSharp.Automata.AcceptanceConditions
         {
             Conditions = new HashSet<RabinCondition<T>> ();
         }
-
-        public bool Accept (IEnumerable<T> nodes)
-        {
-            return Conditions.Any (c => c.Rejecting.Intersect (nodes).Count () == 0 && (c.Accepting.Intersect (nodes).Count () > 0));
-        }
-
-        public bool Accept (T nodes)
-        {
-            throw new NotImplementedException ();
-        }
-
-        public IEnumerable<T> GetAcceptingNodes (HashSet<T> nodes)
-        {
-            throw new NotImplementedException ();
-        }
         
-        public IAcceptanceCondition<T1> Map<T1>(Func<T, IEnumerable<T1>> map)
-        {
-            var nacc = new RabinAcceptance<T1> ();
-
-            foreach (var condition in this.Conditions) {
-                nacc.Add (condition.Rejecting.SelectMany (map),
-                          condition.Accepting.SelectMany (map));
-            }
-
-            return nacc;
-        }
-
         /// <summary>
         /// Add a new rabin condition with the specified set of nodes e and f as rejecting and accepting set.
         /// </summary>
@@ -75,7 +42,39 @@ namespace LtlSharp.Automata.AcceptanceConditions
         {
             Conditions.Add (new RabinCondition<T> (e, f));
         }
+        
+        #region IAcceptanceCondition<T> Members 
+        
+        bool IAcceptanceCondition<T>.IsSatisfiable {
+            get {
+                return Conditions.All (c => c.IsSatisfiable);
+            }
+        }
 
+        bool IAcceptanceCondition<T>.Accept (IEnumerable<T> nodes)
+        {
+            return Conditions.Any (c => c.Rejecting.Intersect (nodes).Count () == 0 && (c.Accepting.Intersect (nodes).Count () > 0));
+        }
+
+        bool IAcceptanceCondition<T>.Accept (T nodes)
+        {
+            return Conditions.Any (c => !c.Rejecting.Contains (nodes) && c.Accepting.Contains (nodes));
+        }
+        
+        IAcceptanceCondition<T1> IAcceptanceCondition<T>.Map<T1>(Func<T, IEnumerable<T1>> map)
+        {
+            var nacc = new RabinAcceptance<T1> ();
+
+            foreach (var condition in Conditions) {
+                nacc.Add (condition.Rejecting.SelectMany (map),
+                          condition.Accepting.SelectMany (map));
+            }
+
+            return nacc;
+        }
+        
+        #endregion
+        
         public override string ToString ()
         {
             return string.Format ("[RabinAcceptance: {{{0}}}]", 
@@ -84,12 +83,12 @@ namespace LtlSharp.Automata.AcceptanceConditions
     }
     
     /// <summary>
-    /// Represents a Rabin condition. 
+    /// Defines a Rabin condition. 
     /// </summary>
-    /// <description>
+    /// <remarks>
     /// An omega automata with a Rabin condition accepts the words where no nodes in the rejecting set is met infinitely
     /// often and where at least a node in the accepting set is met infinitely often.
-    /// </description>
+    /// </remarks>
     /// <typeparam name="T">Types of the nodes in omega automaton.</typeparam>
     public class RabinCondition<T>
     {
@@ -97,7 +96,7 @@ namespace LtlSharp.Automata.AcceptanceConditions
         /// Gets the rejecting set.
         /// </summary>
         /// <value>The rejecting.</value>
-        public HashSet<T> Rejecting {
+        public ISet<T> Rejecting {
             get;
             private set;
         }
@@ -106,10 +105,11 @@ namespace LtlSharp.Automata.AcceptanceConditions
         /// Gets the accepting set.
         /// </summary>
         /// <value>The accepting.</value>
-        public HashSet<T> Accepting {
+        public ISet<T> Accepting {
             get;
             private set;
         }
+        public bool IsSatisfiable { get; internal set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.AcceptanceConditions.RabinCondition`1"/> 

@@ -7,6 +7,7 @@ using System.Linq;
 using LtlSharp.Utils;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Transitions;
+using LtlSharp.Automata.AcceptanceConditions;
 
 namespace LtlSharp.Translators
 {
@@ -166,7 +167,7 @@ namespace LtlSharp.Translators
             {   
                 var children = Children.ToList ();
                 
-                var inter = ba.AcceptanceCondition.GetAcceptingNodes (MacroState);
+                var inter = ((BuchiAcceptance<AutomatonNode>) ba.AcceptanceCondition).GetAcceptingNodes (MacroState);
                 if (inter.Any ()) {
                     var newNode = new SafraTree (inter, ba);
                     Children.Add (newNode);

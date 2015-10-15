@@ -217,20 +217,6 @@ namespace LtlSharp.ProbabilisticSystems
             var U = mc.GetBSCC ().Where (bscc => B.Accept(bscc)).SelectMany (x => x);
             return mc.Reachability (U);
         }
-        
-        
-        /// <summary>
-        /// Returns the probability for repeated reachability of all nodes in B.
-        /// </summary>
-        /// <returns>The repeated reachability.</returns>
-        /// <param name="mc">Mc.</param>
-        /// <param name="B">B.</param>
-        public static IDictionary<T, double> QuantitativeRepeatedReachability<T> (this MarkovChain<T> mc, 
-                                                                                  RabinAcceptance<T> conditions) where T : IAutomatonNode
-        {
-            var U = mc.GetBSCC ().Where (u => conditions.Accept (u)).SelectMany (x => x);
-            return mc.Reachability (U);
-        }
 
         /// <summary>
         /// Compute the transient probability from the initial states to reach a state in B.
