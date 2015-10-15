@@ -7,6 +7,9 @@ using LtlSharp.Buchi.Automata;
 using QuickGraph;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
+using LtlSharp.Utils;
+using LtlSharp.Language;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Automata.OmegaAutomata
 {
@@ -36,7 +39,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         
         public string ToDot ()
         {
-            var graphviz = new GraphvizAlgorithm<T, AutomatonTransition<T>> (graph);
+            var graphviz = new GraphvizAlgorithm<T, ParametrizedEdge<T, LiteralsSet>> (graph);
             graphviz.FormatVertex += (object sender, FormatVertexEventArgs<T> e) => {
                 e.VertexFormatter.Label = e.Vertex.Name;
                 if (this.InitialNode.Equals (e.Vertex))
@@ -44,12 +47,11 @@ namespace LtlSharp.Automata.OmegaAutomata
                 if (AcceptanceCondition.Accept (e.Vertex))
                     e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.DoubleCircle;
             };
-            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<T, AutomatonTransition<T>> e) => {
-                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Labels);
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<T, ParametrizedEdge<T, LiteralsSet>> e) => {
+                e.EdgeFormatter.Label.Value = e.Edge.Value.ToString ();
             };
             return graphviz.Generate ();
         }
-
     }
 }
 

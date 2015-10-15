@@ -74,6 +74,7 @@ namespace LtlSharp.Tests.TestProbabilisticSystems
             var mchecker = new PCTLModelChecker<AutomatonNode> (mc, formula, 1e-5);
     
             var result = mchecker.Check ();
+            Console.WriteLine ("{"+string.Join (",", result)+"}");
             Assert.That (result.SetEquals (mc.Nodes));
         }
     }

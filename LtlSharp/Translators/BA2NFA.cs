@@ -21,10 +21,11 @@ namespace LtlSharp.Buchi.Translators
             }
 
             var nfa = new NFA ();
-            nfa.AddVertexRange (automata.Vertices);
-            nfa.AddEdgeRange (automata.Edges);
-            nfa.AcceptanceSet = newAcceptanceSet;
-            nfa.InitialNodes = new HashSet<AutomatonNode> (new [] { automata.InitialNode });
+            // TODO fixme
+            //nfa.AddVertexRange (automata.Vertices);
+            //nfa.AddEdgeRange (automata.Edges);
+            //nfa.AcceptanceSet = newAcceptanceSet;
+            //nfa.InitialNodes = new HashSet<AutomatonNode> (new [] { automata.InitialNode });
             return nfa;
         }
     }

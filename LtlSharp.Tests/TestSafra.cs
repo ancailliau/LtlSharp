@@ -26,28 +26,28 @@ namespace LtlSharp.Tests
             var pb = new Proposition ("b");
             var pc = new Proposition ("c");
 
-            var a = new HashSet<ILiteral> (new ILiteral[] { pa });
-            var b = new HashSet<ILiteral> (new ILiteral[] { pb });
-            var c = new HashSet<ILiteral> (new ILiteral[] { pc });
+            var a = new ILiteral[] { pa };
+            var b = new ILiteral[] { pb };
+            var c = new ILiteral [] { pc };
 
             // a,b from qI to qI
-            ba.AddTransition (new AutomatonTransition<AutomatonNode> (q, q, a));
-            ba.AddTransition (new AutomatonTransition<AutomatonNode> (q, q, b));
+            ba.AddTransition (q, q, a);
+            ba.AddTransition (q, q, b);
 
             // c from f to f
-            ba.AddTransition (new AutomatonTransition<AutomatonNode> (f, f, c));
+            ba.AddTransition (f, f, c);
 
             // a from qI to f
-            ba.AddTransition (new AutomatonTransition<AutomatonNode> (q, f, a));
+            ba.AddTransition (q, f, a);
 
             // a from f to g
-            ba.AddTransition (new AutomatonTransition<AutomatonNode> (f, g, a));
+            ba.AddTransition (f, g, a);
 
             // a from g to g
-            ba.AddTransition (new AutomatonTransition<AutomatonNode> (g, g, a));
+            ba.AddTransition (g, g, a);
 
             // a from g to f
-            ba.AddTransition (new AutomatonTransition<AutomatonNode> (g, f, a));
+            ba.AddTransition (g, f, a);
 
             ba.SetInitialNode (q);
             ba.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (new [] { f, g }));

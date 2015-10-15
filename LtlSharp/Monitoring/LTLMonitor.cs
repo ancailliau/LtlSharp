@@ -229,7 +229,7 @@ namespace LtlSharp.Monitoring
                 var current = pending.Pop ();
                 var commonTransitions = from t1 in positive.OutEdges (current.Item1)
                     from t2 in negative.OutEdges (current.Item2)
-                        where t1.Labels.SetEquals (t2.Labels)
+                                                               where t1.Labels.Equals (t2.Labels)
                     select new Tuple<AutomatonTransition<AutomatonNode>, AutomatonTransition<AutomatonNode>> (t1, t2);
 
                 foreach (var t in commonTransitions) {

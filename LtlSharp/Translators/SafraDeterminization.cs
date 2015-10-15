@@ -6,6 +6,7 @@ using LtlSharp.Buchi.Automata;
 using System.Linq;
 using LtlSharp.Utils;
 using LtlSharp.Automata.OmegaAutomata;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Translators
 {
@@ -181,7 +182,7 @@ namespace LtlSharp.Translators
             /// The procedure is recursively applied on all children.
             /// </summary>
             /// <param name="a">The literals.</param>
-            public void Update (HashSet<ILiteral> a)
+            public void Update (LiteralsSet a)
             {
                 MacroState = new HashSet<AutomatonNode> (ba.Post (MacroState, a));
                 
@@ -274,7 +275,7 @@ namespace LtlSharp.Translators
             /// Gets or sets the labels for the transition.
             /// </summary>
             /// <value>The labels.</value>
-            public HashSet<ILiteral> Labels {
+            public LiteralsSet Labels {
                 get;
                 set;
             }
@@ -295,7 +296,7 @@ namespace LtlSharp.Translators
             /// </summary>
             /// <param name="labels">Labels.</param>
             /// <param name="target">Target.</param>
-            public SafraTransition (HashSet<ILiteral> labels, SafraTree target)
+            public SafraTransition (LiteralsSet labels, SafraTree target)
             {
                 this.Labels = labels;
                 this.Target = target;
@@ -377,10 +378,7 @@ namespace LtlSharp.Translators
             
             foreach (var t in Transitions) {
                 foreach (var e in t.Value) {
-                    var edge = new AutomatonTransition<AutomatonNode> (mapping [t.Key], mapping [e.Target], e.Labels);
-                    if (!rabin.OutTransitions (mapping [t.Key]).Contains (edge)) {
-                        rabin.AddTransition (edge);
-                    }
+                    rabin.AddTransition (mapping [t.Key], mapping [e.Target], e.Labels);
                 }
             }
             

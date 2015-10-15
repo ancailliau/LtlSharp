@@ -25,10 +25,10 @@ namespace LtlSharp.Tests.Models
             var np4 = new Negation (p4);
             
             var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeDefaultFactory ());
-            var start = mc.AddVertex ("start"); start.Labels = new HashSet<ILiteral> (new ILiteral[] { p1, np2, np3, np4 });
-            var ntry = mc.AddVertex ("try"); ntry.Labels = new HashSet<ILiteral> (new ILiteral[] { np1, p2, np3, np4 });
-            var lost = mc.AddVertex ("lost"); lost.Labels = new HashSet<ILiteral> (new ILiteral[] { np1, p2, p3, np4 });
-            var delivered = mc.AddVertex ("delivered"); delivered.Labels = new HashSet<ILiteral> (new ILiteral[] { np1, np2, np3, p4 });
+            var start = mc.AddVertex ("start", new ILiteral[] { p1, np2, np3, np4 });
+            var ntry = mc.AddVertex ("try", new ILiteral[] { np1, p2, np3, np4 });
+            var lost = mc.AddVertex ("lost", new ILiteral[] { np1, p2, p3, np4 });
+            var delivered = mc.AddVertex ("delivered", new ILiteral[] { np1, np2, np3, p4 });
             mc.SetInitial (start, 1);
             
             mc.AddEdge (start, ntry);

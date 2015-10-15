@@ -1,5 +1,6 @@
 ﻿using System;
 using QuickGraph;
+using System.Collections.Generic;
 
 namespace LtlSharp.Utils
 {
@@ -20,7 +21,6 @@ namespace LtlSharp.Utils
             Value = value;
         }
         
-        
         public override bool Equals (object obj)
         {
             if (obj == null)
@@ -30,12 +30,15 @@ namespace LtlSharp.Utils
             if (obj.GetType () != typeof(ParametrizedEdge<T1,T2>))
                 return false;
             var other = (ParametrizedEdge<T1,T2>)obj;
-            return base.Equals (other) & Value.Equals (other.Value);
+            return Source.Equals (other.Source) 
+                         & Target.Equals (other.Target) 
+                         & Value.Equals (other.Value);
         }
 
         public override int GetHashCode ()
         {
-            return 17 + base.GetHashCode () + 32 * Value.GetHashCode ();
+            // TODO fixme Encapsulate HashSet<ILiteral> and returns the fucking correct hashCode !!!!!
+            return 17 + Source.GetHashCode () + 32 * (Target.GetHashCode () + 32 * Value.GetHashCode ());
         }
     }
 }

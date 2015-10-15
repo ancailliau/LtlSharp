@@ -312,16 +312,15 @@ namespace LtlSharp.ProbabilisticSystems
         {
             // For more details, see "Principles of Model Checking", p785ff
             
-            Console.WriteLine ("QuantitativeLinearProperty");
-            
             MarkovChain<ProductAutomatonNode<T>> productMC;
             Dictionary<T, ProductAutomatonNode<T>> correspondingNodes;
             IDictionary<ProductAutomatonNode<T>, double> probabilities;
             Dictionary<T, double> dict;
             
             var buchi = (new Gia02 ()).GetAutomaton (formula);
-            var unfolder = new Unfold ();
-            buchi = unfolder.Transform (buchi);
+            //var unfolder = new Unfold ();
+            //buchi = unfolder.Transform (buchi);
+            buchi.UnfoldTransitions ();
             
             Console.WriteLine (buchi.IsDeterministic ());
 
@@ -349,9 +348,13 @@ namespace LtlSharp.ProbabilisticSystems
             productMC = mc.Product (rabin, mc.Nodes, out conditions, out correspondingNodes);
             probabilities = productMC.QuantitativeRepeatedReachability (conditions);
             
+            Console.WriteLine (productMC.ToDot ());
+            Console.WriteLine (correspondingNodes.Count ());
+            
             dict = new Dictionary<T, double> ();
             foreach (var k in correspondingNodes.Values) {
                 dict.Add (k.MarkovNode, probabilities [k]);
+                Console.WriteLine (k.MarkovNode + " -> " + probabilities[k]);
             }
             
             return dict;

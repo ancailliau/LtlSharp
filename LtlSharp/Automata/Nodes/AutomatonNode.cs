@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LtlSharp.Monitoring;
 using LtlSharp.Utils;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Automata
 {
@@ -32,7 +33,7 @@ namespace LtlSharp.Automata
         /// Gets the labels attached to the node.
         /// </summary>
         /// <value>The labels.</value>
-        public ISet<ILiteral> Labels {
+        public LiteralsSet Labels {
             get;
             set;
         }
@@ -50,12 +51,12 @@ namespace LtlSharp.Automata
         {
             Id = currentId++;
             Name = name;
-            Labels = new HashSet<ILiteral> (labels);
+            Labels = new LiteralsSet (labels);
         }
         
         public override string ToString ()
         {
-            return string.Format ("[AutomatonNode: Name=\"{0}\"]", Name);
+            return string.Format ("[AutomatonNode: Name=\"{0}\" - {1}]", Name, GetHashCode ());
         }
         
         public override bool Equals (object obj)
@@ -67,14 +68,13 @@ namespace LtlSharp.Automata
             if (obj.GetType () != typeof(AutomatonNode))
                 return false;
             var other = (AutomatonNode)obj;
-            return Id == other.Id && Name == other.Name && Labels.SetEquals (other.Labels);
+            return Name == other.Name && Labels.Equals (other.Labels);
         }
 
         public override int GetHashCode ()
         {
-            return 17 + Id.GetHashCode () 
-                          + 32 * (Name != null ? Name.GetHashCode () : 0)
-                          + 32 * 32 * (Labels != null ? Labels.GetHashCodeForElements () : 0);
+            return 17 + (Name != null ? Name.GetHashCode () : 0)
+                          + 32 * (Labels != null ? Labels.GetHashCode () : 0);
         }
     }
 

@@ -620,8 +620,8 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     var newNext = !cache.ContainsKey (new Tuple<AutomatonNode, AutomatonNode> (next0, next1));
                     var next = Get (ba, tgba, degeneralizer, cache, next0, next1);
 
-                    var t = new AutomatonTransition<AutomatonNode> (n, next, e0.Labels);
-                    ba.AddTransition (t);
+                    //var t = new AutomatonTransition<AutomatonNode> (n, next, e0.Labels);
+                    ba.AddTransition (n, next, e0.Labels);
                     
                     if (newNext) {
                         DFSSynchrounousProduct (ba, tgba, degeneralizer, cache, next0, next1);

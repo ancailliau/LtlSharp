@@ -103,6 +103,7 @@
     <Compile Include="Automata\Nodes\Factories\AutomatonNodeFactory.cs" />
     <Compile Include="Automata\Nodes\Factories\ProductAutomatonNodeFactory.cs" />
     <Compile Include="Utils\QuickGraphUtils.cs" />
+    <Compile Include="Automata\Transitions\LiteralsSet.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Language\LTL.g" />

@@ -9,6 +9,7 @@ using LtlSharp.Monitoring;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 using LtlSharp.Automata;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Buchi.Automata
 {
@@ -132,10 +133,11 @@ namespace LtlSharp.Buchi.Automata
             return nnfa;
         }
         
-        private HashSet<HashSet<ILiteral>> UnfoldLabels (HashSet<ILiteral> trans, IEnumerable<ILiteral> alphabet)
+        [Obsolete]
+        private HashSet<LiteralsSet> UnfoldLabels (LiteralsSet trans, IEnumerable<ILiteral> alphabet)
         {
-            var s = new HashSet<HashSet<ILiteral>> ();
-            s.Add (new HashSet<ILiteral> ());
+            var s = new HashSet<LiteralsSet> ();
+            s.Add (new LiteralsSet ());
             
             var pending = new Stack<ILiteral> (alphabet);
             while (pending.Count > 0) {
@@ -146,11 +148,11 @@ namespace LtlSharp.Buchi.Automata
                         }
                     
                 } else if (trans.Contains (current.Negate ())) {
-                    s = new HashSet<HashSet<ILiteral>> (s.Where (l => !l.Contains (current)));
+                    s = new HashSet<LiteralsSet> (s.Where (l => !l.Contains (current)));
                     
                 } else {
                         foreach (var e in s.ToList ()) {
-                            var ns = new HashSet<ILiteral> (e);
+                        var ns = new LiteralsSet (e);
                             ns.Add (current);
                             s.Add (ns);
                         }
@@ -194,11 +196,10 @@ namespace LtlSharp.Buchi.Automata
                 dfa.AcceptanceSet.Add (initialNode);
             }
 
-            var transitions = new Dictionary<Tuple<HashSet<AutomatonNode>, HashSet<AutomatonNode>>, HashSet<HashSet<ILiteral>>> ();
+            var transitions = new Dictionary<Tuple<HashSet<AutomatonNode>, HashSet<AutomatonNode>>, HashSet<LiteralsSet>> ();
             while (pending.Count > 0) {
                 var ss = pending.Pop ();
-                var cc = new HashSet<HashSet<ILiteral>> (ss.SelectMany (s => unfoldedAutomata.OutEdges (s).Select (x => x.Labels)),
-                                                         HashSet<ILiteral>.CreateSetComparer ());
+                var cc = new HashSet<LiteralsSet> (ss.SelectMany (s => unfoldedAutomata.OutEdges (s).Select (x => x.Labels)));
                 
 //                Console.WriteLine (string.Join (",", ss));
 //                foreach (var c in cc) {
@@ -214,7 +215,7 @@ namespace LtlSharp.Buchi.Automata
 //                        Console.WriteLine ("Successor of " + s);
                         var enumerable = unfoldedAutomata.OutEdges (s).Where (x => {
 //                            Console.WriteLine (string.Join (",", x.Labels) + " == " + string.Join (",", c) + " = " + x.Labels.SetEquals (c));
-                            return x.Labels.SetEquals (c);   
+                            return x.Labels.Equals (c);   
                         });
 //                        Console.WriteLine (string.Join (",", enumerable));
                         foreach (var t in enumerable) {
@@ -239,7 +240,7 @@ namespace LtlSharp.Buchi.Automata
 
                     var skey = new Tuple<HashSet<AutomatonNode>, HashSet<AutomatonNode>> (ss, succs);
                     if (!transitions.ContainsKey (skey)) {
-                        transitions.Add (skey, new HashSet<HashSet<ILiteral>> ());
+                        transitions.Add (skey, new HashSet<LiteralsSet> ());
                     }
                     transitions[skey].Add (c);
                 }   

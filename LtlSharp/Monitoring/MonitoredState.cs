@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Monitoring
 {
@@ -13,7 +14,7 @@ namespace LtlSharp.Monitoring
             state = new Dictionary<Proposition, bool> ();
         }
 
-        internal bool Evaluate (HashSet<ILiteral> labels)
+        internal bool Evaluate (LiteralsSet labels)
         {
             //Console.WriteLine (string.Join (",", labels));
             //Console.WriteLine (string.Join (",", state.Select (kv => kv.Key + "=" + kv.Value)));

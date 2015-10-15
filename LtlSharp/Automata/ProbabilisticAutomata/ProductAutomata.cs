@@ -106,8 +106,15 @@ namespace LtlSharp.Translators
             AutomatonNode successorInWA;
             ProductAutomatonNode<T> newNode;
 
+            Console.WriteLine ("--");
+            Console.WriteLine (automaton.ToDot ());
+            Console.WriteLine ("--");
+            Console.WriteLine (mc.ToDot ());
+            Console.WriteLine ("--");
+            
             foreach (var initial in initials) {
                 successorsInWA = automaton.Post (initWA, initial.Labels);
+                Console.WriteLine ("successorsInWA.Count () = " + successorsInWA.Count ());
                 
                 if (successorsInWA.Count () > 1)
                     throw new NotSupportedException ("Product between a Markov Chain and a non-deterministic " +
@@ -126,6 +133,8 @@ namespace LtlSharp.Translators
                     pending.Push (newNode);
                 }
             }
+            
+            Console.WriteLine ("Pending : " + pending.Count);
             
             while (pending.Count > 0) {
                 var current = pending.Pop ();

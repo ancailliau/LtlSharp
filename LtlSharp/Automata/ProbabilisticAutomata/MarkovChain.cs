@@ -139,6 +139,23 @@ namespace LtlSharp.Models
         }
 
         /// <summary>
+        /// Adds a new vertex with the specified name and specified labels to the Markov chain.
+        /// </summary>
+        /// <returns>The vertex.</returns>
+        /// <param name="name">Name.</param>
+        /// <param name="labels">Labels.</param>
+        public T AddVertex (string name, IEnumerable<ILiteral> labels)
+        {
+            var v = factory.Create (name, labels);
+            if (graph.AddVertex (v.Id)) {
+                nodes.Add (v.Id, v);
+                return v;
+            }
+
+            return default (T);
+        }
+
+        /// <summary>
         /// Adds a new edge with the specified source, target and a probability 1 to the Markov chain.
         /// </summary>
         /// <param name="source">Source node.</param>

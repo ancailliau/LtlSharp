@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Automata
 {
@@ -7,7 +8,7 @@ namespace LtlSharp.Automata
     {
         int Id { get; }
         string Name { get; set; }
-        ISet<ILiteral> Labels { get; set; }
+        LiteralsSet Labels { get; set; }
     }
 }
 

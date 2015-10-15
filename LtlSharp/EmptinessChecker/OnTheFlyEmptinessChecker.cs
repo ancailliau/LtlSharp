@@ -59,15 +59,15 @@ namespace LittleSharp.Buchi
 		{
             dfsStack1.Push (new Tuple<T2, T1>(n, n2));
             
-            foreach (var succ in LTLAutomata.OutTransitions (n)) {
-                foreach (var succ2 in LTS.OutTransitions (n2)) {
-                    if (succ.Labels.IsSubsetOf (succ2.Labels)) {
-                        if (!dfsStack1.Contains (new Tuple<T2,T1> (succ.Target, succ2.Target))) {
-                            if (dfs1 (succ.Target, succ2.Target)) {
+            foreach (var succ in LTLAutomata.Post (n)) {
+                foreach (var succ2 in LTS.Post (n2, succ.Labels)) {
+                    //if (succ.Labels.IsSubsetOf (succ2.Labels)) {
+                        if (!dfsStack1.Contains (new Tuple<T2,T1> (succ, succ2))) {
+                            if (dfs1 (succ, succ2)) {
                                 return true;
                             }
                         }
-                    }
+                    //}
                 }
             }
             
@@ -85,21 +85,21 @@ namespace LittleSharp.Buchi
         
         bool dfs2(T2 n, T1 n2) {
             dfsStack2.Push(new Tuple<T2, T1> (n, n2));
-            foreach (var succ in LTLAutomata.OutTransitions (n)) {
-                foreach (var succ2 in LTS.OutTransitions (n2)) {
-                    if (succ2.Labels.IsSubsetOf (succ.Labels)) {
-                        var tuple = new Tuple<T2, T1> (succ.Target, succ2.Target);
+            foreach (var succ in LTLAutomata.Post (n)) {
+                foreach (var succ2 in LTS.Post (n2, succ.Labels)) {
+                    //if (succ2.Labels.IsSubsetOf (succ.Labels)) {
+                        var tuple = new Tuple<T2, T1> (succ, succ2);
                         if (dfsStack1.Contains (tuple)) {
                             dfsStack2.Push (tuple);
                             BuildCounterExample ();
                             return true;
         					
                         } else if (!dfsStack2.Contains (tuple)) {
-                            if (dfs2 (succ.Target, succ2.Target)) {
+                            if (dfs2 (succ, succ2)) {
                                 return true;
                             }
                         }
-                    }
+                    //}
                 }
             }
             

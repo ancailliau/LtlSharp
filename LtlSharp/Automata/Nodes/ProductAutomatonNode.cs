@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Automata
 {
@@ -17,7 +18,7 @@ namespace LtlSharp.Automata
             get; private set; 
         }
 
-        public ISet<ILiteral> Labels {
+        public LiteralsSet Labels {
             get {
                 return MarkovNode.Labels;
             }
@@ -36,6 +37,12 @@ namespace LtlSharp.Automata
         }
         public ProductAutomatonNode (string name) : this()
         {
+            this.Name = name;
+        }
+        public ProductAutomatonNode (string name, IEnumerable<ILiteral> labels) : this()
+        {
+            // Todo fix and use this
+            throw new NotImplementedException ();
             this.Name = name;
         }
         public override string ToString ()

@@ -78,10 +78,10 @@ namespace LtlSharp.Tests
 
             lts.SetInitialNode (n0);
                
-            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
-            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
-            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
-            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddTransition (n0, n1, new ILiteral [] { nalloc, nmob });
+            lts.AddTransition (n1, n2, new ILiteral [] { alloc, nmob });
+            lts.AddTransition (n2, n3, new ILiteral [] { alloc, mob });
+            lts.AddTransition (n3, n0, new ILiteral [] { nalloc, nmob });
             
             lts.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (lts.Vertices));
             
@@ -126,10 +126,10 @@ namespace LtlSharp.Tests
 
             lts.SetInitialNode (n0);
 
-            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n0, n1, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
-            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n1, n2, new HashSet<ILiteral> (new ILiteral [] { alloc, nmob })));
-            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n2, n3, new HashSet<ILiteral> (new ILiteral [] { alloc, mob })));
-            lts.AddTransition (new AutomatonTransition<AutomatonNode> (n3, n0, new HashSet<ILiteral> (new ILiteral [] { nalloc, nmob })));
+            lts.AddTransition (n0, n1, new ILiteral [] { nalloc, nmob });
+            lts.AddTransition (n1, n2, new ILiteral [] { alloc, nmob });
+            lts.AddTransition (n2, n3, new ILiteral [] { alloc, mob });
+            lts.AddTransition (n3, n0, new ILiteral [] { nalloc, nmob });
 
             lts.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (lts.Vertices));
 

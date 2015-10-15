@@ -4,12 +4,16 @@ using System.Linq;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Buchi.Automata;
 using QuickGraph;
+using LtlSharp.Utils;
+using LtlSharp.Language;
+using QuickGraph.Graphviz;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Automata.OmegaAutomata
 {
     public abstract class OmegaAutomaton<T> where T : IAutomatonNode
     {
-        protected AdjacencyGraph<T, AutomatonTransition<T>> graph;
+        protected AdjacencyGraph<T, ParametrizedEdge<T, LiteralsSet>> graph;
         
         public T InitialNode { get; protected set; }
 
@@ -20,16 +24,16 @@ namespace LtlSharp.Automata.OmegaAutomata
                 return graph.Vertices;
             }
         }
-
-        public IEnumerable<AutomatonTransition<T>> Edges { 
+        
+        public IEnumerable<Tuple<T, LiteralsSet, T>> Edges { 
             get {
-                return graph.Edges;
+                return graph.Edges.Select (x => new Tuple<T, LiteralsSet, T> (x.Source, x.Value, x.Target));
             }
         }
 
         public OmegaAutomaton ()
         {
-            graph = new AdjacencyGraph<T, AutomatonTransition<T>> ();
+            graph = new AdjacencyGraph<T, ParametrizedEdge<T, LiteralsSet>> ();
         }
 
         /// <summary>
@@ -40,21 +44,49 @@ namespace LtlSharp.Automata.OmegaAutomata
         {
             InitialNode = node;
         }
-
+        
+        /// <summary>
+        /// Maps the label of each transition using the specified function.
+        /// </summary>
+        /// <description>
+        /// The mapping function receive a set of label and returns the new set of label for the mapped transition.
+        /// Note that the mapping function might return more than one set of literals; in that case, the transition
+        /// is duplicated for each new set of literals.
+        /// </description>
+        /// <param name="map">Mapping function.</param>
+        public void MapLabel (Func<LiteralsSet, IEnumerable<LiteralsSet>> map)
+        {
+            foreach (var trans in graph.Edges.ToList ()) {
+                graph.RemoveEdge (trans);
+                foreach (var m in map (trans.Value)) {
+                    graph.AddEdge (new ParametrizedEdge<T, LiteralsSet> (trans.Source, trans.Target, m));
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Returns the set of literals that correspond to (at least) a transition.
+        /// </summary>
+        /// <param name="node">Node.</param>
+        public IEnumerable<ILiteral> Alphabet ()
+        {
+            return graph.Edges.SelectMany (e => e.Value.GetAlphabet ()).Distinct ();
+        }
+        
         /// <summary>
         /// Returns the set of literals that correspond to (at least) a transition from the specified node.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<HashSet<ILiteral>> OutAlphabet (T node)
+        public IEnumerable<LiteralsSet> OutAlphabet (T node)
         {
-            return graph.OutEdges (node).Select (e => e.Labels).Distinct ();
+            return graph.OutEdges (node).Select (e => e.Value).Distinct ();
         }
 
         /// <summary>
         /// Returns the set of literals that correspond to (at least) a transition for (at least) a specified node.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<HashSet<ILiteral>> OutAlphabet (IEnumerable<T> nodes)
+        public IEnumerable<LiteralsSet> OutAlphabet (IEnumerable<T> nodes)
         {
             return nodes.SelectMany (OutAlphabet).Distinct ();
         }
@@ -81,16 +113,16 @@ namespace LtlSharp.Automata.OmegaAutomata
         /// Returns all the successor nodes of the specified node for the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<T> Post (T node, ISet<ILiteral> labels)
+        public IEnumerable<T> Post (T node, LiteralsSet labels)
         {
-            return graph.OutEdges (node).Where (e => e.Labels.IsSubsetOf (labels)).Select (e => e.Target);
+            return graph.OutEdges (node).Where (e => labels.Entails (e.Value)).Select (e => e.Target);
         }
 
         /// <summary>
         /// Returns all the successor nodes of the specified nodes for the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<T> Post (IEnumerable<T> nodes, HashSet<ILiteral> labels)
+        public IEnumerable<T> Post (IEnumerable<T> nodes, LiteralsSet labels)
         {
             return nodes.SelectMany (node => Post(node, labels));
         }
@@ -99,7 +131,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         /// Returns all the successor nodes of the specified node for all the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<T> Post (T node, IEnumerable<HashSet<ILiteral>> labels)
+        public IEnumerable<T> Post (T node, IEnumerable<LiteralsSet> labels)
         {
             return labels.SelectMany (l => Post(node, l));
         }
@@ -108,46 +140,31 @@ namespace LtlSharp.Automata.OmegaAutomata
         /// Returns all the successor nodes of the specified nodes for all the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<T> Post (IEnumerable<T> nodes, IEnumerable<HashSet<ILiteral>> labels)
+        public IEnumerable<T> Post (IEnumerable<T> nodes, IEnumerable<LiteralsSet> labels)
         {
             return nodes.SelectMany (node => Post(node, labels));
         }
         
         /// <summary>
-        /// Returns all the outgoing transitions for the specified node.
+        /// Adds the specified transition to the automaton.
         /// </summary>
-        /// <returns>The transitions.</returns>
-        /// <param name="node">Node.</param>
-        public IEnumerable<AutomatonTransition<T>> OutTransitions (T node)
+        /// <param name="transition">Transition.</param>
+        public void AddTransition (T source, T target, LiteralsSet value)
         {
-            return graph.OutEdges (node);
+            var edge = new ParametrizedEdge<T, LiteralsSet> (source, target, value);
+            if (!graph.ContainsEdge(edge))
+                graph.AddEdge (edge);
         }
 
         /// <summary>
         /// Adds the specified transition to the automaton.
         /// </summary>
         /// <param name="transition">Transition.</param>
-        public void AddTransition (AutomatonTransition<T> transition)
+        public void AddTransition (T source, T target, IEnumerable<ILiteral> value)
         {
-            graph.AddEdge (transition);
-        }
-
-        /// <summary>
-        /// Removes the transition.
-        /// </summary>
-        /// <param name="transition">Transition.</param>
-        public void RemoveTransition (AutomatonTransition<T> transition)
-        {
-            graph.RemoveEdge (transition);
-        }
-
-        /// <summary>
-        /// Adds the transitions.
-        /// </summary>
-        /// <param name="transitions">Transitions.</param>
-        public void AddTransitions (IEnumerable<AutomatonTransition<T>> transitions)
-        {
-            graph.AddEdgeRange (transitions);
+            var edge = new ParametrizedEdge<T, LiteralsSet> (source, target, new LiteralsSet (value));
+            if (!graph.ContainsEdge(edge))
+                graph.AddEdge (edge);
         }
         
         /// <summary>
@@ -182,8 +199,9 @@ namespace LtlSharp.Automata.OmegaAutomata
                 visited.Add (s0);
 
                 var transitions = graph.OutEdges (s0);
-                foreach (var c in transitions.Select (x => x.Labels)) {
-                    var succ = transitions.Where (t => c.IsSubsetOf(t.Labels)).Select (t => t.Target);
+                // TODO Simpler expression MUST exist !
+                foreach (var c in transitions.Select (x => x.Value)) {
+                    var succ = transitions.Where (t => c.Entails(t.Value)).Select (t => t.Target);
                     if (succ.Count () > 1)
                         return false;
                     
@@ -196,6 +214,82 @@ namespace LtlSharp.Automata.OmegaAutomata
             return true;
         }
         
+        
+
+        public void SimplifyTransitions ()
+        {
+            foreach (var node in graph.Vertices) {
+                var transitions = graph.OutEdges (node);
+                foreach (var trans in transitions.ToList ()) {
+                    var sameTarget = transitions.Where (t => t.Target.Equals (trans.Target)).ToList ();
+                    var labels = sameTarget.Select (x => x.Value);
+                    var lf = new LiteralFormula (labels);
+                    var newLabels = lf.Simplify ();
+                    foreach (var e in sameTarget) {
+                        graph.RemoveEdge (e);
+                    }
+                    foreach (var nl in newLabels) {
+                        graph.AddEdge (new ParametrizedEdge<T,LiteralsSet> (trans.Source, trans.Target, new LiteralsSet (nl)));
+                    }
+                }
+            }
+        }
+
+        public void UnfoldTransitions ()
+        {
+            MapLabel ((arg) => UnfoldLabels (arg, Alphabet ()));
+        }
+
+        // TODO MOVE THIS
+        ISet<LiteralsSet> UnfoldLabels (LiteralsSet trans, IEnumerable<ILiteral> alphabet)
+        {
+            var s = new HashSet<LiteralsSet> ();
+            s.Add (new LiteralsSet ());
+
+            var pending = new Stack<ILiteral> (alphabet);
+            while (pending.Count > 0) {
+                var current = pending.Pop ();
+                if (trans.Contains (current)) {
+                    foreach (var e in s) {
+                        e.Add (current);
+                    }
+
+                } else if (trans.Contains (current.Negate ())) {
+                    s = new HashSet<LiteralsSet> (s.Where (l => !l.Contains (current)));
+
+                } else {
+                    foreach (var e in s.ToList ()) {
+                        var ns = new LiteralsSet (e);
+                        ns.Add (current);
+                        s.Add (ns);
+                    }
+                }
+            }
+
+            foreach (var a in alphabet) {
+                foreach (var ss in s) {
+                    if (!ss.Contains (a)) {
+                        ss.Add ((ILiteral)a.Negate ());
+                    }
+                }
+            }
+
+            return s;
+        }
+
+        public string ToDot ()
+        {
+            var graphviz = new GraphvizAlgorithm<T, ParametrizedEdge<T, LiteralsSet>> (graph);
+            graphviz.FormatVertex += (object sender, FormatVertexEventArgs<T> e) => {
+                e.VertexFormatter.Label = e.Vertex.Name;
+                if (this.InitialNode.Equals (e.Vertex))
+                    e.VertexFormatter.Style = QuickGraph.Graphviz.Dot.GraphvizVertexStyle.Bold;
+            };
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<T, ParametrizedEdge<T, LiteralsSet>> e) => {
+                e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Value);
+            };
+            return graphviz.Generate ();
+        }
     }
 }
 

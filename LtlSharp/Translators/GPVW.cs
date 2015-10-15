@@ -6,6 +6,7 @@ using LtlSharp.Buchi.Automata;
 using LtlSharp.Buchi.Translators;
 using LtlSharp.Automata;
 using LtlSharp.Automata.OmegaAutomata;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
@@ -204,7 +205,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     }
                     
                     if (!contradiction) {
-                        transition.Labels = new HashSet<ILiteral> (literals);
+                        transition.Labels = new LiteralsSet (literals);
                     }
                     
                     automaton.AddEdge (transition);

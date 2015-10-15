@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Language
 {
@@ -309,11 +310,11 @@ namespace LtlSharp.Language
             return -1;
         }
 
-        public LiteralFormula (IEnumerable<HashSet<ILiteral>> terms)
+        public LiteralFormula (IEnumerable<LiteralsSet> terms)
         {
             Terms = new List<Term> ();
-            
-            var alphabet = terms.SelectMany (x => x).Select (x => x is Negation ? ((ILiteral)((Negation)x).Enclosed) : x).Distinct ().ToList ();
+
+            var alphabet = terms.SelectMany (x => x.GetAlphabet ()).Distinct ().ToList ();
             encoding = new Dictionary<ILiteral, int> ();
             int i = 0;
             foreach (var a in alphabet) {
