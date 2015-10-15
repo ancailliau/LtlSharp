@@ -7,8 +7,12 @@ using LtlSharp.Automata.Transitions;
 
 namespace LtlSharp.Automata
 {
+    /// <summary>
+    /// Defines an automaton node
+    /// </summary>
     public class AutomatonNode : IAutomatonNode
     {
+        // TODO Move this to factories
         static int currentId = 0;
 
         /// <summary>
@@ -28,31 +32,80 @@ namespace LtlSharp.Automata
             get;
             set;
         }
-
+        
         /// <summary>
-        /// Gets the labels attached to the node.
+        /// Gets the labels of the nodes.
         /// </summary>
         /// <value>The labels.</value>
-        public LiteralsSet Labels {
+        public LiteralsSet Label {
             get;
-            set;
+            private set;
         }
-
-        public AutomatonNode () : this ("") {}
-
-        public AutomatonNode (AutomatonNode node) : this (node.Name, node.Labels) {}
         
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.AutomatonNode"/> class with an empty name
+        /// and an empty label.
+        /// </summary>
+        public AutomatonNode () 
+            : this ("")
+        {}
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.AutomatonNode"/> class with the name of the
+        /// specified node and the same label.
+        /// </summary>
+        /// <param name="node">Node.</param>
+        public AutomatonNode (IAutomatonNode node) 
+            : this (node.Name, node.Labels)
+        {}
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.AutomatonNode"/> class with the specified
+        /// name and an empty label.
+        /// </summary>
+        /// <param name="name">Name.</param>
         public AutomatonNode (string name) : this (name, Enumerable.Empty<ILiteral> ())
         {
             Name = name;
         }
         
-        public AutomatonNode (string name, IEnumerable<ILiteral> labels)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.AutomatonNode"/> class with the specified
+        /// name (if not empty or null) and the provided literals.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <param name="literals">Literals.</param>
+        public AutomatonNode (string name, IEnumerable<ILiteral> literals)
         {
             Id = currentId++;
             Name = string.IsNullOrEmpty (name) ? "s" + Id : name;
-            Labels = new LiteralsSet (labels);
+            Label = new LiteralsSet (literals);
         }
+        
+        #region IAutomatonNode Members
+        
+        int IAutomatonNode.Id {
+            get {
+                return Id;
+            }
+        }
+        
+        string IAutomatonNode.Name {
+            get {
+                return Name;
+            }
+            set {
+                Name = value;
+            }
+        }
+
+        LiteralsSet IAutomatonNode.Labels {
+            get {
+                return Label;
+            }
+        }
+        
+        #endregion
         
         public override string ToString ()
         {
@@ -68,23 +121,13 @@ namespace LtlSharp.Automata
             if (obj.GetType () != typeof(AutomatonNode))
                 return false;
             var other = (AutomatonNode)obj;
-            return Name == other.Name && Labels.Equals (other.Labels);
+            return Name == other.Name && Label.Equals (other.Label);
         }
 
         public override int GetHashCode ()
         {
             return 17 + (Name != null ? Name.GetHashCode () : 0)
-                          + 32 * (Labels != null ? Labels.GetHashCode () : 0);
-        }
-    }
-
-    public class MonitorNode : AutomatonNode 
-    {   
-        public MonitorStatus Status;
-
-        public MonitorNode (string name, MonitorStatus status) : base (name)
-        {
-            Status = status;
+                          + 32 * (Label != null ? Label.GetHashCode () : 0);
         }
     }
 }

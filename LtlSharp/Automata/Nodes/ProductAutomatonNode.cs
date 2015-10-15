@@ -8,7 +8,8 @@ namespace LtlSharp.Automata
     /// <summary>
     /// Represents a node of a product automaton between two automaton
     /// </summary>
-    public class ProductAutomatonNode<T1, T2> : AutomatonNode 
+    public class ProductAutomatonNode<T1, T2>
+        : AutomatonNode 
         where T1 : IAutomatonNode 
         where T2 : IAutomatonNode
     {
@@ -72,16 +73,39 @@ namespace LtlSharp.Automata
             Node1 = node1;
             Node2 = node2;
         }
+
+        /// <summary>
+        /// Sets the nodes.
+        /// </summary>
+        /// <returns>The nodes.</returns>
+        /// <param name="node1">Node 1.</param>
+        /// <param name="node2">Node 2.</param>
+        public void SetNodes (T1 node1, T2 node2)
+        {
+            Node1 = node1;
+            Node2 = node2;
+        }
         
         public override string ToString ()
         {
             return string.Format ("[ProductAutomatonNode: Node1={0}, Node2={1}]", Node1.Name, Node2.Name);
         }
 
-        public void SetNodes (T1 node1, T2 node2)
+        public override bool Equals (object obj)
         {
-            Node1 = node1;
-            Node2 = node2;
+            if (obj == null)
+                return false;
+            if (ReferenceEquals (this, obj))
+                return true;
+            if (obj.GetType () != typeof(ProductAutomatonNode<T1,T2>))
+                return false;
+            var other = (ProductAutomatonNode<T1,T2>)obj;
+            return base.Equals (other) & Node1.Equals (other.Node1) & Node2.Equals (other.Node2);
+        }
+
+        public override int GetHashCode ()
+        {
+            return 17 + base.GetHashCode () + 32 * (Node1.GetHashCode () + 32 * Node2.GetHashCode ());
         }
     }
 }

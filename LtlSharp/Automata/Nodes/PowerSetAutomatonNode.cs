@@ -9,7 +9,8 @@ namespace LtlSharp.Automata
     /// <summary>
     /// Defines a generic node for a power set of nodes.
     /// </summary>
-    public class PowerSetAutomatonNode<T> : AutomatonNode 
+    public class PowerSetAutomatonNode<T> 
+        : AutomatonNode 
         where T : IAutomatonNode 
     {
         
@@ -62,16 +63,21 @@ namespace LtlSharp.Automata
         {
             Nodes = new HashSet<T> (nodes);
         }
+
+        /// <summary>
+        /// Adds the node.
+        /// </summary>
+        /// <returns>The node.</returns>
+        /// <param name="node">Node.</param>
+        public void AddNode (T node)
+        {
+            Nodes.Add (node);
+        }
         
         public override string ToString ()
         {
             return string.Format ("[PowerSetAutomatonNode: Nodes={{{0}}}]", 
                                   string.Join (",", Nodes.Select (n => n.ToString ())));
-        }
-
-        public void AddNode (T node)
-        {
-            Nodes.Add (node);
         }
 
         public override bool Equals (object obj)
