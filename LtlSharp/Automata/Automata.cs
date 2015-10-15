@@ -19,10 +19,8 @@ namespace LtlSharp.Automata
         
         protected IAutomatonNodeFactory<T> factory;
         protected IAutomatonTransitionFactory<T2> factoryTransition;
-        
-        public T InitialNode { get; protected set; }
 
-        public IEnumerable<T> Vertices { 
+        public IEnumerable<T> Nodes { 
             get {
                 return graph.Vertices;
             }
@@ -40,15 +38,6 @@ namespace LtlSharp.Automata
             graph = new AdjacencyGraph<T, ParametrizedEdge<T, T2>> ();
             this.factory = factory;
             this.factoryTransition = factoryTransition;
-        }
-        
-        /// <summary>
-        /// Sets the initial node.
-        /// </summary>
-        /// <param name="node">Node.</param>
-        public void SetInitialNode (T node)
-        {
-            InitialNode = node;
         }
 
         /// <summary>
@@ -173,6 +162,80 @@ namespace LtlSharp.Automata
             return nodes.SelectMany (node => Post(node, predicate));
         }
         
+        
+
+        /// <summary>
+        /// Returns all the successors of the specified node <c>v</c>, i.e. all the nodes that can be reached from the
+        /// specified node.
+        /// </summary>
+        /// <returns>The successors.</returns>
+        /// <param name="v">The node.</param>
+        public IEnumerable<T> AllPost (T v)
+        {
+            var pending = new Stack<T> (new [] { v });
+            var sucessors = new HashSet<T> ();
+
+            IEnumerable<ParametrizedEdge<T, T2>> edges;
+            while (pending.Count > 0) {
+                var current = pending.Pop ();
+                if (graph.TryGetOutEdges (current, out edges)) {
+                    foreach (var v2 in edges.Select (e => e.Target)) {
+                        if (!sucessors.Contains (v2)) {
+                            sucessors.Add (v2);
+                            pending.Push (v2);
+                        }
+                    }
+                }
+            }
+
+            return sucessors;
+        }
+
+        /// <summary>
+        /// Returns the predecessors of the specified node <c>v</c>.
+        /// </summary>
+        /// <returns>The predecessors.</returns>
+        /// <param name="v">The node.</param>
+        public IEnumerable<T> Pre (T v)
+        {
+            return graph.Edges.Where (e => e.Target.Equals (v)).Select (e => e.Source).Distinct ();
+        }
+
+        /// <summary>
+        /// Returns all the predecessors of the specified node <c>v</c>, i.e. all the nodes that can reach the
+        /// specified node.
+        /// </summary>
+        /// <returns>The predecessors.</returns>
+        /// <param name="v">The node.</param>
+        public IEnumerable<T> AllPre (T v)
+        {
+            return AllPre (new [] { v });
+        }
+
+        /// <summary>
+        /// Returns all the predecessors of the specified node <c>v</c>, i.e. all the nodes that can reach the
+        /// specified node.
+        /// </summary>
+        /// <returns>The predecessors.</returns>
+        /// <param name="v">The node.</param>
+        public IEnumerable<T> AllPre (IEnumerable<T> v)
+        {
+            var pending = new Stack<T> (v);
+            var predecessors = new HashSet<T> ();
+
+            while (pending.Count > 0) {
+                var current = pending.Pop ();
+                foreach (var v2 in graph.Edges.Where (e => e.Target.Equals (current)).Select (e => e.Source)) {
+                    if (!predecessors.Contains (v2)) {
+                        predecessors.Add (v2);
+                        pending.Push (v2);
+                    }
+                }
+            }
+
+            return predecessors.Select (x => x);
+        }
+        
         /// <summary>
         /// Adds the specified transition to the automaton.
         /// </summary>
@@ -195,6 +258,11 @@ namespace LtlSharp.Automata
                 graph.AddEdge (edge);
         }
 
+        public void RemoveAllTransitions (T node)
+        {
+            graph.ClearOutEdges (node);
+        }
+
         /// <summary>
         /// Adds the node.
         /// </summary>
@@ -203,7 +271,28 @@ namespace LtlSharp.Automata
         {
             graph.AddVertex (node);
         }
-
+        
+        public T AddNode (string name)
+        {
+            var t = factory.Create (name);
+            graph.AddVertex (t);
+            return t;
+        }
+        
+        public T AddNode (string name, ILiteral literal)
+        {
+            var t = factory.Create (name, new [] { literal });
+            graph.AddVertex (t);
+            return t;
+        }
+        
+        public T AddNode (string name, IEnumerable<ILiteral> literals)
+        {
+            var t = factory.Create (name, literals);
+            graph.AddVertex (t);
+            return t;
+        }
+        
         /// <summary>
         /// Adds all the nodes.
         /// </summary>
@@ -217,9 +306,9 @@ namespace LtlSharp.Automata
         /// Returns whether the omega automaton is deterministic.
         /// </summary>
         /// <returns><c>True</c> if deterministic, <c>False</c> otherwise.</returns>
-        public bool IsDeterministic ()
+        public bool IsDeterministic (T initialNode)
         {
-            var pending = new Stack<T> (new [] { InitialNode });
+            var pending = new Stack<T> (new [] { initialNode });
             var visited = new HashSet<T> ();
 
             while (pending.Count > 0) {
@@ -242,7 +331,15 @@ namespace LtlSharp.Automata
             return true;
         }
 
-
+        /// <summary>
+        /// Indicates whether the specified node is absorbing.
+        /// </summary>
+        /// <param name="node">Node.</param>
+        /// <returns><c>True</c> if nodes are absorbing, <c>False</c> otherwise.</returns>
+        public bool IsAbsorbing (T node)
+        {
+            return Post (node).All (v2 => v2.Equals (node));
+        }
 
         public void SimplifyTransitions ()
         {
@@ -268,13 +365,11 @@ namespace LtlSharp.Automata
             MapLabel ((arg) => arg.UnfoldLabels (Alphabet ()));
         }
 
-        public string ToDot ()
+        public virtual string ToDot ()
         {
             var graphviz = new GraphvizAlgorithm<T, ParametrizedEdge<T, T2>> (graph);
             graphviz.FormatVertex += (object sender, FormatVertexEventArgs<T> e) => {
                 e.VertexFormatter.Label = e.Vertex.Name;
-                if (this.InitialNode != null && this.InitialNode.Equals (e.Vertex))
-                    e.VertexFormatter.Style = QuickGraph.Graphviz.Dot.GraphvizVertexStyle.Bold;
             };
             graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<T, ParametrizedEdge<T, T2>> e) => {
                 e.EdgeFormatter.Label.Value = string.Join (",", e.Edge.Value.ToString ());

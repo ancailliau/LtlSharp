@@ -32,7 +32,7 @@ namespace LtlSharp.Translators
         public BuchiAutomaton<AutomatonNode> Transform (BuchiAutomaton<AutomatonNode> t, IEnumerable<ILiteral> alphabet)
         {        
             var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
-            automata.AddNodes (t.Vertices);
+            automata.AddNodes (t.Nodes);
             automata.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode>((BuchiAcceptance<AutomatonNode>) t.AcceptanceCondition));
             automata.SetInitialNode (t.InitialNode);
 

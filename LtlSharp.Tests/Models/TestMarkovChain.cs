@@ -6,6 +6,7 @@ using LtlSharp;
 using System.Collections.Generic;
 using LtlSharp.Automata;
 using LtlSharp.Automata.Nodes.Factories;
+using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Tests.Models
 {
@@ -24,146 +25,146 @@ namespace LtlSharp.Tests.Models
             var np3 = new Negation (p3);
             var np4 = new Negation (p4);
             
-            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory ());
-            var start = mc.AddVertex ("start", new ILiteral[] { p1, np2, np3, np4 });
-            var ntry = mc.AddVertex ("try", new ILiteral[] { np1, p2, np3, np4 });
-            var lost = mc.AddVertex ("lost", new ILiteral[] { np1, p2, p3, np4 });
-            var delivered = mc.AddVertex ("delivered", new ILiteral[] { np1, np2, np3, p4 });
+            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory (), new ProbabilityDecoratorFactory ());
+            var start = mc.AddNode ("start", new ILiteral[] { p1, np2, np3, np4 });
+            var ntry = mc.AddNode ("try", new ILiteral[] { np1, p2, np3, np4 });
+            var lost = mc.AddNode ("lost", new ILiteral[] { np1, p2, p3, np4 });
+            var delivered = mc.AddNode ("delivered", new ILiteral[] { np1, np2, np3, p4 });
             mc.SetInitial (start, 1);
             
-            mc.AddEdge (start, ntry);
-            mc.AddEdge (ntry, .1d, lost);
-            mc.AddEdge (lost, ntry);
-            mc.AddEdge (ntry, .9d, delivered);
-            mc.AddEdge (delivered, start);
+            mc.AddTransition (start, ntry);
+            mc.AddTransition (ntry, .1d, lost);
+            mc.AddTransition (lost, ntry);
+            mc.AddTransition (ntry, .9d, delivered);
+            mc.AddTransition (delivered, start);
             
             return mc;
         }
         
         public static MarkovChain<AutomatonNode> GetExampleFig102 ()
         {
-            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory ());
-            var s0 = mc.AddVertex ("s0");
-            var s123 = mc.AddVertex ("s123");
-            var s456 = mc.AddVertex ("s456");
-            var ss123 = mc.AddVertex ("s'123");
-            var s23 = mc.AddVertex ("s23");
-            var s45 = mc.AddVertex ("s45");
-            var ss456 = mc.AddVertex ("s'456");
-            var t1 = mc.AddVertex ("1");
-            var t2 = mc.AddVertex ("2");
-            var t3 = mc.AddVertex ("3");
-            var t4 = mc.AddVertex ("4");
-            var t5 = mc.AddVertex ("5");
-            var t6 = mc.AddVertex ("6");
+            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory (), new ProbabilityDecoratorFactory ());
+            var s0 = mc.AddNode ("s0");
+            var s123 = mc.AddNode ("s123");
+            var s456 = mc.AddNode ("s456");
+            var ss123 = mc.AddNode ("s'123");
+            var s23 = mc.AddNode ("s23");
+            var s45 = mc.AddNode ("s45");
+            var ss456 = mc.AddNode ("s'456");
+            var t1 = mc.AddNode ("1");
+            var t2 = mc.AddNode ("2");
+            var t3 = mc.AddNode ("3");
+            var t4 = mc.AddNode ("4");
+            var t5 = mc.AddNode ("5");
+            var t6 = mc.AddNode ("6");
             mc.SetInitial (s0, 1);
 
-            mc.AddEdge (s0, 1d/2, s123);
-            mc.AddEdge (s0, 1d/2, s456);
+            mc.AddTransition (s0, 1d/2, s123);
+            mc.AddTransition (s0, 1d/2, s456);
             
-            mc.AddEdge (s123, 1d/2, ss123);
-            mc.AddEdge (s123, 1d/2, s23);
+            mc.AddTransition (s123, 1d/2, ss123);
+            mc.AddTransition (s123, 1d/2, s23);
             
-            mc.AddEdge (ss123, 1d/2, s123);
-            mc.AddEdge (ss123, 1d/2, t1);
+            mc.AddTransition (ss123, 1d/2, s123);
+            mc.AddTransition (ss123, 1d/2, t1);
 
-            mc.AddEdge (s23, 1d/2, t2);
-            mc.AddEdge (s23, 1d/2, t3);
+            mc.AddTransition (s23, 1d/2, t2);
+            mc.AddTransition (s23, 1d/2, t3);
             
-            mc.AddEdge (s45, 1d/2, t4);
-            mc.AddEdge (s45, 1d/2, t5);
+            mc.AddTransition (s45, 1d/2, t4);
+            mc.AddTransition (s45, 1d/2, t5);
             
-            mc.AddEdge (s456, 1d/2, s45);
-            mc.AddEdge (s456, 1d/2, ss456);
+            mc.AddTransition (s456, 1d/2, s45);
+            mc.AddTransition (s456, 1d/2, ss456);
             
-            mc.AddEdge (ss456, 1d/2, s456);
-            mc.AddEdge (ss456, 1d/2, t6);
+            mc.AddTransition (ss456, 1d/2, s456);
+            mc.AddTransition (ss456, 1d/2, t6);
             
-            mc.AddEdge (t1, t1);
-            mc.AddEdge (t2, t2);
-            mc.AddEdge (t3, t3);
-            mc.AddEdge (t4, t4);
-            mc.AddEdge (t5, t5);
-            mc.AddEdge (t6, t6);
+            mc.AddTransition (t1, t1);
+            mc.AddTransition (t2, t2);
+            mc.AddTransition (t3, t3);
+            mc.AddTransition (t4, t4);
+            mc.AddTransition (t5, t5);
+            mc.AddTransition (t6, t6);
             
             return mc;
         }
         
         public static MarkovChain<AutomatonNode> GetExampleFig103 ()
         {
-            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory ());
+            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory (), new ProbabilityDecoratorFactory ());
             
-            var start = mc.AddVertex ("start", new Proposition ("start"));
-            var s4 = mc.AddVertex ("4", new Proposition ("4"));
-            var s10 = mc.AddVertex ("10", new Proposition ("10"));
-            var s5 = mc.AddVertex ("5", new Proposition ("5"));
-            var s9 = mc.AddVertex ("9", new Proposition ("9"));
-            var s6 = mc.AddVertex ("6", new Proposition ("6"));
-            var s8 = mc.AddVertex ("8", new Proposition ("8"));
-            var won = mc.AddVertex ("won", new Proposition ("won"));
-            var lost = mc.AddVertex ("lost", new Proposition ("lost"));
+            var start = mc.AddNode ("start", new Proposition ("start"));
+            var s4 = mc.AddNode ("4", new Proposition ("4"));
+            var s10 = mc.AddNode ("10", new Proposition ("10"));
+            var s5 = mc.AddNode ("5", new Proposition ("5"));
+            var s9 = mc.AddNode ("9", new Proposition ("9"));
+            var s6 = mc.AddNode ("6", new Proposition ("6"));
+            var s8 = mc.AddNode ("8", new Proposition ("8"));
+            var won = mc.AddNode ("won", new Proposition ("won"));
+            var lost = mc.AddNode ("lost", new Proposition ("lost"));
             mc.Initial.Add (start, 1);
             
-            mc.AddEdge (start, 2d/9, won);
-            mc.AddEdge (start, 1d/12, s4);
-            mc.AddEdge (start, 1d/12, s10);
-            mc.AddEdge (start, 1d/9, s5);
-            mc.AddEdge (start, 1d/9, s9);
-            mc.AddEdge (start, 5d/36, s6);
-            mc.AddEdge (start, 5d/36, s8);
-            mc.AddEdge (start, 1d/9, lost);
+            mc.AddTransition (start, 2d/9, won);
+            mc.AddTransition (start, 1d/12, s4);
+            mc.AddTransition (start, 1d/12, s10);
+            mc.AddTransition (start, 1d/9, s5);
+            mc.AddTransition (start, 1d/9, s9);
+            mc.AddTransition (start, 5d/36, s6);
+            mc.AddTransition (start, 5d/36, s8);
+            mc.AddTransition (start, 1d/9, lost);
             
-            mc.AddEdge (s4, 3d/4, s4);
-            mc.AddEdge (s4, 1d/12, won);
-            mc.AddEdge (s4, 1d/6, lost);
+            mc.AddTransition (s4, 3d/4, s4);
+            mc.AddTransition (s4, 1d/12, won);
+            mc.AddTransition (s4, 1d/6, lost);
 
-            mc.AddEdge (s10, 3d/4, s10);
-            mc.AddEdge (s10, 1d/12, won);
-            mc.AddEdge (s10, 1d/6, lost);
+            mc.AddTransition (s10, 3d/4, s10);
+            mc.AddTransition (s10, 1d/12, won);
+            mc.AddTransition (s10, 1d/6, lost);
 
-            mc.AddEdge (s5, 13d/18, s5);
-            mc.AddEdge (s5, 1d/9, won);
-            mc.AddEdge (s5, 1d/6, lost);
+            mc.AddTransition (s5, 13d/18, s5);
+            mc.AddTransition (s5, 1d/9, won);
+            mc.AddTransition (s5, 1d/6, lost);
 
-            mc.AddEdge (s9, 13d/18, s9);
-            mc.AddEdge (s9, 1d/9, won);
-            mc.AddEdge (s9, 1d/6, lost);
+            mc.AddTransition (s9, 13d/18, s9);
+            mc.AddTransition (s9, 1d/9, won);
+            mc.AddTransition (s9, 1d/6, lost);
 
-            mc.AddEdge (s6, 25d/36, s6);
-            mc.AddEdge (s6, 5d/36, won);
-            mc.AddEdge (s6, 1d/6, lost);
+            mc.AddTransition (s6, 25d/36, s6);
+            mc.AddTransition (s6, 5d/36, won);
+            mc.AddTransition (s6, 1d/6, lost);
 
-            mc.AddEdge (s8, 25d/36, s8);
-            mc.AddEdge (s8, 5d/36, won);
-            mc.AddEdge (s8, 1d/6, lost);
+            mc.AddTransition (s8, 25d/36, s8);
+            mc.AddTransition (s8, 5d/36, won);
+            mc.AddTransition (s8, 1d/6, lost);
             
-            mc.AddEdge (won, won);
-            mc.AddEdge (lost, lost);
+            mc.AddTransition (won, won);
+            mc.AddTransition (lost, lost);
             
             return mc;
         }
         
         public static MarkovChain<AutomatonNode> GetExamplePMCLecture1513 () {
-            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory ());
-            var s0 = mc.AddVertex ("s0");
-            var s1 = mc.AddVertex ("s1");
-            var s2 = mc.AddVertex ("s2");
-            var s3 = mc.AddVertex ("s3");
-            var s4 = mc.AddVertex ("s4");
-            var s5 = mc.AddVertex ("s5");
+            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory (), new ProbabilityDecoratorFactory ());
+            var s0 = mc.AddNode ("s0");
+            var s1 = mc.AddNode ("s1");
+            var s2 = mc.AddNode ("s2");
+            var s3 = mc.AddNode ("s3");
+            var s4 = mc.AddNode ("s4");
+            var s5 = mc.AddNode ("s5");
             
-            mc.AddEdge (s0, .5, s1);
-            mc.AddEdge (s0, .5, s3);
+            mc.AddTransition (s0, .5, s1);
+            mc.AddTransition (s0, .5, s3);
             
-            mc.AddEdge (s1, .5, s0);
-            mc.AddEdge (s1, .25, s4);
-            mc.AddEdge (s1, .25, s2);
+            mc.AddTransition (s1, .5, s0);
+            mc.AddTransition (s1, .25, s4);
+            mc.AddTransition (s1, .25, s2);
             
-            mc.AddEdge (s2, s5);
-            mc.AddEdge (s5, s2);
+            mc.AddTransition (s2, s5);
+            mc.AddTransition (s5, s2);
             
-            mc.AddEdge (s3, s3);
-            mc.AddEdge (s4, s4);
+            mc.AddTransition (s3, s3);
+            mc.AddTransition (s4, s4);
             
             mc.SetInitial (s0, 1);
             

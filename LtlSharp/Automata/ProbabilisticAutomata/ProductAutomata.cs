@@ -9,6 +9,7 @@ using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Automata.Transitions;
+using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Translators
 {
@@ -43,7 +44,9 @@ namespace LtlSharp.Translators
         {
             var product = mc.Product<T> (ba, initials, out correspondingNodes);
             
-            condition = ba.AcceptanceCondition.Map<ProductAutomatonNode<T, AutomatonNode>> (x => product.Nodes.Where (t => t.Node2.Equals (x)));
+            condition = ba.AcceptanceCondition.Map<ProductAutomatonNode<T, AutomatonNode>> (
+                x => product.Nodes.Where (t => t.Node2.Equals (x))
+            );
 
             return product;
         }
@@ -96,8 +99,12 @@ namespace LtlSharp.Translators
 
             var unique = new Dictionary<Tuple<T,AutomatonNode>, ProductAutomatonNode<T, AutomatonNode>> ();
             correspondingNodes = new Dictionary<T, ProductAutomatonNode<T, AutomatonNode>> ();
-            
-            var product = new MarkovChain<ProductAutomatonNode<T, AutomatonNode>> (new AutomatonNodeProductFactory<T, AutomatonNode> ());
+
+            var _productFactory = new AutomatonNodeProductFactory<T, AutomatonNode> ();
+            var product = new MarkovChain<ProductAutomatonNode<T, AutomatonNode>> (
+                _productFactory,
+                new ProbabilityDecoratorFactory ()
+            );
             var pending = new Stack<ProductAutomatonNode<T, AutomatonNode>> ();
             var visited = new HashSet<ProductAutomatonNode<T, AutomatonNode>> ();
 
@@ -113,11 +120,8 @@ namespace LtlSharp.Translators
                 
                 if (successorsInWA.Any ()) {
                     successorInWA = successorsInWA.Single ();
-                    newNode = product.AddVertex (
-                        string.Format ("{0} x {1}", initial, successorInWA), 
-                        initial.Labels
-                    );
-                    newNode.SetNodes (initial, successorInWA);
+                    newNode = _productFactory.Create (initial, successorInWA, initial.Labels);
+                    product.AddNode (newNode);
                     
                     var tuple = new Tuple<T, AutomatonNode> (initial, successorInWA);
                     
@@ -146,11 +150,8 @@ namespace LtlSharp.Translators
                         var tuple = new Tuple<T, AutomatonNode> (successorInMC, successorInWA);
 
                         if (!unique.ContainsKey (tuple)) {
-                            newNode = product.AddVertex (
-                                string.Format ("{0} x {1}", successorInMC, successorInWA), 
-                                successorInMC.Labels
-                            );
-                            newNode.SetNodes (successorInMC, successorInWA);
+                            newNode = _productFactory.Create (successorInMC, successorInWA, successorInMC.Labels);
+                            product.AddNode (newNode);
                             unique.Add (tuple, newNode);
 
                         } else {
@@ -161,7 +162,7 @@ namespace LtlSharp.Translators
                             pending.Push (newNode);
                         }
                         
-                        product.AddEdge (currentNodeInPA, mc.GetProbability (currentNodeInMC, successorInMC), newNode);
+                        product.AddTransition (currentNodeInPA, mc.GetProbability (currentNodeInMC, successorInMC), newNode);
                     }
                 }
             }

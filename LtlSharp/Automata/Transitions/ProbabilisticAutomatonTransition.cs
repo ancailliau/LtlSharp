@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using LtlSharp.Automata.Transitions;
 using QuickGraph;
 
 namespace LtlSharp.Automata
@@ -10,18 +12,9 @@ namespace LtlSharp.Automata
     /// A Markov Transition has a source Markov node and a target Markov node. 
     /// The transition is decorated with its probability.
     /// </description>
-    public class MarkovTransition 
-    {
-        public int Source {
-            get;
-            set;
-        }
-        
-        public int Target {
-            get;
-            set;
-        }
-        
+    public class ProbabilityTransitionDecorator 
+        : IAutomatonTransitionDecorator<ProbabilityTransitionDecorator>
+    {   
         /// <summary>
         /// Gets or sets the probability of the transition.
         /// </summary>
@@ -34,14 +27,10 @@ namespace LtlSharp.Automata
         /// <summary>
         /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovTransition"/> class.
         /// </summary>
-        /// <param name="source">Source node.</param>
         /// <param name="probability">Transition probability.</param>
-        /// <param name="target">Target node.</param>
-        public MarkovTransition (int source, double probability, int target)
+        public ProbabilityTransitionDecorator (double probability)
         {
             Probability = probability;
-            Source = source;
-            Target = target;
         }
 
         public override bool Equals (object obj)
@@ -50,27 +39,37 @@ namespace LtlSharp.Automata
                 return false;
             if (ReferenceEquals (this, obj))
                 return true;
-            if (obj.GetType () != typeof(MarkovTransition))
+            if (obj.GetType () != typeof(ProbabilityTransitionDecorator))
                 return false;
-            MarkovTransition other = (MarkovTransition)obj;
-            return Probability == other.Probability 
-                                       && Source.Equals (other.Source) 
-                                       && Target.Equals (other.Target);
+            ProbabilityTransitionDecorator other = (ProbabilityTransitionDecorator)obj;
+            return Probability == other.Probability;
         }
-
 
         public override int GetHashCode ()
         {
             unchecked {
-                return Probability.GetHashCode ()
-                                  ^ Source.GetHashCode ()
-                                  ^ Target.GetHashCode ();
+                return Probability.GetHashCode ();
             }
         }
 
-        public MarkovTransition Clone ()
+        IEnumerable<ILiteral> IAutomatonTransitionDecorator<ProbabilityTransitionDecorator>.GetAlphabet ()
         {
-            return new MarkovTransition (Source, Probability, Target);
+            throw new NotImplementedException ();
+        }
+
+        LiteralsSet IAutomatonTransitionDecorator<ProbabilityTransitionDecorator>.ToLiteralSet ()
+        {
+            throw new NotImplementedException ();
+        }
+
+        bool IAutomatonTransitionDecorator<ProbabilityTransitionDecorator>.Entails (ProbabilityTransitionDecorator l)
+        {
+            throw new NotImplementedException ();
+        }
+
+        IEnumerable<ProbabilityTransitionDecorator> IAutomatonTransitionDecorator<ProbabilityTransitionDecorator>.UnfoldLabels (IEnumerable<ILiteral> enumerable)
+        {
+            throw new NotImplementedException ();
         }
     }
 }

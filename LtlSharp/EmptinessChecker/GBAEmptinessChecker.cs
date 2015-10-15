@@ -46,7 +46,7 @@ namespace LtlSharp.Buchi
         public bool EmptinessSearch (TransitionGeneralizedBuchiAutomata a, AutomatonNode qi)
         {
             label = new Dictionary<AutomatonNode, HashSet<int>> ();
-            foreach (var n in a.Vertices) {
+            foreach (var n in a.Nodes) {
                 label.Add (n, new HashSet<int> ());
             }
             //for (int i = 0, length = a.Transitions.Count; i < length; i++) {

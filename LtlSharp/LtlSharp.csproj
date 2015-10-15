@@ -110,6 +110,7 @@
     <Compile Include="Automata\Transitions\Factories\LiteralSetFactory.cs" />
     <Compile Include="Automata\Transitions\Factories\DegeneralizerAutomataTransitionFactory.cs" />
     <Compile Include="Automata\Transitions\DegeneralizerAutomataTransition.cs" />
+    <Compile Include="Automata\Transitions\Factories\ProbabilityDecoratorFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Language\LTL.g" />

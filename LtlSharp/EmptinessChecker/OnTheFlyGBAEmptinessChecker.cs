@@ -48,7 +48,7 @@ namespace LtlSharp.Buchi
         
         public bool EmptinessSearch (AutomatonNode qi, AutomatonNode bi)
         {   
-            foreach (var n in a.Vertices) {
+            foreach (var n in a.Nodes) {
                 label.Add (n, new HashSet<int> ());
             }
             

@@ -16,7 +16,7 @@ namespace LtlSharp.Buchi.Translators
             var emptinessChecker = new EmptinessChecker<AutomatonNode> (automata);
 
             var newAcceptanceSet = new HashSet<AutomatonNode> ();
-            foreach (var n in automata.Vertices) {
+            foreach (var n in automata.Nodes) {
                 if (emptinessChecker.Emptiness (n)) {
                     newAcceptanceSet.Add (n);
                 }

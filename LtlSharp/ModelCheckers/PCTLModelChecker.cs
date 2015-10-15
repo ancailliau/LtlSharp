@@ -101,7 +101,7 @@ namespace LtlSharp.ModelCheckers
                 if (!sat.ContainsKey (e.Enclosed)) {
                     throw new InvalidProgramException (e.Enclosed + " was not precomputed.");
                 }
-                return new HashSet<T> (mc.ExceptNodes (sat[e.Enclosed]));
+                return new HashSet<T> (mc.Nodes.Except (sat[e.Enclosed]));
             }
             
             if (phi is ProbabilisticOperator) {
@@ -119,9 +119,9 @@ namespace LtlSharp.ModelCheckers
                     
                 } else if (enclosed is Release) { // A R B is !(!A U !B)
                     var u = (Release)enclosed;
-                    var n2 = mc.ConstrainedReachability (mc.ExceptNodes (sat [u.Left]), mc.ExceptNodes (sat [u.Right]));
+                    var n2 = mc.ConstrainedReachability (mc.Nodes.Except (sat [u.Left]), mc.Nodes.Except (sat [u.Right]));
                     var nodes = n2.Where (kv => po.IsSatisfied (kv.Value, epsilon)).Select (kv => kv.Key);
-                    return new HashSet<T> (mc.ExceptNodes (nodes));
+                    return new HashSet<T> (mc.Nodes.Except (nodes));
                 
                 } else {
                     var result = mc.QuantitativeLinearProperty (enclosed);

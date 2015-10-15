@@ -67,7 +67,7 @@ namespace LtlSharp.ProbabilisticSystems
         {
             var S0 = ComputeS0 (mc, C, B);
             var S1 = ComputeS1 (mc, C, B);
-            var Stilde = mc.ExceptNodes (S0.Union (S1)).ToArray ();
+            var Stilde = mc.Nodes.Except (S0.Union (S1)).ToArray ();
             
             // Build I - A if not iterative, and A if iterative
             var A = new double[Stilde.Length,Stilde.Length];
@@ -151,7 +151,7 @@ namespace LtlSharp.ProbabilisticSystems
                 }
             }
             
-            return mc.ExceptNodes (nodes);
+            return mc.Nodes.Except (nodes);
         }
         
         static IEnumerable<T> ComputeS1<T> (MarkovChain<T> mc,
@@ -160,7 +160,7 @@ namespace LtlSharp.ProbabilisticSystems
         {
             // For detailled discussion about the following algorithm, check "Principles of Model Checking", p767ff.
             var mcprime = new MarkovChain<T> (mc);
-            var absorbing = B.Union (mcprime.ExceptNodes (C.Union (B))); // B U (S \ (B U C))
+            var absorbing = B.Union (mcprime.Nodes.Except (C.Union (B))); // B U (S \ (B U C))
             foreach (var s in absorbing) {
                 foreach (var t in mcprime.Nodes) {
                     mcprime.SetProbability (s, t, s.Equals (t) ? 1 : 0);
@@ -168,7 +168,7 @@ namespace LtlSharp.ProbabilisticSystems
             }
             
             // S \ AllPre(S \ AllPre (B))
-            return mcprime.ExceptNodes (mcprime.AllPre (mcprime.ExceptNodes (mcprime.AllPre (B))));
+            return mcprime.Nodes.Except (mcprime.AllPre (mcprime.Nodes.Except (mcprime.AllPre (B))));
         }
         
         /// <summary>
@@ -183,11 +183,11 @@ namespace LtlSharp.ProbabilisticSystems
             // See "Principles of model checking", p 766ff.
             var mcprime = new MarkovChain<T> (mc);
             foreach (var b in B) {
-                mcprime.ClearOutEdges (b);
-                mcprime.AddEdge (b, b);
+                mcprime.RemoveAllTransitions (b);
+                mcprime.AddTransition (b, b);
             }
             // S \ AllPre(S \ AllPre (B))
-            return mcprime.ExceptNodes (mcprime.AllPre (mcprime.ExceptNodes (mcprime.AllPre (B))));
+            return mcprime.Nodes.Except (mcprime.AllPre (mcprime.Nodes.Except (mcprime.AllPre (B))));
         }
         
         /// <summary>
@@ -253,11 +253,11 @@ namespace LtlSharp.ProbabilisticSystems
             
             // To ensure that checking a node is absorbing is O(1)
             // and to avoid multiple enumeration of B and C.
-            var absorbing = new HashSet<T> (B.Union (mc.ExceptNodes(C.Union (B))));
+            var absorbing = new HashSet<T> (B.Union (mc.Nodes.Except(C.Union (B))));
             
             // See "Principles of Model-Checking", p 758ff.
             var nodes = mc.Nodes.ToArray ();
-            var len = mc.NodesCount;
+            var len = nodes.Length;
             
             // Build A for nodes which have an initial value
             var A = new double[len,len];
@@ -307,7 +307,7 @@ namespace LtlSharp.ProbabilisticSystems
 
             // If buchi automaton is deterministic, no need for transforming to rabin automaton. 
             // This save a little computation.
-            if (buchi.IsDeterministic()) {
+            if (buchi.IsDeterministic(buchi.InitialNode)) {
                 IAcceptanceCondition<ProductAutomatonNode<T, AutomatonNode>> condition = null;
                 productMC = mc.Product (buchi, mc.Nodes, out condition, out correspondingNodes);
                 probabilities = productMC.QuantitativeRepeatedReachability (condition);

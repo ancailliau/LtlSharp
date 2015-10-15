@@ -39,7 +39,6 @@ namespace LtlSharp.Automata.Nodes.Factories
         /// </summary>
         /// <remarks>The name of the node is the name of the nodes separated by a cross; and the label of the node
         /// is union of the labels.</remarks>
-        /// <param name="name">Name.</param>
         /// <param name="labels">Labels.</param>
         /// <param name="node1">Node of the first automaton.</param>
         /// <param name="node2">Node of the second automaton.</param>
@@ -47,6 +46,21 @@ namespace LtlSharp.Automata.Nodes.Factories
         {
             return new ProductAutomatonNode<T1, T2> (string.Format ("{0} x {1}", node1.Name, node2.Name),
                                                      node1.Labels.Union (node2.Labels).Distinct(), 
+                                                     node1,
+                                                     node2);
+        }
+        
+        /// <summary>
+        /// Creates a new automaton node with the specified nodes and label.
+        /// </summary>
+        /// <remarks>The name of the node is the name of the nodes separated by a cross.</remarks>
+        /// <param name="labels">Labels.</param>
+        /// <param name="node1">Node of the first automaton.</param>
+        /// <param name="node2">Node of the second automaton.</param>
+        public ProductAutomatonNode<T1, T2> Create (T1 node1, T2 node2, IEnumerable<ILiteral> labels)
+        {
+            return new ProductAutomatonNode<T1, T2> (string.Format ("{0} x {1}", node1.Name, node2.Name),
+                                                     labels, 
                                                      node1,
                                                      node2);
         }

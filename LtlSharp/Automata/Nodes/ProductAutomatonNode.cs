@@ -105,7 +105,9 @@ namespace LtlSharp.Automata
 
         public override int GetHashCode ()
         {
-            return 17 + base.GetHashCode () + 32 * (Node1.GetHashCode () + 32 * Node2.GetHashCode ());
+            return 17 + base.GetHashCode () + 32 * (
+                ((Node1 != null) ? Node1.GetHashCode () : 0) 
+                + 32 * ((Node2 != null) ? Node2.GetHashCode () : 0));
         }
     }
 }

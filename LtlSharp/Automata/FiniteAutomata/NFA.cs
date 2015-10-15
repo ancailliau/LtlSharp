@@ -27,6 +27,10 @@ namespace LtlSharp.Automata.FiniteAutomata
         : Automata<T, LiteralsSet>
         where T : IAutomatonNode
     {   
+        
+
+        public T InitialNode { get; protected set; }
+        
         /// <summary>
         /// Gets the set of node accepting the finite word.
         /// </summary>
@@ -45,6 +49,15 @@ namespace LtlSharp.Automata.FiniteAutomata
             : base (factory, factoryTransition)
         {
             AcceptingNodes = new HashSet<T> ();
+        }
+
+        /// <summary>
+        /// Sets the initial node.
+        /// </summary>
+        /// <param name="node">Node.</param>
+        public void SetInitialNode (T node)
+        {
+            InitialNode = node;
         }
         
         /// <summary>

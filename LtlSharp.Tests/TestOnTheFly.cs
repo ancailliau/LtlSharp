@@ -84,7 +84,7 @@ namespace LtlSharp.Tests
             lts.AddTransition (n2, n3, new ILiteral [] { alloc, mob });
             lts.AddTransition (n3, n0, new ILiteral [] { nalloc, nmob });
             
-            lts.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (lts.Vertices));
+            lts.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (lts.Nodes));
             
             var f = new StrongImplication (alloc, new Next (mob)).Negate ();
             
@@ -132,7 +132,7 @@ namespace LtlSharp.Tests
             lts.AddTransition (n2, n3, new ILiteral [] { alloc, mob });
             lts.AddTransition (n3, n0, new ILiteral [] { nalloc, nmob });
 
-            lts.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (lts.Vertices));
+            lts.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (lts.Nodes));
 
             var f = new StrongImplication (alloc, new Next (mob)).Negate ();
 

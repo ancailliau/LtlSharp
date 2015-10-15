@@ -27,14 +27,14 @@ namespace LtlSharp.Buchi.Translators
             // A GBA without acceptance set the same than a GBA with one acceptance set containing all nodes.
             if (gba.AcceptanceSets.Length == 0) {
                 gba.AcceptanceSets = new GBAAcceptanceSet[] { 
-                    new GBAAcceptanceSet (0, gba.Vertices.ToArray ())
+                    new GBAAcceptanceSet (0, gba.Nodes.ToArray ())
                 };
             }
             
             // If the GBA contains only one acceptance set, then it is a BA.
             if (gba.AcceptanceSets.Length == 1) {
                 var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
-                automata.AddNodes (gba.Vertices);
+                automata.AddNodes (gba.Nodes);
                 foreach (var e in gba.Edges) {
                     automata.AddTransition (e.Item1, e.Item3, e.Item2);
                 }
