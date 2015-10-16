@@ -7,7 +7,7 @@ using QuickGraph;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Utils;
-using LtlSharp.Automata.Transitions.Factories;
+
 
 namespace LtlSharp.Automata.OmegaAutomata
 {
@@ -37,7 +37,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         public HashSet<AutomatonNode> InitialNodes;
         
         public GeneralizedBuchiAutomata (int n_nodes)
-            : base (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ())
+            : base (new AutomatonNodeFactory ())
         {
             InitialNodes = new HashSet<AutomatonNode> ();
         }
@@ -59,7 +59,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         public HashSet<AutomatonNode> InitialNodes;
 
         public TransitionGeneralizedBuchiAutomata ()
-            : base (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ())
+            : base (new AutomatonNodeFactory ())
         {
             InitialNodes = new HashSet<AutomatonNode> ();
         }
@@ -87,7 +87,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         public HashSet<AutomatonNode> InitialNodes;
 
         public TGBA ()
-            : base (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ())
+            : base (new AutomatonNodeFactory ())
         {
             InitialNodes = new HashSet<AutomatonNode> ();
         }

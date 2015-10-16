@@ -8,7 +8,7 @@ using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Nodes.Factories;
-using LtlSharp.Automata.Transitions.Factories;
+
 using LtlSharp.Automata.Utils;
 
 namespace LtlSharp.Tests
@@ -19,7 +19,7 @@ namespace LtlSharp.Tests
         [Test()]
         public void TestSafraExampleInPaper ()
         {
-            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ());
+            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
             var q = new AutomatonNode ("qI"); ba.AddNode (q);
             var f = new AutomatonNode ("f"); ba.AddNode (f);
             var g = new AutomatonNode ("g"); ba.AddNode (g);

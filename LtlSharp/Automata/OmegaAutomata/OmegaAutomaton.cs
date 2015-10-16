@@ -8,7 +8,7 @@ using LtlSharp.Language;
 using QuickGraph.Graphviz;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.Nodes.Factories;
-using LtlSharp.Automata.Transitions.Factories;
+
 
 namespace LtlSharp.Automata.OmegaAutomata
 {
@@ -21,9 +21,8 @@ namespace LtlSharp.Automata.OmegaAutomata
         public T1 InitialNode { get; protected set; }
         public abstract IAcceptanceCondition<T1> AcceptanceCondition { get; }
 
-        public OmegaAutomaton (IAutomatonNodeFactory<T1> factory,
-                               IAutomatonTransitionFactory<T2> factory2) 
-            : base (factory, factory2)
+        public OmegaAutomaton (IAutomatonNodeFactory<T1> factory) 
+            : base (factory)
         {}
 
         /// <summary>

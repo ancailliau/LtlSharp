@@ -7,7 +7,7 @@ using LtlSharp.Utils;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.Nodes.Factories;
-using LtlSharp.Automata.Transitions.Factories;
+
 
 namespace LtlSharp.Automata.OmegaAutomata
 {
@@ -22,9 +22,8 @@ namespace LtlSharp.Automata.OmegaAutomata
             }
         }
         
-        public RabinAutomaton (IAutomatonNodeFactory<T> factory,
-                               IAutomatonTransitionFactory<LiteralSetDecoration> factoryTransition)
-            : base (factory, factoryTransition)
+        public RabinAutomaton (IAutomatonNodeFactory<T> factory)
+            : base (factory)
         {
             _acceptanceCondition = new RabinAcceptance<T> ();
         }

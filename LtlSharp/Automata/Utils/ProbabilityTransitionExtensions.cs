@@ -12,7 +12,7 @@ using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.Nodes.Factories;
-using LtlSharp.Automata.Transitions.Factories;
+
 
 namespace LtlSharp.Automata.Utils
 {
@@ -407,8 +407,7 @@ namespace LtlSharp.Automata.Utils
 
             var _productFactory = new AutomatonNodeProductFactory<T1,T2> ();
             var product = new MarkovChain<ProductAutomatonNode<T1,T2>> (
-                _productFactory,
-                new ProbabilityDecoratorFactory ()
+                _productFactory
             );
             var pending = new Stack<ProductAutomatonNode<T1,T2>> ();
             var visited = new HashSet<ProductAutomatonNode<T1,T2>> ();

@@ -7,7 +7,7 @@ using QuickGraph;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Language;
 using QuickGraph.Graphviz;
-using LtlSharp.Automata.Transitions.Factories;
+
 
 namespace LtlSharp.Automata
 {
@@ -18,7 +18,6 @@ namespace LtlSharp.Automata
         protected AdjacencyGraph<T, ParametrizedEdge<T, T2>> graph;
         
         protected IAutomatonNodeFactory<T> factory;
-        protected IAutomatonTransitionFactory<T2> factoryTransition;
 
         public IEnumerable<T> Nodes { 
             get {
@@ -32,22 +31,15 @@ namespace LtlSharp.Automata
             }
         }
 
-        public Automata (IAutomatonNodeFactory<T> factory,
-                         IAutomatonTransitionFactory<T2> factoryTransition)
+        public Automata (IAutomatonNodeFactory<T> factory)
         {
             graph = new AdjacencyGraph<T, ParametrizedEdge<T, T2>> ();
             this.factory = factory;
-            this.factoryTransition = factoryTransition;
         }
         
         public IAutomatonNodeFactory<T> GetNodeFactory ()
         {
             return factory;
-        }
-        
-        public IAutomatonTransitionFactory<T2> GetTransitionFactory ()
-        {
-            return factoryTransition;
         }
 
         public void RemoveTransition (T source, T target, T2 value)

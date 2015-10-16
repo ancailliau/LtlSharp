@@ -11,7 +11,7 @@ using LtlSharp.Utils;
 using QuickGraph;
 using QuickGraph.Graphviz;
 using LtlSharp.Automata.Transitions;
-using LtlSharp.Automata.Transitions.Factories;
+
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
@@ -471,7 +471,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 }
             }
 
-            public Degeneralizer () : base (new AutomatonNodeFactory (), new DegeneralizerAutomataTransitionFactory ())
+            public Degeneralizer () : base (new AutomatonNodeFactory ())
             {
                 InitialNodes = new HashSet<AutomatonNode> ();
                 AcceptanceSet = new HashSet<AutomatonNode> ();
@@ -548,7 +548,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         BuchiAutomaton<AutomatonNode> SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
         {
             var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> ();
-            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ());
+            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
 
             var n0 = tgba.InitialNodes.Single ();
             var n1 = degeneralizer.InitialNodes.Single ();

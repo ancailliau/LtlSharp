@@ -7,7 +7,7 @@ using QuickGraph.Graphviz.Dot;
 using LtlSharp.Automata;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Utils;
-using LtlSharp.Automata.Transitions.Factories;
+
 
 namespace LtlSharp.Models
 {
@@ -18,7 +18,6 @@ namespace LtlSharp.Models
         : Automata<T, ProbabilityTransitionDecorator>
         where T : IAutomatonNode
     {
-        ProbabilityDecoratorFactory _factoryTrans;
 
         /// <summary>
         /// Gets the initial distribution of the nodes. If a node is not contained, it is assumed that its
@@ -33,12 +32,10 @@ namespace LtlSharp.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="LtlSharp.Models.MarkovChain"/> class.
         /// </summary>
-        public MarkovChain (IAutomatonNodeFactory<T> factory,
-                            ProbabilityDecoratorFactory factoryTrans)
-            : base (factory, factoryTrans)
+        public MarkovChain (IAutomatonNodeFactory<T> factory)
+            : base (factory)
         {
             Initial = new Dictionary<T, ProbabilityTransitionDecorator> ();
-            _factoryTrans = factoryTrans;
         }
 
         /// <summary>
@@ -47,7 +44,7 @@ namespace LtlSharp.Models
         /// </summary>
         /// <param name="mc">Markov chain to copy.</param>
         public MarkovChain (MarkovChain<T> mc)
-            : base (mc.factory, mc.factoryTransition)
+            : base (mc.factory)
         {
         }
 
@@ -59,9 +56,9 @@ namespace LtlSharp.Models
         public void SetInitial (T node, double probability)
         {
             if (!Initial.ContainsKey (node)) {
-                Initial.Add (node, _factoryTrans.Create (probability));
+                Initial.Add (node, new ProbabilityTransitionDecorator (probability));
             }
-            Initial [node] = _factoryTrans.Create (probability);
+            Initial [node] = new ProbabilityTransitionDecorator (probability);
         }
 
         /// <summary>
@@ -92,7 +89,7 @@ namespace LtlSharp.Models
         /// <param name="target">Target node.</param>
         public void AddTransition (T source, double probability, T target)
         {
-            graph.AddEdge (new ParametrizedEdge<T, ProbabilityTransitionDecorator> (source, target, _factoryTrans.Create (probability)));
+            graph.AddEdge (new ParametrizedEdge<T, ProbabilityTransitionDecorator> (source, target, new ProbabilityTransitionDecorator (probability)));
         }
 
         public override string ToDot ()
@@ -111,7 +108,7 @@ namespace LtlSharp.Models
 
         public override Automata<T, ProbabilityTransitionDecorator> Clone ()
         {
-            var mc = new MarkovChain<T> (factory, (ProbabilityDecoratorFactory) factoryTransition);
+            var mc = new MarkovChain<T> (factory);
             foreach (var vertex in graph.Vertices) {
                 mc.graph.AddVertex (vertex);
             }
@@ -119,7 +116,7 @@ namespace LtlSharp.Models
                 mc.graph.AddEdge (new ParametrizedEdge<T, ProbabilityTransitionDecorator> (
                     edge.Source, 
                     edge.Target, 
-                    _factoryTrans.Clone (edge.Value)
+                    new ProbabilityTransitionDecorator (edge.Value.Probability)
                 ));
             }
             foreach (var i in Initial) {

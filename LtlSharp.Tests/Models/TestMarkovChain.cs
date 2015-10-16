@@ -6,7 +6,7 @@ using LtlSharp;
 using System.Collections.Generic;
 using LtlSharp.Automata;
 using LtlSharp.Automata.Nodes.Factories;
-using LtlSharp.Automata.Transitions.Factories;
+
 
 namespace LtlSharp.Tests.Models
 {
@@ -25,7 +25,7 @@ namespace LtlSharp.Tests.Models
             var np3 = new Negation (p3);
             var np4 = new Negation (p4);
             
-            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory (), new ProbabilityDecoratorFactory ());
+            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory ());
             var start = mc.AddNode ("start", new ILiteral[] { p1, np2, np3, np4 });
             var ntry = mc.AddNode ("try", new ILiteral[] { np1, p2, np3, np4 });
             var lost = mc.AddNode ("lost", new ILiteral[] { np1, p2, p3, np4 });
@@ -43,7 +43,7 @@ namespace LtlSharp.Tests.Models
         
         public static MarkovChain<AutomatonNode> GetExampleFig102 ()
         {
-            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory (), new ProbabilityDecoratorFactory ());
+            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory ());
             var s0 = mc.AddNode ("s0");
             var s123 = mc.AddNode ("s123");
             var s456 = mc.AddNode ("s456");
@@ -92,7 +92,7 @@ namespace LtlSharp.Tests.Models
         
         public static MarkovChain<AutomatonNode> GetExampleFig103 ()
         {
-            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory (), new ProbabilityDecoratorFactory ());
+            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory ());
             
             var start = mc.AddNode ("start", new Proposition ("start"));
             var s4 = mc.AddNode ("4", new Proposition ("4"));
@@ -145,7 +145,7 @@ namespace LtlSharp.Tests.Models
         }
         
         public static MarkovChain<AutomatonNode> GetExamplePMCLecture1513 () {
-            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory (), new ProbabilityDecoratorFactory ());
+            var mc = new MarkovChain<AutomatonNode> (new AutomatonNodeFactory ());
             var s0 = mc.AddNode ("s0");
             var s1 = mc.AddNode ("s1");
             var s2 = mc.AddNode ("s2");

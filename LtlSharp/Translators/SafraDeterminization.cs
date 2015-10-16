@@ -8,7 +8,7 @@ using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.Nodes.Factories;
-using LtlSharp.Automata.Transitions.Factories;
+
 using LtlSharp.Automata.Utils;
 
 namespace LtlSharp.Translators
@@ -368,7 +368,7 @@ namespace LtlSharp.Translators
                 }
             }
             
-            var rabin = new RabinAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ());
+            var rabin = new RabinAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
             var mapping = new Dictionary<SafraTree, AutomatonNode> ();
             int i = 0;
             foreach (var t in Transitions.Keys) {
