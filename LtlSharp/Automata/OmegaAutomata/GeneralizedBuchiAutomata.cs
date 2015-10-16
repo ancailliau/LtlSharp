@@ -25,7 +25,7 @@ namespace LtlSharp.Automata.OmegaAutomata
         }
     }
     
-    public class GeneralizedBuchiAutomata : OmegaAutomaton<AutomatonNode, LiteralsSet>
+    public class GeneralizedBuchiAutomata : OmegaAutomaton<AutomatonNode, LiteralSetDecoration>
     {
         public override AcceptanceConditions.IAcceptanceCondition<AutomatonNode> AcceptanceCondition {
             get {
@@ -37,18 +37,18 @@ namespace LtlSharp.Automata.OmegaAutomata
         public HashSet<AutomatonNode> InitialNodes;
         
         public GeneralizedBuchiAutomata (int n_nodes)
-            : base (new AutomatonNodeFactory (), new LiteralSetFactory ())
+            : base (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ())
         {
             InitialNodes = new HashSet<AutomatonNode> ();
         }
 
-        public override Automata<AutomatonNode, LiteralsSet> Clone ()
+        public override Automata<AutomatonNode, LiteralSetDecoration> Clone ()
         {
             throw new NotImplementedException ();
         }
     }
 
-    public class TransitionGeneralizedBuchiAutomata : OmegaAutomaton<AutomatonNode, LiteralsSet>
+    public class TransitionGeneralizedBuchiAutomata : OmegaAutomaton<AutomatonNode, LiteralSetDecoration>
     {
         public override AcceptanceConditions.IAcceptanceCondition<AutomatonNode> AcceptanceCondition {
             get {
@@ -59,24 +59,24 @@ namespace LtlSharp.Automata.OmegaAutomata
         public HashSet<AutomatonNode> InitialNodes;
 
         public TransitionGeneralizedBuchiAutomata ()
-            : base (new AutomatonNodeFactory (), new LiteralSetFactory ())
+            : base (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ())
         {
             InitialNodes = new HashSet<AutomatonNode> ();
         }
 
-        public IEnumerable<Tuple<LiteralsSet, AutomatonNode>> OutTransitions (AutomatonNode root)
+        public IEnumerable<Tuple<LiteralSetDecoration, AutomatonNode>> OutTransitions (AutomatonNode root)
         {
-            return graph.OutEdges (root).Select (x => new Tuple<LiteralsSet, AutomatonNode> (x.Value, x.Target));
+            return graph.OutEdges (root).Select (x => new Tuple<LiteralSetDecoration, AutomatonNode> (x.Value, x.Target));
         }
 
-        public override Automata<AutomatonNode, LiteralsSet> Clone ()
+        public override Automata<AutomatonNode, LiteralSetDecoration> Clone ()
         {
             throw new NotImplementedException ();
         }
     }
 
 
-    public class TGBA : OmegaAutomaton<AutomatonNode, LiteralsSet>
+    public class TGBA : OmegaAutomaton<AutomatonNode, LiteralSetDecoration>
     {
         public override AcceptanceConditions.IAcceptanceCondition<AutomatonNode> AcceptanceCondition {
             get {
@@ -87,17 +87,17 @@ namespace LtlSharp.Automata.OmegaAutomata
         public HashSet<AutomatonNode> InitialNodes;
 
         public TGBA ()
-            : base (new AutomatonNodeFactory (), new LiteralSetFactory ())
+            : base (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ())
         {
             InitialNodes = new HashSet<AutomatonNode> ();
         }
 
-        internal IEnumerable<Tuple<AutomatonNode, AutomatonNode, LiteralsSet>> OutEdges (AutomatonNode n0)
+        internal IEnumerable<Tuple<AutomatonNode, AutomatonNode, LiteralSetDecoration>> OutEdges (AutomatonNode n0)
         {
-            return graph.OutEdges (n0).Select (x => new Tuple<AutomatonNode, AutomatonNode, LiteralsSet> (n0, x.Target, x.Value));
+            return graph.OutEdges (n0).Select (x => new Tuple<AutomatonNode, AutomatonNode, LiteralSetDecoration> (n0, x.Target, x.Value));
         }
 
-        public override Automata<AutomatonNode, LiteralsSet> Clone ()
+        public override Automata<AutomatonNode, LiteralSetDecoration> Clone ()
         {
             throw new NotImplementedException ();
         }
@@ -105,13 +105,13 @@ namespace LtlSharp.Automata.OmegaAutomata
     
     public class TGBAAcceptanceSet {
         public int Id;
-        public HashSet<Tuple<AutomatonNode, AutomatonNode, LiteralsSet>> Transitions;
+        public HashSet<Tuple<AutomatonNode, AutomatonNode, LiteralSetDecoration>> Transitions;
         public TGBAAcceptanceSet (int id)
         {
             Id = id;
-            Transitions = new HashSet<Tuple<AutomatonNode, AutomatonNode, LiteralsSet>> ();
+            Transitions = new HashSet<Tuple<AutomatonNode, AutomatonNode, LiteralSetDecoration>> ();
         }
-        public void Add (Tuple<AutomatonNode, AutomatonNode, LiteralsSet> n)
+        public void Add (Tuple<AutomatonNode, AutomatonNode, LiteralSetDecoration> n)
         {
             Transitions.Add (n);
         }

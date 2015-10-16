@@ -11,11 +11,6 @@ namespace LtlSharp.Automata
     public interface IAutomatonTransitionDecorator<T>
         where T : IAutomatonTransitionDecorator<T>
     {
-        IEnumerable<ILiteral> GetAlphabet ();
-        LiteralsSet ToLiteralSet ();
-        
-        bool Entails (T l);
-        IEnumerable<T> UnfoldLabels (IEnumerable<ILiteral> enumerable);
     }
 }
 

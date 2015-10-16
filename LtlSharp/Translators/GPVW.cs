@@ -205,9 +205,9 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     if (!contradiction) {
                         // TODO fixme
                         //transition.Labels = new LiteralsSet (literals);
-						automaton.AddTransition (mapping [incomingNodeName], mapping [node.Name], literals);
+                        automaton.AddTransition (mapping [incomingNodeName], mapping [node.Name], new LiteralSetDecoration (literals));
                     } else {
-                        automaton.AddTransition (mapping [incomingNodeName], mapping [node.Name], new ILiteral[] { });   
+                        automaton.AddTransition (mapping [incomingNodeName], mapping [node.Name], new LiteralSetDecoration ());   
                     }
                     
                 }

@@ -22,7 +22,7 @@ namespace LtlSharp.Buchi.Translators
                 }
             }
 
-            var nfa = new NFA<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
+            var nfa = new NFA<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ());
             // TODO fixme
             //nfa.AddVertexRange (automata.Vertices);
             //nfa.AddEdgeRange (automata.Edges);

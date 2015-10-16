@@ -82,7 +82,7 @@ namespace LtlSharp.Monitoring
         public void Consume (MonitoredState state)
         {
             foreach (var current in currentPositive.ToList ()) {
-                var successors = positiveNFA.Post (current, (l, t) => state.Evaluate (l));
+                var successors = positiveNFA.Post (current, (l, t) => state.Evaluate (l.ToLiteralSet ()));
                 currentPositive.Remove (current);
                 foreach (var nt in successors) {
                     currentPositive.Add (nt);
@@ -90,7 +90,7 @@ namespace LtlSharp.Monitoring
             }
             
             foreach (var current in currentNegative.ToList ()) {
-                var successors = negativeNFA.Post (current, (l, t) => state.Evaluate (l));
+                var successors = negativeNFA.Post (current, (l, t) => state.Evaluate (l.ToLiteralSet ()));
                 currentNegative.Remove (current);
                 foreach (var nt in successors) {
                     currentNegative.Add (nt);

@@ -6,7 +6,7 @@ using LtlSharp.Utils;
 
 namespace LtlSharp.Automata.Transitions
 {
-    public class LiteralsSet : IEnumerable<ILiteral>, IAutomatonTransitionDecorator<LiteralsSet>
+    public class LiteralsSet : IEnumerable<ILiteral>
     {
         HashSet<ILiteral> _literals;
         
@@ -54,6 +54,54 @@ namespace LtlSharp.Automata.Transitions
             }));
         }
         
+        public bool Entails (LiteralsSet l)
+        {
+            return Project (l._literals).IsSubsetOf (_literals);
+        }
+        
+        public IEnumerable<LiteralsSet> Expand (IEnumerable<ILiteral> alphabet)
+        {
+            
+            Console.WriteLine ("start");
+            var s = new HashSet<LiteralsSet> ();
+            s.Add (new LiteralsSet ());
+
+            Console.WriteLine (string.Join (",", alphabet));
+            
+            var pending = new Stack<ILiteral> (alphabet);
+            while (pending.Count > 0) {
+                var current = pending.Pop ();
+                Console.WriteLine ("current = " + current);
+                
+                if (_literals.Contains (current)) {
+                    foreach (var e in s) {
+                        e.Add (current);
+                    }
+
+                } else if (_literals.Contains (current.Negate ())) {
+                    s = new HashSet<LiteralsSet> (s.Where (l => !l.Contains (current)));
+
+                } else {
+                    foreach (var e in s.ToList ()) {
+                        var ns = new LiteralsSet (e);
+                        ns.Add (current);
+                        s.Add (ns);
+                    }
+                }
+            }
+
+            foreach (var a in alphabet) {
+                foreach (var ss in s) {
+                    if (!ss.Contains (a)) {
+                        ss.Add ((ILiteral)a.Negate ());
+                    }
+                }
+            }
+            
+            Console.WriteLine ("end");
+            return s;
+        }
+        
         public override string ToString ()
         {
             return "{" + string.Join (", ", _literals) + "}";
@@ -89,58 +137,6 @@ namespace LtlSharp.Automata.Transitions
         public void Add (ILiteral literal)
         {
             _literals.Add (literal);
-        }
-
-        IEnumerable<ILiteral> IAutomatonTransitionDecorator<LiteralsSet>.GetAlphabet ()
-        {
-            return GetAlphabet ();
-        }
-
-        [Obsolete]
-        LiteralsSet IAutomatonTransitionDecorator<LiteralsSet>.ToLiteralSet ()
-        {
-            return this;
-        }
-
-        bool IAutomatonTransitionDecorator<LiteralsSet>.Entails (LiteralsSet l)
-        {
-            return Project (l._literals).IsSubsetOf (_literals);
-        }
-
-        IEnumerable<LiteralsSet> IAutomatonTransitionDecorator<LiteralsSet>.UnfoldLabels (IEnumerable<ILiteral> alphabet)
-        {
-            var s = new HashSet<LiteralsSet> ();
-            s.Add (new LiteralsSet ());
-
-            var pending = new Stack<ILiteral> (alphabet);
-            while (pending.Count > 0) {
-                var current = pending.Pop ();
-                if (_literals.Contains (current)) {
-                    foreach (var e in s) {
-                        e.Add (current);
-                    }
-
-                } else if (_literals.Contains (current.Negate ())) {
-                    s = new HashSet<LiteralsSet> (s.Where (l => !l.Contains (current)));
-
-                } else {
-                    foreach (var e in s.ToList ()) {
-                        var ns = new LiteralsSet (e);
-                        ns.Add (current);
-                        s.Add (ns);
-                    }
-                }
-            }
-
-            foreach (var a in alphabet) {
-                foreach (var ss in s) {
-                    if (!ss.Contains (a)) {
-                        ss.Add ((ILiteral)a.Negate ());
-                    }
-                }
-            }
-
-            return s;
         }
     }
 }

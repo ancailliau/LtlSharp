@@ -519,11 +519,11 @@ namespace LtlSharp.Buchi.LTL2Buchi
             foreach (var state in states) {
                 foreach (var transition in state.Transitions) {
                     foreach (var source in transition.Source) {
-                        var ltrans = new Tuple<AutomatonNode, AutomatonNode, LiteralsSet> (
+                        var ltrans = new Tuple<AutomatonNode, AutomatonNode, LiteralSetDecoration> (
                             correspondingState[source],
                             correspondingState[state.StateId],
-                            transition.Label
-                        );
+                            new LiteralSetDecoration (transition.Label)
+                        );//fixme
                         automaton.AddTransition (ltrans.Item1, ltrans.Item2, ltrans.Item3);
                         
                         for (int i = 0; i < transition.Accepting.Length; i++) {
@@ -548,7 +548,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         BuchiAutomaton<AutomatonNode> SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
         {
             var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> ();
-            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
+            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ());
 
             var n0 = tgba.InitialNodes.Single ();
             var n1 = degeneralizer.InitialNodes.Single ();

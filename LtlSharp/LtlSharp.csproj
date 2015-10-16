@@ -88,9 +88,7 @@
     <Compile Include="Translators\SafraDeterminization.cs" />
     <Compile Include="Translators\Transformer.cs" />
     <Compile Include="Automata\OmegaAutomata\RabinAutomaton.cs" />
-    <Compile Include="Translators\Fold.cs" />
     <Compile Include="Utils\CollectionUtils.cs" />
-    <Compile Include="Translators\Unfold.cs" />
     <Compile Include="Automata\OmegaAutomata\OmegaAutomaton.cs" />
     <Compile Include="Automata\AcceptanceConditions\IAcceptanceCondition.cs" />
     <Compile Include="Automata\AcceptanceConditions\BuchiAcceptance.cs" />
@@ -108,11 +106,13 @@
     <Compile Include="LiteralsSet.cs" />
     <Compile Include="Automata\Automata.cs" />
     <Compile Include="Automata\Transitions\Factories\IAutomatonTransitionFactory.cs" />
-    <Compile Include="Automata\Transitions\Factories\LiteralSetFactory.cs" />
     <Compile Include="Automata\Transitions\Factories\DegeneralizerAutomataTransitionFactory.cs" />
     <Compile Include="Automata\Transitions\DegeneralizerAutomataTransition.cs" />
     <Compile Include="Automata\Transitions\Factories\ProbabilityDecoratorFactory.cs" />
     <Compile Include="Automata\Utils\ProbabilityTransitionExtensions.cs" />
+    <Compile Include="Automata\Utils\LiteralSetTransitionExtensions.cs" />
+    <Compile Include="Automata\Transitions\LiteralSetDecoration.cs" />
+    <Compile Include="Automata\Transitions\Factories\LiteralSetDecorationFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Language\LTL.g" />

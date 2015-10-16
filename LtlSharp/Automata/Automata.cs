@@ -103,36 +103,27 @@ namespace LtlSharp.Automata
             foreach (var trans in graph.Edges.ToList ()) {
                 graph.RemoveEdge (trans);
                 foreach (var m in map (trans.Value)) {
-                    graph.AddEdge (new ParametrizedEdge<T, T2> (trans.Source, trans.Target, m));
+                    AddTransition (trans.Source, trans.Target, m);
                 }
             }
         }
 
         /// <summary>
-        /// Returns the set of literals that correspond to (at least) a transition.
+        /// Returns the set of decorations that correspond to (at least) a transition from the specified node.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<ILiteral> Alphabet ()
-        {
-            return graph.Edges.SelectMany (e => e.Value.GetAlphabet ()).Distinct ();
-        }
-
-        /// <summary>
-        /// Returns the set of literals that correspond to (at least) a transition from the specified node.
-        /// </summary>
-        /// <param name="node">Node.</param>
-        public IEnumerable<T2> OutAlphabet (T node)
+        public IEnumerable<T2> GetOutDecorations (T node)
         {
             return graph.OutEdges (node).Select (e => e.Value).Distinct ();
         }
 
         /// <summary>
-        /// Returns the set of literals that correspond to (at least) a transition for (at least) a specified node.
+        /// Returns the set of decorations that correspond to (at least) a transition for (at least) a specified node.
         /// </summary>
         /// <param name="node">Node.</param>
-        public IEnumerable<T2> OutAlphabet (IEnumerable<T> nodes)
+        public IEnumerable<T2> GetOutDecorations (IEnumerable<T> nodes)
         {
-            return nodes.SelectMany (OutAlphabet).Distinct ();
+            return nodes.SelectMany (GetOutDecorations).Distinct ();
         }
 
         /// <summary>
@@ -152,41 +143,15 @@ namespace LtlSharp.Automata
         {
             return nodes.SelectMany (node => Post(node));
         }
-
-        /// <summary>
-        /// Returns all the successor nodes of the specified node for the specified transition label.
-        /// </summary>
-        /// <param name="node">Node.</param>
-        public IEnumerable<T> Post (T node, T2 labels)
+        
+        public IEnumerable<T> Post (T node, T2 value)
         {
-            return Post (node, (l, target) => labels.Entails(l));
+            return Post(node, (arg1, arg2) => arg1.Equals(value));
         }
-
-        /// <summary>
-        /// Returns all the successor nodes of the specified nodes for the specified transition label.
-        /// </summary>
-        /// <param name="node">Node.</param>
-        public IEnumerable<T> Post (IEnumerable<T> nodes, T2 labels)
+        
+        public IEnumerable<T> Post (IEnumerable<T> nodes, T2 value)
         {
-            return nodes.SelectMany (node => Post(node, labels));
-        }
-
-        /// <summary>
-        /// Returns all the successor nodes of the specified node for all the specified transition label.
-        /// </summary>
-        /// <param name="node">Node.</param>
-        public IEnumerable<T> Post (T node, IEnumerable<T2> labels)
-        {
-            return labels.SelectMany (l => Post(node, l));
-        }
-
-        /// <summary>
-        /// Returns all the successor nodes of the specified nodes for all the specified transition label.
-        /// </summary>
-        /// <param name="node">Node.</param>
-        public IEnumerable<T> Post (IEnumerable<T> nodes, IEnumerable<T2> labels)
-        {
-            return nodes.SelectMany (node => Post(node, labels));
+            return nodes.SelectMany (node => Post(node, value));
         }
 
         /// <summary>
@@ -296,17 +261,6 @@ namespace LtlSharp.Automata
                 graph.AddEdge (edge);
         }
 
-        /// <summary>
-        /// Adds the specified transition to the automaton.
-        /// </summary>
-        /// <param name="transition">Transition.</param>
-        public void AddTransition (T source, T target, IEnumerable<ILiteral> value)
-        {
-            var edge = new ParametrizedEdge<T, T2> (source, target, factoryTransition.Create (value));
-            if (!graph.ContainsEdge(edge))
-                graph.AddEdge (edge);
-        }
-
         public void RemoveAllTransitions (T node)
         {
             graph.ClearOutEdges (node);
@@ -352,35 +306,6 @@ namespace LtlSharp.Automata
         }
 
         /// <summary>
-        /// Returns whether the omega automaton is deterministic.
-        /// </summary>
-        /// <returns><c>True</c> if deterministic, <c>False</c> otherwise.</returns>
-        public bool IsDeterministic (T initialNode)
-        {
-            var pending = new Stack<T> (new [] { initialNode });
-            var visited = new HashSet<T> ();
-
-            while (pending.Count > 0) {
-                var s0 = pending.Pop ();
-                visited.Add (s0);
-
-                var transitions = graph.OutEdges (s0);
-                // TODO Simpler expression MUST exist !
-                foreach (var c in transitions.Select (x => x.Value)) {
-                    var succ = transitions.Where (t => c.Entails(t.Value)).Select (t => t.Target);
-                    if (succ.Count () > 1)
-                        return false;
-
-                    foreach (var s in succ.Except (visited)) {
-                        pending.Push (s);
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
         /// Indicates whether the specified node is absorbing.
         /// </summary>
         /// <param name="node">Node.</param>
@@ -388,30 +313,6 @@ namespace LtlSharp.Automata
         public bool IsAbsorbing (T node)
         {
             return Post (node).All (v2 => v2.Equals (node));
-        }
-
-        public void SimplifyTransitions ()
-        {
-            foreach (var node in graph.Vertices) {
-                var transitions = graph.OutEdges (node);
-                foreach (var trans in transitions.ToList ()) {
-                    var sameTarget = transitions.Where (t => t.Target.Equals (trans.Target)).ToList ();
-                    var labels = sameTarget.Select (x => x.Value.ToLiteralSet ());
-                    var lf = new LiteralFormula (labels);
-                    var newLabels = lf.Simplify ();
-                    foreach (var e in sameTarget) {
-                        graph.RemoveEdge (e);
-                    }
-                    foreach (var nl in newLabels) {
-                        graph.AddEdge (new ParametrizedEdge<T,T2> (trans.Source, trans.Target, factoryTransition.Create (nl)));
-                    }
-                }
-            }
-        }
-
-        public void UnfoldTransitions ()
-        {
-            MapLabel ((arg) => arg.UnfoldLabels (Alphabet ()));
         }
 
         public virtual string ToDot ()

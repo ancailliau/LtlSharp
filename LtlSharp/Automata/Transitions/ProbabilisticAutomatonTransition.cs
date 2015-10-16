@@ -52,25 +52,6 @@ namespace LtlSharp.Automata
             }
         }
 
-        IEnumerable<ILiteral> IAutomatonTransitionDecorator<ProbabilityTransitionDecorator>.GetAlphabet ()
-        {
-            throw new NotImplementedException ();
-        }
-
-        LiteralsSet IAutomatonTransitionDecorator<ProbabilityTransitionDecorator>.ToLiteralSet ()
-        {
-            throw new NotImplementedException ();
-        }
-
-        bool IAutomatonTransitionDecorator<ProbabilityTransitionDecorator>.Entails (ProbabilityTransitionDecorator l)
-        {
-            throw new NotImplementedException ();
-        }
-
-        IEnumerable<ProbabilityTransitionDecorator> IAutomatonTransitionDecorator<ProbabilityTransitionDecorator>.UnfoldLabels (IEnumerable<ILiteral> enumerable)
-        {
-            throw new NotImplementedException ();
-        }
     }
 }
 

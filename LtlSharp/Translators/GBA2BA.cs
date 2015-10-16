@@ -33,7 +33,7 @@ namespace LtlSharp.Buchi.Translators
             
             // If the GBA contains only one acceptance set, then it is a BA.
             if (gba.AcceptanceSets.Length == 1) {
-                var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
+                var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ());
                 automata.AddNodes (gba.Nodes);
                 foreach (var e in gba.Edges) {
                     automata.AddTransition (e.Item1, e.Item3, e.Item2);
@@ -53,7 +53,7 @@ namespace LtlSharp.Buchi.Translators
                 mapping [i] = new Dictionary<AutomatonNode, AutomatonNode> ();
             }
             
-            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
+            var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ());
             foreach (var qi in gba.InitialNodes) {
                 Recur (qi, ba, 0, gba);
             }

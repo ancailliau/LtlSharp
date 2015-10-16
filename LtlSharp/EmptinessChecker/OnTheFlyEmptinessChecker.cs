@@ -5,6 +5,7 @@ using LtlSharp.Buchi;
 using LtlSharp;
 using LtlSharp.Automata;
 using LtlSharp.Automata.OmegaAutomata;
+using LtlSharp.Automata.Utils;
 
 namespace LittleSharp.Buchi
 {

@@ -45,7 +45,7 @@ namespace LtlSharp.Monitoring
             if (currentNegative == null | currentPositive == null)
                 return;
 
-            var successors = positiveNFA.Post (currentPositive, (l, t) => state.Evaluate (l));
+            var successors = positiveNFA.Post (currentPositive, (l, t) => state.Evaluate (l.ToLiteralSet ()));
             if (successors.Count () == 1) {
                 currentPositive = successors.Single ();
 
@@ -59,7 +59,7 @@ namespace LtlSharp.Monitoring
                 throw new NotImplementedException ("Non deterministic automata not supported.");
             }
 
-            successors = negativeNFA.Post (currentNegative,(l, t) => state.Evaluate (l));
+            successors = negativeNFA.Post (currentNegative,(l, t) => state.Evaluate (l.ToLiteralSet ()));
             if (successors.Count () == 1) {
                 currentNegative = successors.Single ();
 

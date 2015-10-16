@@ -12,6 +12,7 @@ using LtlSharp.Automata.Transitions;
 using LtlSharp.Utils;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Automata.Transitions.Factories;
+using LtlSharp.Automata.Utils;
 
 namespace LtlSharp.Automata.FiniteAutomata
 {
@@ -24,7 +25,7 @@ namespace LtlSharp.Automata.FiniteAutomata
     /// </remarks>
     /// <typeparam name="T">Type of nodes</typeparam>
     public class NFA<T> 
-        : Automata<T, LiteralsSet>
+        : Automata<T, LiteralSetDecoration>
         where T : IAutomatonNode
     {   
         
@@ -45,7 +46,7 @@ namespace LtlSharp.Automata.FiniteAutomata
         /// specified factory and an empty set of accepting nodes.
         /// </summary>
         /// <param name="factory">Factory.</param>
-        public NFA (IAutomatonNodeFactory<T> factory, IAutomatonTransitionFactory<LiteralsSet> factoryTransition) 
+        public NFA (IAutomatonNodeFactory<T> factory, IAutomatonTransitionFactory<LiteralSetDecoration> factoryTransition) 
             : base (factory, factoryTransition)
         {
             AcceptingNodes = new HashSet<T> ();
@@ -65,10 +66,10 @@ namespace LtlSharp.Automata.FiniteAutomata
         /// </summary>
         public NFA<PowerSetAutomatonNode<T>> Determinize ()
         {
-            UnfoldTransitions ();
+            this.UnfoldTransitions ();
 
             var factory = new PowerSetAutomatonNodeFactory<T> ();
-            var factoryT = new LiteralSetFactory ();
+            var factoryT = new LiteralSetDecorationFactory ();
             
             var deterministicAutomaton = new NFA<PowerSetAutomatonNode<T>> (factory, factoryT);
 
@@ -95,7 +96,7 @@ namespace LtlSharp.Automata.FiniteAutomata
                 visited.Add (current);
                 
                 var currentPowerSet = current.Nodes;
-                var outLabels = OutAlphabet (currentPowerSet);
+                var outLabels = GetOutDecorations (currentPowerSet);
                 
                 foreach (var label in outLabels) {
                     var successorPowerSet = new HashSet<T> ();
@@ -127,7 +128,7 @@ namespace LtlSharp.Automata.FiniteAutomata
             return deterministicAutomaton;
         }
 
-        public override Automata<T, LiteralsSet> Clone ()
+        public override Automata<T, LiteralSetDecoration> Clone ()
         {
             throw new NotImplementedException ();
         }

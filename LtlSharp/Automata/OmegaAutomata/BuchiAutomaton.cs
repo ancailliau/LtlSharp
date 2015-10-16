@@ -14,7 +14,7 @@ using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Automata.OmegaAutomata
 {
-    public class BuchiAutomaton<T> : OmegaAutomaton<T, LiteralsSet> where T : IAutomatonNode
+    public class BuchiAutomaton<T> : OmegaAutomaton<T, LiteralSetDecoration> where T : IAutomatonNode
     {
         BuchiAcceptance<T> _acceptanceCondition;
         
@@ -22,7 +22,7 @@ namespace LtlSharp.Automata.OmegaAutomata
             get { return _acceptanceCondition; }
         }
 
-        public BuchiAutomaton (IAutomatonNodeFactory<T> factory, IAutomatonTransitionFactory<LiteralsSet> factoryTransition) : base (factory, factoryTransition)
+        public BuchiAutomaton (IAutomatonNodeFactory<T> factory, IAutomatonTransitionFactory<LiteralSetDecoration> factoryTransition) : base (factory, factoryTransition)
         {
             _acceptanceCondition = new BuchiAcceptance<T> ();
         }
@@ -38,9 +38,19 @@ namespace LtlSharp.Automata.OmegaAutomata
             _acceptanceCondition.Add (node);
         }
         
+        public void AddTransition (T source, T target, ILiteral l)
+        {
+            this.AddTransition (source, target, new LiteralSetDecoration (new [] { l }));
+        }
+
+        public void AddTransition (T source, T target, IEnumerable<ILiteral> l)
+        {
+            this.AddTransition (source, target, new LiteralSetDecoration (l));
+        }
+        
         public string ToDot ()
         {
-            var graphviz = new GraphvizAlgorithm<T, ParametrizedEdge<T, LiteralsSet>> (graph);
+            var graphviz = new GraphvizAlgorithm<T, ParametrizedEdge<T, LiteralSetDecoration>> (graph);
             graphviz.FormatVertex += (object sender, FormatVertexEventArgs<T> e) => {
                 e.VertexFormatter.Label = e.Vertex.Name;
                 if (this.InitialNode.Equals (e.Vertex))
@@ -48,13 +58,13 @@ namespace LtlSharp.Automata.OmegaAutomata
                 if (AcceptanceCondition.Accept (e.Vertex))
                     e.VertexFormatter.Shape = QuickGraph.Graphviz.Dot.GraphvizVertexShape.DoubleCircle;
             };
-            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<T, ParametrizedEdge<T, LiteralsSet>> e) => {
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<T, ParametrizedEdge<T, LiteralSetDecoration>> e) => {
                 e.EdgeFormatter.Label.Value = e.Edge.Value.ToString ();
             };
             return graphviz.Generate ();
         }
 
-        public override Automata<T, LiteralsSet> Clone ()
+        public override Automata<T, LiteralSetDecoration> Clone ()
         {
             throw new NotImplementedException ();
         }

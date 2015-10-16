@@ -9,6 +9,7 @@ using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Automata.Transitions.Factories;
+using LtlSharp.Automata.Utils;
 
 namespace LtlSharp.Translators
 {
@@ -345,11 +346,11 @@ namespace LtlSharp.Translators
                 var source = pending.Pop ();                
                 visited.Add (source);
                 
-                foreach (var a in ba.OutAlphabet (source.MacroState)) {
+                foreach (var a in ba.GetOutDecorations (source.MacroState)) {
                     var target = source.Clone ();
                     target.RemoveAllMarks (); // Step 1
                     target.Create (); // Step 2
-                    target.Update (a); // Step 3
+                    target.Update (a.ToLiteralSet ()); // Step 3
                     target.HorizontalMerge (); // Step 4
                     target.RemoveEmpty (); // Step 5
                     if (target.MacroState.Count > 0) {
@@ -358,7 +359,7 @@ namespace LtlSharp.Translators
                         if (!Transitions.ContainsKey (source)) {
                             Transitions.Add (source, new List<SafraTransition> ());
                         }
-                        Transitions[source].Add (new SafraTransition (a, target));
+                        Transitions[source].Add (new SafraTransition (a.ToLiteralSet (), target));
                         
                         if (!Transitions.ContainsKey (target) & !pending.Contains (target)) {
                             pending.Push (target);
@@ -367,7 +368,7 @@ namespace LtlSharp.Translators
                 }
             }
             
-            var rabin = new RabinAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetFactory ());
+            var rabin = new RabinAutomaton<AutomatonNode> (new AutomatonNodeFactory (), new LiteralSetDecorationFactory ());
             var mapping = new Dictionary<SafraTree, AutomatonNode> ();
             int i = 0;
             foreach (var t in Transitions.Keys) {
@@ -380,7 +381,7 @@ namespace LtlSharp.Translators
             
             foreach (var t in Transitions) {
                 foreach (var e in t.Value) {
-                    rabin.AddTransition (mapping [t.Key], mapping [e.Target], e.Labels);
+                    rabin.AddTransition (mapping [t.Key], mapping [e.Target], new LiteralSetDecoration (e.Labels));
                 }
             }
             

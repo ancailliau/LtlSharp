@@ -43,30 +43,6 @@ namespace LtlSharp.Automata.Transitions
             return 17 + 23 * (base.GetHashCode () + 23 * (Labels.GetHashCodeForElements () + 23 * Else.GetHashCode ()));
         }
 
-        public IEnumerable<ILiteral> GetAlphabet ()
-        {
-            throw new NotImplementedException ();
-        }
-
-        IEnumerable<ILiteral> IAutomatonTransitionDecorator<DegeneralizerAutomataTransition>.GetAlphabet ()
-        {
-            throw new NotImplementedException ();
-        }
-
-        LiteralsSet IAutomatonTransitionDecorator<DegeneralizerAutomataTransition>.ToLiteralSet ()
-        {
-            throw new NotImplementedException ();
-        }
-
-        bool IAutomatonTransitionDecorator<DegeneralizerAutomataTransition>.Entails (DegeneralizerAutomataTransition l)
-        {
-            throw new NotImplementedException ();
-        }
-
-        IEnumerable<DegeneralizerAutomataTransition> IAutomatonTransitionDecorator<DegeneralizerAutomataTransition>.UnfoldLabels (IEnumerable<ILiteral> enumerable)
-        {
-            throw new NotImplementedException ();
-        }
     }
 }
 

@@ -278,8 +278,15 @@ namespace LtlSharp.Automata.Utils
             Dictionary<T, double> dict;
 
             var buchi = (new Gia02 ()).GetAutomaton (formula);
+            
+            Console.WriteLine ("/*");
+            Console.WriteLine (buchi.ToDot ());
+            
             buchi.UnfoldTransitions ();
-
+            
+            Console.WriteLine (buchi.ToDot ());
+            Console.WriteLine ("*/");
+            
             // If buchi automaton is deterministic, no need for transforming to rabin automaton. 
             // This save a little computation.
             if (buchi.IsDeterministic (buchi.InitialNode)) {
@@ -387,7 +394,7 @@ namespace LtlSharp.Automata.Utils
 
         static Automata<ProductAutomatonNode<T1, T2>, ProbabilityTransitionDecorator> Product<T1, T2> (
             this Automata<T1, ProbabilityTransitionDecorator> automaton1,
-            OmegaAutomaton<T2, LiteralsSet> automaton2,
+            OmegaAutomaton<T2, LiteralSetDecoration> automaton2,
             IEnumerable<T1> initials,
             out Dictionary<T1, ProductAutomatonNode<T1,T2>> correspondingNodes)
             where T1 : IAutomatonNode
@@ -411,8 +418,22 @@ namespace LtlSharp.Automata.Utils
             T2 successorInWA;
             ProductAutomatonNode<T1,T2> newNode;
 
+            Console.WriteLine (automaton2.ToDot ());
+            
             foreach (var initial in initials) {
                 successorsInWA = automaton2.Post (initWA, initial.Labels);
+                
+                Console.WriteLine ("----");
+                foreach (var s in automaton2.GetTransitions (initWA)) {
+                    Console.WriteLine (s);
+                }
+                Console.WriteLine ("----");
+                Console.WriteLine ("---- " + initWA + " -- " + initial.Labels);
+                foreach (var s in successorsInWA) {
+                    Console.WriteLine (s);
+                }
+                Console.WriteLine ("----");
+                
                 if (successorsInWA.Count () > 1)
                     throw new NotSupportedException ("Product between non-deterministic automaton is not supported.");
 
