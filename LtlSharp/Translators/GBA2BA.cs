@@ -34,7 +34,7 @@ namespace LtlSharp.Buchi.Translators
                 var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
                 automata.AddNodes (gba.Nodes);
                 foreach (var e in gba.Edges) {
-                    automata.AddTransition (e.Item1, e.Item3, e.Item2);
+                    automata.AddTransition (e.Source, e.Target, e.Decoration);
                 }
                 automata.SetInitialNode (gba.InitialNode);
                 automata.SetAcceptanceCondition (gba.GetAcceptanceCondition()[0]);
@@ -83,9 +83,9 @@ namespace LtlSharp.Buchi.Translators
             }
             
             foreach (var t in generalizedBuchiAutomaton.GetTransitions (node)) {
-                var n2 = Recur (t.Item1, buchiAutomaton, newAcceptanceIndex, generalizedBuchiAutomaton);
+                var n2 = Recur (t.Target, buchiAutomaton, newAcceptanceIndex, generalizedBuchiAutomaton);
                 //var t2 = new AutomatonTransition<AutomatonNode> (bANode, n2, t.Labels);
-                buchiAutomaton.AddTransition (newNode, n2, t.Item2);
+                buchiAutomaton.AddTransition (newNode, n2, t.Decoration);
             }
             
             return newNode;

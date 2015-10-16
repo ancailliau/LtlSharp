@@ -12,15 +12,15 @@ namespace LtlSharp.Automata.Utils
             where T : IAutomatonNode
         {
             foreach (var trans in automata.Edges) {
-                var sameTarget = automata.Edges.Where (t => t.Item3.Equals (trans.Item3)).ToList ();
-                var labels = sameTarget.Select (x => x.Item2.ToLiteralSet ());
+                var sameTarget = automata.Edges.Where (t => t.Target.Equals (trans.Target)).ToList ();
+                var labels = sameTarget.Select (x => x.Decoration.ToLiteralSet ());
                     var lf = new LiteralFormula (labels);
                     var newLabels = lf.Simplify ();
                     foreach (var e in sameTarget) {
-                    automata.RemoveTransition (e.Item1, e.Item3, e.Item2);
+                    automata.RemoveTransition (e.Source, e.Target, e.Decoration);
                     }
                     foreach (var nl in newLabels) {
-                    automata.AddTransition (trans.Item1, trans.Item3, new LiteralSetDecoration (nl));
+                    automata.AddTransition (trans.Source, trans.Target, new LiteralSetDecoration (nl));
                     }
                 }
         }
@@ -40,7 +40,7 @@ namespace LtlSharp.Automata.Utils
         public static IEnumerable<ILiteral> Alphabet<T> (this Automata<T, LiteralSetDecoration> automata)
             where T : IAutomatonNode
         {
-            return automata.Edges.SelectMany (e => e.Item2.ToLiteralSet ().GetAlphabet ()).Distinct ();
+            return automata.Edges.SelectMany (e => e.Decoration.ToLiteralSet ().GetAlphabet ()).Distinct ();
         }
         
         
@@ -62,9 +62,9 @@ namespace LtlSharp.Automata.Utils
 
                 var transitions = automata.GetTransitions (s0);
                 // TODO Simpler expression MUST exist !
-                foreach (var c in transitions.Select (x => x.Item2)) {
+                foreach (var c in transitions.Select (x => x.Decoration)) {
                     // Better use POST with a predicate
-                    var succ = transitions.Where (t => c.ToLiteralSet ().Entails(t.Item2.ToLiteralSet ())).Select (t => t.Item1);
+                    var succ = transitions.Where (t => c.ToLiteralSet ().Entails(t.Decoration.ToLiteralSet ())).Select (t => t.Target);
                     if (succ.Count () > 1)
                         return false;
 

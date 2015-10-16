@@ -35,10 +35,10 @@ namespace LtlSharp.Automata.Utils
             var t = mc.GetTransitions (target);
             foreach (var tr in t) {
                 if (value == 0) {
-                    mc.RemoveTransition (source, tr.Item1, tr.Item2);
+                    mc.RemoveTransition (source, tr.Target, tr.Decoration);
                 } else {
                     var v = new ProbabilityTransitionDecorator (value);
-                    mc.ReplaceTransitionValue (source, tr.Item1, tr.Item2, v);
+                    mc.ReplaceTransitionValue (source, tr.Target, tr.Decoration, v);
                 }
             }
 

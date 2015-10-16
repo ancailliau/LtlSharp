@@ -25,9 +25,9 @@ namespace LtlSharp.Automata
             }
         }
 
-        public IEnumerable<Tuple<T, T2, T>> Edges { 
+        public IEnumerable<AutomataTransition<T, T2>> Edges { 
             get {
-                return graph.Edges.Select (x => new Tuple<T, T2, T> (x.Source, x.Value, x.Target));
+                return graph.Edges.Select (x => new AutomataTransition<T, T2> (x.Source, x.Target, x.Value));
             }
         }
 
@@ -61,9 +61,9 @@ namespace LtlSharp.Automata
             }
         }
 
-        public IEnumerable<Tuple<T, T2>> GetTransitions (T source)
+        public IEnumerable<AutomataTransition<T, T2>> GetTransitions (T source)
         {
-            return graph.OutEdges (source).Select (x => new Tuple<T, T2> (x.Target, x.Value));
+            return graph.OutEdges (source).Select (x => new AutomataTransition<T, T2> (source, x.Target, x.Value));
         }
 
         public T2 GetTransition (T source, T target)
@@ -320,6 +320,20 @@ namespace LtlSharp.Automata
         }
 
         public abstract Automata<T, T2> Clone ();
+    }
+    
+    public struct AutomataTransition<T1, T2>
+    {
+        public readonly T1 Source;
+        public readonly T1 Target;
+        public readonly T2 Decoration;
+
+        public AutomataTransition (T1 source, T1 target, T2 decoration)
+        {
+            Source = source;
+            Target = target;
+            Decoration = decoration;
+        }
     }
 }
 
