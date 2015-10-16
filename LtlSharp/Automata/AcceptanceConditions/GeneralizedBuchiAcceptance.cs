@@ -57,6 +57,11 @@ namespace LtlSharp.Automata.AcceptanceConditions
             }
             return null;
         }
+
+        public bool HasKey (int i)
+        {
+            return _buchiAcceptances.ContainsKey (i);
+        }
         
         #region IAcceptanceCondition<T> Members
 
