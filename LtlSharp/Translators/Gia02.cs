@@ -500,10 +500,9 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var init = InternalNode.CreateInitial (phi);
             var states = init.Expand (new HashSet<InternalState> ());
             
-            var automaton = new TGBA ();
-            automaton.AcceptanceSets = new TGBAAcceptanceSet[init.Untils.Length];
-            for (int i = 0; i < automaton.AcceptanceSets.Length; i++) {
-                automaton.AcceptanceSets[i] = new TGBAAcceptanceSet (i);   
+            var automaton = new TransitionGeneralizedBuchiAutomata<AutomatonNode> (new AutomatonNodeFactory ());
+            for (int i = 0; i < init.Untils.Length; i++) {
+                automaton.GetAcceptanceCondition ().Add (i, new AutomataTransition<AutomatonNode, LiteralSetDecoration>[] { });
             }
             
             var correspondingState = new Dictionary<int, AutomatonNode> ();
@@ -514,21 +513,21 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 correspondingState.Add (state.StateId, node);
             }
 
-            automaton.InitialNodes.Add (correspondingState[0]);
+            automaton.SetInitialNode (correspondingState[0]);
             
             foreach (var state in states) {
                 foreach (var transition in state.Transitions) {
                     foreach (var source in transition.Source) {
-                        var ltrans = new Tuple<AutomatonNode, AutomatonNode, LiteralSetDecoration> (
+                        var ltrans = new AutomataTransition<AutomatonNode, LiteralSetDecoration> (
                             correspondingState[source],
                             correspondingState[state.StateId],
                             new LiteralSetDecoration (transition.Label)
                         );//fixme
-                        automaton.AddTransition (ltrans.Item1, ltrans.Item2, ltrans.Item3);
+                        automaton.AddTransition (ltrans);
                         
                         for (int i = 0; i < transition.Accepting.Length; i++) {
                             if (!transition.Accepting.Get (i)) {
-                                automaton.AcceptanceSets[i].Add (ltrans);
+                                automaton.GetAcceptanceCondition ()[i].Add (ltrans);
                             }
                         }
                     }
@@ -537,7 +536,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             
             Console.WriteLine (automaton.ToDot ());
 
-            var degeneralizer = Generate (automaton.AcceptanceSets.Length);
+            var degeneralizer = Generate (automaton.GetAcceptanceCondition ().Count);
 
             
             Console.WriteLine (degeneralizer.ToDot ());
@@ -545,12 +544,12 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return SynchrounousProduct (automaton, degeneralizer); 
         }
 
-        BuchiAutomaton<AutomatonNode> SynchrounousProduct (TGBA tgba, Degeneralizer degeneralizer)
+        BuchiAutomaton<AutomatonNode> SynchrounousProduct (TransitionGeneralizedBuchiAutomata<AutomatonNode> tgba, Degeneralizer degeneralizer)
         {
             var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> ();
             var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
 
-            var n0 = tgba.InitialNodes.Single ();
+            var n0 = tgba.InitialNode;
             var n1 = degeneralizer.InitialNodes.Single ();
             DFSSynchrounousProduct (ba, tgba, degeneralizer,
                                     cache, n0, n1);
@@ -560,13 +559,13 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return ba;
         }
 
-        void DFSSynchrounousProduct (BuchiAutomaton<AutomatonNode> ba, TGBA tgba, Degeneralizer degeneralizer,
+        void DFSSynchrounousProduct (BuchiAutomaton<AutomatonNode> ba, TransitionGeneralizedBuchiAutomata<AutomatonNode> tgba, Degeneralizer degeneralizer,
                                      Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> cache, 
                                      AutomatonNode n0, AutomatonNode n1) {
             
             var n = Get (ba, tgba, degeneralizer, cache, n0, n1);
 
-            var t0 = tgba.OutEdges (n0);
+            var t0 = tgba.GetTransitions (n0);
             var t1 = degeneralizer.OutEdges (n1).ToList ();
             
             Console.WriteLine ("****");
@@ -590,7 +589,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             ParametrizedEdge<AutomatonNode, DegeneralizerAutomataTransition> theEdge = null;
             
             foreach (var e0 in t0) {
-                var next0 = e0.Item2;
+                var next0 = e0.Target;
                 var found = false;
                 foreach (var e1 in t1) {
                     if (found) {
@@ -603,8 +602,8 @@ namespace LtlSharp.Buchi.LTL2Buchi
                         }
                     } else {
                         found = true;
-                        for (int i = 0; i < tgba.AcceptanceSets.Length; i++) {
-                            var b0 = tgba.AcceptanceSets [i].Transitions.Contains (e0);
+                        for (int i = 0; i < tgba.GetAcceptanceCondition ().Count; i++) {
+                            var b0 = tgba.GetAcceptanceCondition () [i].Accept (e0);
                             var b1 = e1.Value.Labels.Contains (i);
                             if (b1 & !b0) {
                                 found = false;
@@ -624,7 +623,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     var next = Get (ba, tgba, degeneralizer, cache, next0, next1);
 
                     //var t = new AutomatonTransition<AutomatonNode> (n, next, e0.Labels);
-                    ba.AddTransition (n, next, e0.Item3);
+                    ba.AddTransition (n, next, e0.Decoration);
                     
                     if (newNext) {
                         DFSSynchrounousProduct (ba, tgba, degeneralizer, cache, next0, next1);
@@ -633,7 +632,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        AutomatonNode Get (BuchiAutomaton<AutomatonNode> ba, TGBA automaton, Degeneralizer degeneralizer,
+        AutomatonNode Get (BuchiAutomaton<AutomatonNode> ba, TransitionGeneralizedBuchiAutomata<AutomatonNode> automaton, Degeneralizer degeneralizer,
                                   Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> cache, 
                                   AutomatonNode n0, AutomatonNode n1)
         {
