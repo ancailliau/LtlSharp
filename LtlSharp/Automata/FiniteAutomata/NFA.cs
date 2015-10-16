@@ -126,6 +126,11 @@ namespace LtlSharp.Automata.FiniteAutomata
             
             return deterministicAutomaton;
         }
+
+        public override Automata<T, LiteralsSet> Clone ()
+        {
+            throw new NotImplementedException ();
+        }
     }
 }
 

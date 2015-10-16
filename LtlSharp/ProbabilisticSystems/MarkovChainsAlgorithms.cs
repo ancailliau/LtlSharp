@@ -14,6 +14,54 @@ namespace LtlSharp.ProbabilisticSystems
 {
     public static class MarkovChainsAlgorithms
     {
+        
+        
+
+        /// <summary>
+        /// Sets the probability for the transition between the source and the target.
+        /// </summary>
+        /// <remarks>The transition will be updated if it exists, created if not.</remarks>
+        /// <param name="source">Source.</param>
+        /// <param name="target">Target.</param>
+        /// <param name="value">Value.</param>
+        public static void SetProbability<T> (this Automata<T, ProbabilityTransitionDecorator> mc, 
+                                              T source, 
+                                              T target, 
+                                              double value)
+            where T : IAutomatonNode
+        {
+            var t = mc.GetTransitions (target);
+            foreach (var tr in t) {
+                if (value == 0) {
+                    mc.RemoveTransition (source, tr.Item1, tr.Item2);
+                } else {
+                    var v = new ProbabilityTransitionDecorator (value);
+                    mc.ReplaceTransitionValue (source, tr.Item1, tr.Item2, v);
+                }
+            }
+            
+            if (!t.Any () & value > 0) {
+                var v = new ProbabilityTransitionDecorator (value);
+                mc.AddTransition (source, target, v);
+            }
+        }
+
+        /// <summary>
+        /// Gets the probability of taking the transition from source to target.
+        /// </summary>
+        /// <returns>The probability.</returns>
+        /// <param name="source">Source.</param>
+        /// <param name="target">Target.</param>
+        public static double GetProbability<T> (this Automata<T, ProbabilityTransitionDecorator> mc, 
+                                                T source, 
+                                                T target)
+            where T : IAutomatonNode
+        {
+            return mc.GetTransition (source, target)?.Probability ?? 0;
+            //return graph.OutEdges (source).SingleOrDefault (x => x.Target.Equals (target))?.Value.Probability ?? 0;
+        }
+        
+        
         /// <summary>
         /// Returns the probability to reach a node of <c>B</c> for each node in <c>AllPre(B)</c>
         /// </summary>
@@ -33,7 +81,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <param name="epsilon">Epsilon.</param>
         /// <param name="n">Number of steps, if iterative resolution. Set to <c>-1</c> to not stop after <c>n</c> 
         /// steps.</param>
-        public static IDictionary<T, double> Reachability<T> (this MarkovChain<T> mc, 
+        public static IDictionary<T, double> Reachability<T> (this Automata<T, ProbabilityTransitionDecorator> mc, 
                                                                        IEnumerable<T> B,
                                                                     bool iterative = false, 
                                                                     double epsilon = 1e-5,
@@ -58,7 +106,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <param name="epsilon">Epsilon.</param>
         /// <param name="n">Number of steps, if iterative resolution. Set to <c>-1</c> to not stop after <c>n</c> 
         /// steps.</param>
-        public static IDictionary<T, double> ConstrainedReachability<T> (this MarkovChain<T> mc, 
+        public static IDictionary<T, double> ConstrainedReachability<T> (this Automata<T, ProbabilityTransitionDecorator> mc, 
                                                                                   IEnumerable<T> C, 
                                                                                   IEnumerable<T> B,
                                                                                bool iterative = false, 
@@ -131,7 +179,7 @@ namespace LtlSharp.ProbabilisticSystems
             return dict;
         }
         
-        static IEnumerable<T> ComputeS0<T> (MarkovChain<T> mc, 
+        static IEnumerable<T> ComputeS0<T> (Automata<T, ProbabilityTransitionDecorator> mc, 
                                                   IEnumerable<T> C, 
                                                      IEnumerable<T> B) where T : IAutomatonNode
         {
@@ -154,12 +202,12 @@ namespace LtlSharp.ProbabilisticSystems
             return mc.Nodes.Except (nodes);
         }
         
-        static IEnumerable<T> ComputeS1<T> (MarkovChain<T> mc,
+        static IEnumerable<T> ComputeS1<T> (Automata<T, ProbabilityTransitionDecorator> mc,
                                                   IEnumerable<T> C, 
                                                      IEnumerable<T> B) where T : IAutomatonNode
         {
             // For detailled discussion about the following algorithm, check "Principles of Model Checking", p767ff.
-            var mcprime = new MarkovChain<T> (mc);
+            var mcprime = (Automata<T, ProbabilityTransitionDecorator>) mc.Clone ();
             var absorbing = B.Union (mcprime.Nodes.Except (C.Union (B))); // B U (S \ (B U C))
             foreach (var s in absorbing) {
                 foreach (var t in mcprime.Nodes) {
@@ -177,14 +225,14 @@ namespace LtlSharp.ProbabilisticSystems
         /// <returns>The set of nodes with almost sure reachability.</returns>
         /// <param name="mc">Markov Chain.</param>
         /// <param name="B">B.</param>
-        public static IEnumerable<T> GlobalAlmostSureReachability<T> (this MarkovChain<T> mc, 
+        public static IEnumerable<T> GlobalAlmostSureReachability<T> (this Automata<T, ProbabilityTransitionDecorator> mc, 
                                                                       IEnumerable<T> B) where T : IAutomatonNode
         {
             // See "Principles of model checking", p 766ff.
-            var mcprime = new MarkovChain<T> (mc);
+            var mcprime = (Automata<T, ProbabilityTransitionDecorator>) mc.Clone ();
             foreach (var b in B) {
                 mcprime.RemoveAllTransitions (b);
-                mcprime.AddTransition (b, b);
+                mcprime.AddTransition (b, b, new ProbabilityTransitionDecorator (1));
             }
             // S \ AllPre(S \ AllPre (B))
             return mcprime.Nodes.Except (mcprime.AllPre (mcprime.Nodes.Except (mcprime.AllPre (B))));
@@ -196,7 +244,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <returns>The nodes repeatly reaching a node in B.</returns>
         /// <param name="mc">Markov Chain.</param>
         /// <param name="B">B.</param>
-        public static IEnumerable<T> QualitativeRepeatedReachability<T> (this MarkovChain<T> mc, 
+        public static IEnumerable<T> QualitativeRepeatedReachability<T> (this Automata<T, ProbabilityTransitionDecorator> mc, 
                                                                                IEnumerable<T> B) where T : IAutomatonNode
         {
             var bsccs = mc.GetBSCC ();
@@ -210,7 +258,7 @@ namespace LtlSharp.ProbabilisticSystems
         /// <returns>The repeated reachability.</returns>
         /// <param name="mc">Mc.</param>
         /// <param name="B">B.</param>
-        public static IDictionary<T, double> QuantitativeRepeatedReachability<T>(this MarkovChain<T> mc,
+        public static IDictionary<T, double> QuantitativeRepeatedReachability<T>(this Automata<T, ProbabilityTransitionDecorator> mc,
                                                                                  IAcceptanceCondition<T> B) where T : IAutomatonNode
         {
             var U = mc.GetBSCC ().Where (bscc => B.Accept(bscc)).SelectMany (x => x);
@@ -246,6 +294,8 @@ namespace LtlSharp.ProbabilisticSystems
                                                                IEnumerable<T> B,
                                                                   int n) where T : IAutomatonNode
         {
+            // This method cannot be applied to all automaton with probability on their transitions as it requires
+            // initial distribution. This is why the method is restricted to Markov Chains.
             if (mc.Initial.Count == 0) {
                 Debug.Print ("No initial node. Transient probability will be zero.");
                 return 0;
@@ -292,12 +342,12 @@ namespace LtlSharp.ProbabilisticSystems
             return B.Sum (b => theta[Array.IndexOf (nodes, b)]);
         }
         
-        public static Dictionary<T, double> QuantitativeLinearProperty<T> (this MarkovChain<T> mc, 
+        public static Dictionary<T, double> QuantitativeLinearProperty<T> (this Automata<T, ProbabilityTransitionDecorator> mc, 
                                                                                  ITLFormula formula) where T : IAutomatonNode
         {
             // For more details, see "Principles of Model Checking", p785ff
             
-            MarkovChain<ProductAutomatonNode<T, AutomatonNode>> productMC;
+            Automata<ProductAutomatonNode<T, AutomatonNode>, ProbabilityTransitionDecorator> productMC;
             Dictionary<T, ProductAutomatonNode<T, AutomatonNode>> correspondingNodes;
             IDictionary<ProductAutomatonNode<T, AutomatonNode>, double> probabilities;
             Dictionary<T, double> dict;

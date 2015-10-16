@@ -11,7 +11,7 @@ using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Automata
 {
-    public class Automata<T,T2>
+    public abstract class Automata<T,T2>
         where T : IAutomatonNode
         where T2 : IAutomatonTransitionDecorator<T2>
     {
@@ -31,7 +31,7 @@ namespace LtlSharp.Automata
                 return graph.Edges.Select (x => new Tuple<T, T2, T> (x.Source, x.Value, x.Target));
             }
         }
-        
+
         public Automata (IAutomatonNodeFactory<T> factory,
                          IAutomatonTransitionFactory<T2> factoryTransition)
         {
@@ -40,6 +40,45 @@ namespace LtlSharp.Automata
             this.factoryTransition = factoryTransition;
         }
         
+        public IAutomatonNodeFactory<T> GetNodeFactory ()
+        {
+            return factory;
+        }
+        
+        public IAutomatonTransitionFactory<T2> GetTransitionFactory ()
+        {
+            return factoryTransition;
+        }
+
+        public void RemoveTransition (T source, T target, T2 value)
+        {
+            graph.RemoveOutEdgeIf (source, (e) => e.Target.Equals (target) & e.Value.Equals (value));
+        }
+        
+        public void ReplaceTransitionValue (T source, T item1, T2 oldValue, T2 newValue)
+        {
+            foreach (var e in graph.OutEdges (source).Where (e => e.Target.Equals (item1) & e.Value.Equals (oldValue))) {
+                e.Value = newValue;
+            }
+        }
+        
+        public void SetTransitionsValue (T source, T item1, T2 value)
+        {
+            foreach (var e in graph.OutEdges (source).Where (e => e.Target.Equals (item1))) {
+                e.Value = value;
+            }
+        }
+
+        public IEnumerable<Tuple<T, T2>> GetTransitions (T source)
+        {
+            return graph.OutEdges (source).Select (x => new Tuple<T, T2> (x.Target, x.Value));
+        }
+
+        public T2 GetTransition (T source, T target)
+        {
+            return graph.OutEdges (source).SingleOrDefault (e => e.Target.Equals (target))?.Value;
+        }
+
         /// <summary>
         /// Gets the vertex with the specified name. Assume that the name uniquely identify the node.
         /// </summary>
@@ -386,6 +425,8 @@ namespace LtlSharp.Automata
             };
             return graphviz.Generate ();
         }
+
+        public abstract Automata<T, T2> Clone ();
     }
 }
 

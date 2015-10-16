@@ -49,24 +49,6 @@ namespace LtlSharp.Models
         public MarkovChain (MarkovChain<T> mc)
             : base (mc.factory, mc.factoryTransition)
         {
-            _factoryTrans = mc._factoryTrans;
-            
-            graph = new AdjacencyGraph<T, ParametrizedEdge<T, ProbabilityTransitionDecorator>> ();
-            foreach (var vertex in mc.graph.Vertices) {
-                graph.AddVertex (vertex);
-            }
-            foreach (var edge in mc.graph.Edges) {
-                graph.AddEdge (new ParametrizedEdge<T, ProbabilityTransitionDecorator> (
-                    edge.Source, 
-                    edge.Target, 
-                    _factoryTrans.Clone (edge.Value)
-                ));
-            }
-            Initial = new Dictionary<T, ProbabilityTransitionDecorator> ();
-            foreach (var i in mc.Initial) {
-                Initial.Add (i.Key, i.Value);
-            }
-            factory = mc.factory;
         }
 
         /// <summary>
@@ -113,38 +95,6 @@ namespace LtlSharp.Models
             graph.AddEdge (new ParametrizedEdge<T, ProbabilityTransitionDecorator> (source, target, _factoryTrans.Create (probability)));
         }
 
-        /// <summary>
-        /// Sets the probability for the transition between the source and the target.
-        /// </summary>
-        /// <remarks>The transition will be updated if it exists, created if not.</remarks>
-        /// <param name="source">Source.</param>
-        /// <param name="target">Target.</param>
-        /// <param name="value">Value.</param>
-        public void SetProbability (T source, T target, double value)
-        {
-            var t = graph.OutEdges (source).SingleOrDefault (e => e.Target.Equals (target));
-            if (t != null) {
-                if (value == 0) {
-                    graph.RemoveEdge (t);
-                } else {
-                    t.Value = _factoryTrans.Create (value);
-                }
-            } else if (value != 0) {
-                AddTransition (source, value, target);
-            }
-        }
-
-        /// <summary>
-        /// Gets the probability of taking the transition from source to target.
-        /// </summary>
-        /// <returns>The probability.</returns>
-        /// <param name="source">Source.</param>
-        /// <param name="target">Target.</param>
-        public double GetProbability (T source, T target)
-        {
-            return graph.OutEdges (source).SingleOrDefault (x => x.Target.Equals (target))?.Value.Probability ?? 0;
-        }
-
         public override string ToDot ()
         {
             var graphviz = new GraphvizAlgorithm<T, ParametrizedEdge<T, ProbabilityTransitionDecorator>> (this.graph);
@@ -157,6 +107,25 @@ namespace LtlSharp.Models
                 e.EdgeFormatter.Label.Value = Math.Round (e.Edge.Value.Probability, 2).ToString ();
             };
             return graphviz.Generate ();
+        }
+
+        public override Automata<T, ProbabilityTransitionDecorator> Clone ()
+        {
+            var mc = new MarkovChain<T> (factory, (ProbabilityDecoratorFactory) factoryTransition);
+            foreach (var vertex in graph.Vertices) {
+                mc.graph.AddVertex (vertex);
+            }
+            foreach (var edge in graph.Edges) {
+                mc.graph.AddEdge (new ParametrizedEdge<T, ProbabilityTransitionDecorator> (
+                    edge.Source, 
+                    edge.Target, 
+                    _factoryTrans.Clone (edge.Value)
+                ));
+            }
+            foreach (var i in Initial) {
+                mc.Initial.Add (i.Key, i.Value);
+            }
+            return mc;
         }
     }
 }

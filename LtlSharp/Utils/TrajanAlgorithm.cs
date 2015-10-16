@@ -3,19 +3,24 @@ using LtlSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using LtlSharp.Automata;
+using LtlSharp.Automata.Transitions.Factories;
 
 namespace LtlSharp.Utils
 {
     public static class TrajanAlgorithm
     {
-        public static IEnumerable<HashSet<T>> GetBSCC<T> (this MarkovChain<T> mc) where T : IAutomatonNode
+        public static IEnumerable<HashSet<T>> GetBSCC<T, T2> (this Automata<T, T2> mc) 
+            where T : IAutomatonNode
+            where T2 : IAutomatonTransitionDecorator<T2>
         {
             // A SCC is a Bottom SCC if all successors of the nodes in the SCC are also in the SCC
             // (or no nodes outside the scc can be reached)
             return GetSCC (mc).Where (scc => scc.IsSupersetOf (mc.Post (scc)));
         }
         
-        public static IEnumerable<HashSet<T>> GetSCC<T> (this MarkovChain<T> mc) where T : IAutomatonNode
+        public static IEnumerable<HashSet<T>> GetSCC<T, T2> (this Automata<T, T2> mc) 
+            where T : IAutomatonNode
+            where T2 : IAutomatonTransitionDecorator<T2>
         {
             // Implements Trajan algorithm
             var sccs = new List<HashSet<T>> ();
@@ -34,14 +39,17 @@ namespace LtlSharp.Utils
             return sccs;
         }
 
-        static void StrongConnect<T> (T v, 
-            MarkovChain<T> mc,
-            Dictionary<T, int> index,
-            Dictionary<T, int> lowlink,
-            HashSet<T> onstack,
-            Stack<T> S,
-            ref int currentIndex,
-                                      List<HashSet<T>> sccs)  where T : IAutomatonNode {
+        static void StrongConnect<T, T2> (T v, 
+                                          Automata<T, T2> mc,
+                                          Dictionary<T, int> index,
+                                          Dictionary<T, int> lowlink,
+                                          HashSet<T> onstack,
+                                          Stack<T> S,
+                                          ref int currentIndex,
+                                          List<HashSet<T>> sccs) 
+            where T : IAutomatonNode
+            where T2 : IAutomatonTransitionDecorator<T2>
+        {
             
             if (index.ContainsKey (v))
                 index[v] = currentIndex;

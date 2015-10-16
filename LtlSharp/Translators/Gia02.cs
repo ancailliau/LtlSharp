@@ -481,6 +481,11 @@ namespace LtlSharp.Buchi.LTL2Buchi
             {
                 return graph.OutEdges (n1);
             }
+
+            public override Automata<AutomatonNode, DegeneralizerAutomataTransition> Clone ()
+            {
+                throw new NotImplementedException ();
+            }
         }
     
         public Gia02 ()

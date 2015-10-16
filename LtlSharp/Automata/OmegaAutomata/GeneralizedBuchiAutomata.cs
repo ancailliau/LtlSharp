@@ -41,6 +41,11 @@ namespace LtlSharp.Automata.OmegaAutomata
         {
             InitialNodes = new HashSet<AutomatonNode> ();
         }
+
+        public override Automata<AutomatonNode, LiteralsSet> Clone ()
+        {
+            throw new NotImplementedException ();
+        }
     }
 
     public class TransitionGeneralizedBuchiAutomata : OmegaAutomaton<AutomatonNode, LiteralsSet>
@@ -62,6 +67,11 @@ namespace LtlSharp.Automata.OmegaAutomata
         public IEnumerable<Tuple<LiteralsSet, AutomatonNode>> OutTransitions (AutomatonNode root)
         {
             return graph.OutEdges (root).Select (x => new Tuple<LiteralsSet, AutomatonNode> (x.Value, x.Target));
+        }
+
+        public override Automata<AutomatonNode, LiteralsSet> Clone ()
+        {
+            throw new NotImplementedException ();
         }
     }
 
@@ -85,6 +95,11 @@ namespace LtlSharp.Automata.OmegaAutomata
         internal IEnumerable<Tuple<AutomatonNode, AutomatonNode, LiteralsSet>> OutEdges (AutomatonNode n0)
         {
             return graph.OutEdges (n0).Select (x => new Tuple<AutomatonNode, AutomatonNode, LiteralsSet> (n0, x.Target, x.Value));
+        }
+
+        public override Automata<AutomatonNode, LiteralsSet> Clone ()
+        {
+            throw new NotImplementedException ();
         }
     }
     

@@ -10,6 +10,7 @@ using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.Transitions.Factories;
+using LtlSharp.ProbabilisticSystems;
 
 namespace LtlSharp.Translators
 {
@@ -35,14 +36,15 @@ namespace LtlSharp.Translators
         /// <param name="correspondingNodes">Mapping table <c>(x,y)</c> where <c>x</c> is the node in product 
         /// automata and <c>y</c> is the corresponding node in the specified Markov Chain for the initial state of 
         /// the Buchï Automata.</param>
-        public static MarkovChain<ProductAutomatonNode<T, AutomatonNode>> Product<T> (this MarkovChain<T> mc, 
-                                                                       BuchiAutomaton<AutomatonNode> ba, 
-                                                                    IEnumerable<T> initials,
-                                                                       out IAcceptanceCondition<ProductAutomatonNode<T, AutomatonNode>> condition,
-                                                                       out Dictionary<T, ProductAutomatonNode<T, AutomatonNode>> correspondingNodes)
+        public static Automata<ProductAutomatonNode<T, AutomatonNode>, ProbabilityTransitionDecorator> Product<T> (
+            this Automata<T, ProbabilityTransitionDecorator> mc,
+            BuchiAutomaton<AutomatonNode> ba, 
+            IEnumerable<T> initials,
+            out IAcceptanceCondition<ProductAutomatonNode<T, AutomatonNode>> condition,
+            out Dictionary<T, ProductAutomatonNode<T, AutomatonNode>> correspondingNodes)
             where T : IAutomatonNode
         {
-            var product = mc.Product<T> (ba, initials, out correspondingNodes);
+            var product = mc.Product<T, AutomatonNode> (ba, initials, out correspondingNodes);
             
             condition = ba.AcceptanceCondition.Map<ProductAutomatonNode<T, AutomatonNode>> (
                 x => product.Nodes.Where (t => t.Node2.Equals (x))
@@ -73,14 +75,15 @@ namespace LtlSharp.Translators
         /// <param name="correspondingNodes">Mapping table <c>(x,y)</c> where <c>x</c> is the node in product 
         /// automata and <c>y</c> is the corresponding node in the specified Markov Chain for the initial state of 
         /// the Rabin Automata.</param>
-        public static MarkovChain<ProductAutomatonNode<T, AutomatonNode>> Product<T> (this MarkovChain<T> mc, 
-                                                                       RabinAutomaton<AutomatonNode> rabin, 
-                                                                    IEnumerable<T> initials, 
-                                                                       out IAcceptanceCondition<ProductAutomatonNode<T, AutomatonNode>> condition,
-                                                                       out Dictionary<T, ProductAutomatonNode<T, AutomatonNode>> correspondingNodes)
+        public static Automata<ProductAutomatonNode<T, AutomatonNode>, ProbabilityTransitionDecorator> Product<T> (
+            this Automata<T, ProbabilityTransitionDecorator> mc,
+            RabinAutomaton<AutomatonNode> rabin, 
+            IEnumerable<T> initials, 
+            out IAcceptanceCondition<ProductAutomatonNode<T, AutomatonNode>> condition,
+            out Dictionary<T, ProductAutomatonNode<T, AutomatonNode>> correspondingNodes)
             where T : IAutomatonNode
         {
-            var product = mc.Product<T> (rabin, initials, out correspondingNodes);
+            var product = mc.Product<T, AutomatonNode> (rabin, initials, out correspondingNodes);
 
             condition = rabin.AcceptanceCondition.Map<ProductAutomatonNode<T, AutomatonNode>> (x => {
                 return product.Nodes.Where (t => t.Node2.Equals (x));
@@ -89,32 +92,34 @@ namespace LtlSharp.Translators
             return product;
         }
         
-        static MarkovChain<ProductAutomatonNode<T, AutomatonNode>> Product<T> (this MarkovChain<T> mc,
-                                                                               OmegaAutomaton<AutomatonNode, LiteralsSet> automaton,
-                                                             IEnumerable<T> initials,
-                                                                out Dictionary<T, ProductAutomatonNode<T, AutomatonNode>> correspondingNodes)
-            where T : IAutomatonNode
+        static Automata<ProductAutomatonNode<T1, T2>, ProbabilityTransitionDecorator> Product<T1, T2> (
+            this Automata<T1, ProbabilityTransitionDecorator> automaton1,
+            OmegaAutomaton<T2, LiteralsSet> automaton2,
+            IEnumerable<T1> initials,
+            out Dictionary<T1, ProductAutomatonNode<T1,T2>> correspondingNodes)
+            where T1 : IAutomatonNode
+            where T2 : IAutomatonNode
         {
             // For more details about the product algorithm, see "Principles of Model Checking", p787ff
 
-            var unique = new Dictionary<Tuple<T,AutomatonNode>, ProductAutomatonNode<T, AutomatonNode>> ();
-            correspondingNodes = new Dictionary<T, ProductAutomatonNode<T, AutomatonNode>> ();
+            var unique = new Dictionary<Tuple<T1,T2>, ProductAutomatonNode<T1,T2>> ();
+            correspondingNodes = new Dictionary<T1, ProductAutomatonNode<T1,T2>> ();
 
-            var _productFactory = new AutomatonNodeProductFactory<T, AutomatonNode> ();
-            var product = new MarkovChain<ProductAutomatonNode<T, AutomatonNode>> (
+            var _productFactory = new AutomatonNodeProductFactory<T1,T2> ();
+            var product = new MarkovChain<ProductAutomatonNode<T1,T2>> (
                 _productFactory,
                 new ProbabilityDecoratorFactory ()
             );
-            var pending = new Stack<ProductAutomatonNode<T, AutomatonNode>> ();
-            var visited = new HashSet<ProductAutomatonNode<T, AutomatonNode>> ();
+            var pending = new Stack<ProductAutomatonNode<T1,T2>> ();
+            var visited = new HashSet<ProductAutomatonNode<T1,T2>> ();
 
-            var initWA = automaton.InitialNode;
-            IEnumerable<AutomatonNode> successorsInWA;
-            AutomatonNode successorInWA;
-            ProductAutomatonNode<T, AutomatonNode> newNode;
+            var initWA = automaton2.InitialNode;
+            IEnumerable<T2> successorsInWA;
+            T2 successorInWA;
+            ProductAutomatonNode<T1,T2> newNode;
             
             foreach (var initial in initials) {
-                successorsInWA = automaton.Post (initWA, initial.Labels);
+                successorsInWA = automaton2.Post (initWA, initial.Labels);
                 if (successorsInWA.Count () > 1)
                     throw new NotSupportedException ("Product between non-deterministic automaton is not supported.");
                 
@@ -123,7 +128,7 @@ namespace LtlSharp.Translators
                     newNode = _productFactory.Create (initial, successorInWA, initial.Labels);
                     product.AddNode (newNode);
                     
-                    var tuple = new Tuple<T, AutomatonNode> (initial, successorInWA);
+                    var tuple = new Tuple<T1,T2> (initial, successorInWA);
                     
                     unique.Add (tuple, newNode);
                     correspondingNodes.Add (initial, newNode);
@@ -139,15 +144,15 @@ namespace LtlSharp.Translators
                 var currentNodeInPA = current;
                 visited.Add (current);
 
-                foreach (var successorInMC in mc.Post (currentNodeInMC)) {
-                    successorsInWA = automaton.Post (currentNodeInWA, successorInMC.Labels);
+                foreach (var successorInMC in automaton1.Post (currentNodeInMC)) {
+                    successorsInWA = automaton2.Post (currentNodeInWA, successorInMC.Labels);
                     if (successorsInWA.Count () > 1)
                         throw new NotSupportedException ("Product between non-deterministic automaton is not " +
                                                          "supported.");
                         
                     if (successorsInWA.Any ()) {
                         successorInWA = successorsInWA.Single ();
-                        var tuple = new Tuple<T, AutomatonNode> (successorInMC, successorInWA);
+                        var tuple = new Tuple<T1,T2> (successorInMC, successorInWA);
 
                         if (!unique.ContainsKey (tuple)) {
                             newNode = _productFactory.Create (successorInMC, successorInWA, successorInMC.Labels);
@@ -162,7 +167,7 @@ namespace LtlSharp.Translators
                             pending.Push (newNode);
                         }
                         
-                        product.AddTransition (currentNodeInPA, mc.GetProbability (currentNodeInMC, successorInMC), newNode);
+                        product.AddTransition (currentNodeInPA, automaton1.GetProbability (currentNodeInMC, successorInMC), newNode);
                     }
                 }
             }

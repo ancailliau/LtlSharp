@@ -53,6 +53,11 @@ namespace LtlSharp.Automata.OmegaAutomata
             };
             return graphviz.Generate ();
         }
+
+        public override Automata<T, LiteralsSet> Clone ()
+        {
+            throw new NotImplementedException ();
+        }
     }
 }
 
