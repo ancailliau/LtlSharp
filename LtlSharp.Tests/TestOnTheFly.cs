@@ -59,10 +59,6 @@ namespace LtlSharp.Tests
             Assert.That (e1 == e2);
         }
         
-        Proposition p1 = new Proposition ("p1");
-        Proposition p2 = new Proposition ("p2");
-        Proposition p3 = new Proposition ("p3");
-        
         [Test()]
         public void TestMobilizedWhenAlloc ()
         {

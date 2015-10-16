@@ -12,19 +12,6 @@ namespace LtlSharp.Tests.TestProbabilisticSystems
     public class TestPCTL
     {
         [Test ()]
-        public void TestPCTL01 ()
-        {
-            var s1 = new Finally (new Proposition ("1"));
-            var s2 = new Finally (new Proposition ("2"));
-            var s3 = new Finally (new Proposition ("3"));
-            var s4 = new Finally (new Proposition ("4"));
-            var s5 = new Finally (new Proposition ("5"));
-            var s6 = new Finally (new Proposition ("6"));
-            
-            var p = new Conjunction (s1, new Conjunction (s2, new Conjunction (s3, new Conjunction (s4, new Conjunction (s5, s6)))));
-        }
-        
-        [Test ()]
         public void TestCraps ()
         {
             var mc = TestMarkovChain.GetExample ("craps");

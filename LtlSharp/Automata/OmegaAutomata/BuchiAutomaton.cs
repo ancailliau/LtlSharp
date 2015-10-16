@@ -48,7 +48,7 @@ namespace LtlSharp.Automata.OmegaAutomata
             this.AddTransition (source, target, new LiteralSetDecoration (l));
         }
         
-        public string ToDot ()
+        public override string ToDot ()
         {
             var graphviz = new GraphvizAlgorithm<T, ParametrizedEdge<T, LiteralSetDecoration>> (graph);
             graphviz.FormatVertex += (object sender, FormatVertexEventArgs<T> e) => {

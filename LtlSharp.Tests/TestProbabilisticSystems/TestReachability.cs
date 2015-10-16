@@ -87,7 +87,6 @@ namespace LtlSharp.Tests.Models
         {
             var mc = TestMarkovChain.GetExample ("pmc-lecture-15-13");
             var s0 = mc.GetVertex ("s0");
-            var s1 = mc.GetVertex ("s1");
             var s2 = mc.GetVertex ("s2");
             var s3 = mc.GetVertex ("s3");
             var s4 = mc.GetVertex ("s4");
