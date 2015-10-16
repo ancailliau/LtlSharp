@@ -629,54 +629,30 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 automaton.AddNode (nodes [i]);
             }
 
-            List<int> l;
-
-            DegeneralizerAutomataTransition transition;
             for (int i = 0; i < last; i++) {
                 for (int j = last; j > i; j--) {
-                    //transition = new DegeneralizerAutomataTransition (nodes[i], nodes[j]);
-                    l = new List<int> ();
-                    for (int k = i; k < j; k++) {
-                        l.Add (k);
-                    }
-
-                    Console.WriteLine ("-< " + i + j);
-                    Console.WriteLine ("-< ["+string.Join (",", l)+"]");
-                    Console.WriteLine ("-< ["+string.Join (",", Enumerable.Range(i, j-i))+"]");
-                    
-                    automaton.AddTransition (nodes[i], nodes[j], new DegeneralizerAutomataTransition (Enumerable.Range(i, j-i)));
+                    automaton.AddTransition (nodes[i], 
+                                             nodes[j], 
+                                             new DegeneralizerAutomataTransition (Enumerable.Range(i, j-i)));
                 }
-                //transition = new DegeneralizerAutomataTransition<AutomatonNode> (nodes[i], nodes[i]);
-                //transition.Else = true;
-                automaton.AddTransition (nodes[i], nodes[i], new DegeneralizerAutomataTransition (true));
+                automaton.AddTransition (nodes[i], 
+                                         nodes[i], 
+                                         new DegeneralizerAutomataTransition (true));
             }
 
-            //transition = new DegeneralizerAutomataTransition<AutomatonNode> ();
-            l = new List<int> ();
-            for (int i = 0; i < last; i++) {
-                l.Add (i);
-            }
-            Console.WriteLine ("-< " + 0 + " to " + last);
-            Console.WriteLine ("-< ["+string.Join (",", l)+"]");
-            Console.WriteLine ("-< ["+string.Join (",", Enumerable.Range(0, last))+"]");
-            automaton.AddTransition (nodes[last], nodes[last], new DegeneralizerAutomataTransition (Enumerable.Range(0, last)));
+            automaton.AddTransition (nodes[last], 
+                                     nodes[last], 
+                                     new DegeneralizerAutomataTransition (Enumerable.Range(0, last)));
             
             for (int i = last - 1; i >= 0; i--) {
                 if (i == 0) {
-                    //transition = new DegeneralizerAutomataTransition<AutomatonNode> (nodes[last], nodes[i]);
-                    //transition.Else = true;
-                    automaton.AddTransition (nodes[last], nodes[i], new DegeneralizerAutomataTransition (true));
+                    automaton.AddTransition (nodes[last], 
+                                             nodes[i], 
+                                             new DegeneralizerAutomataTransition (true));
                 } else {
-                    //transition = new DegeneralizerAutomataTransition<AutomatonNode> (nodes[last], nodes[i]);
-                    l = new List<int> ();
-                    for (int k = 0; k < i; k++) {
-                        l.Add (k);
-                    }
-                    Console.WriteLine ("-< " + 0 + " to " + i);
-                    Console.WriteLine ("-< ["+string.Join (",", l)+"]");
-                    Console.WriteLine ("-< ["+string.Join (",", Enumerable.Range(0, i))+"]");
-                    //automaton.AddEdge (transition);
-                    automaton.AddTransition (nodes[last], nodes[i], new DegeneralizerAutomataTransition (Enumerable.Range(0, i)));
+                    automaton.AddTransition (nodes[last], 
+                                             nodes[i], 
+                                             new DegeneralizerAutomataTransition (Enumerable.Range(0, i)));
                 }
             }
 
