@@ -22,28 +22,22 @@ namespace LtlSharp.Buchi
             
         }
         
-        public bool EmptinessSearch (TransitionGeneralizedBuchiAutomata a)
+        public bool EmptinessSearch (GeneralizedBuchiAutomaton<AutomatonNode> a)
         {
-            if (a.AcceptanceSets.Length == 0) {
-                throw new NotImplementedException ("EmptinessSearch (GeneralizedBuchiAutomata a)");
-            }
+            if (!a.AcceptanceCondition.IsSatisfiable)
+                return false;
             
             path = new Stack<AutomatonNode> ();
             processed = new HashSet<AutomatonNode> ();
             label = new Dictionary<AutomatonNode, HashSet<int>> ();
             
-            foreach (var n in a.InitialNodes) {
-                //Console.WriteLine ("******");
-                if (EmptinessSearch (a, n)) {
-                    return true;
-                }
-                //Console.WriteLine ("******");
-            }
+            if (EmptinessSearch (a, a.InitialNode))
+                return true;
             
             return false;
         }
         
-        public bool EmptinessSearch (TransitionGeneralizedBuchiAutomata a, AutomatonNode qi)
+        public bool EmptinessSearch (GeneralizedBuchiAutomaton<AutomatonNode> a, AutomatonNode qi)
         {
             label = new Dictionary<AutomatonNode, HashSet<int>> ();
             foreach (var n in a.Nodes) {
@@ -68,14 +62,12 @@ namespace LtlSharp.Buchi
                     //Console.WriteLine ("q={0}", q.Name);
                 }
                 //Console.WriteLine ("----");
-                if (label[q].Count == 0 | a.AcceptanceSets.Any (x => x.Nodes.Contains (q))) {
-                    var labelsToPropagate = label [q].Union ((from x in a.AcceptanceSets
-                                                                             where x.Nodes.Contains (q)
-                                                                             select x.Id));
+                if (label[q].Count == 0 | a.AcceptanceCondition.Accept(q)) { //  a.AcceptanceSets.Any (x => x.Nodes.Contains (q))
+                    var labelsToPropagate = label [q].Union (a.GetAcceptanceCondition().GetAcceptingConditions(q));
                     //Console.WriteLine ("labelsToPropagate={0}", string.Join (",", labelsToPropagate));
             
                     propagate (a, new [] { q }, labelsToPropagate);
-                    if (label[q].SetEquals (a.AcceptanceSets.Select (set => set.Id))) {
+                    if (label[q].SetEquals (a.GetAcceptanceCondition().AllKeys ())) {
                         goto ExitTrue;
                         // return true;
                     }
@@ -90,7 +82,7 @@ namespace LtlSharp.Buchi
         }
         
 
-        void propagate (TransitionGeneralizedBuchiAutomata a, IEnumerable<AutomatonNode> nodes, IEnumerable<int> labelsToPropagate)
+        void propagate (GeneralizedBuchiAutomaton<AutomatonNode> a, IEnumerable<AutomatonNode> nodes, IEnumerable<int> labelsToPropagate)
         {
             
             //Console.WriteLine ("path : " + string.Join(",", path));

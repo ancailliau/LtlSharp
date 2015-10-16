@@ -6,6 +6,8 @@ using LtlSharp.Buchi.Translators;
 using LtlSharp.Automata;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Transitions;
+using LtlSharp.Automata.Nodes.Factories;
+using LtlSharp.Automata.AcceptanceConditions;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
@@ -159,12 +161,14 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return set;
         }
         
-        public TransitionGeneralizedBuchiAutomata GetGBA (ITLFormula phi) {
+        public GeneralizedBuchiAutomaton<AutomatonNode> GetGBA (ITLFormula phi) {
             var formula = phi.Normalize ();
 
             var nodesSet = CreateGraph (formula);
 
-            var automaton = new TransitionGeneralizedBuchiAutomata ();
+            var automaton = new GeneralizedBuchiAutomaton<AutomatonNode> (
+                new AutomatonNodeFactory ()
+            );
             
 
             int i = 0;
@@ -173,7 +177,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 var newNode = new AutomatonNode ("s" + i);
                 automaton.AddNode (newNode);
                 if (n.Name == "init") {
-                    automaton.InitialNodes.Add (newNode);
+                    automaton.SetInitialNode (newNode);
                 }
 
                 mapping.Add (n.Name, newNode);
@@ -216,8 +220,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             // The acceptance set contains a separate set of states for
             // each subformula of the form x U y. The set contains the
             // states n such that y in Old(n) or x U y not in Old(n).
-            var listAcceptanceSets = new LinkedList<GBAAcceptanceSet>();
-
+            
             // Subformulas are processed in a DFS-fashioned way
             Stack<ITLFormula> formulasToProcess = new Stack<ITLFormula>();
             formulasToProcess.Push(formula);
@@ -239,7 +242,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                         set.Add (mapping[q.Name]);
                     }
 
-                    listAcceptanceSets.AddLast(new GBAAcceptanceSet (setIndex, set.ToArray ()));
+                    automaton.GetAcceptanceCondition().Add (setIndex, set);
                     setIndex++;
 
                 } 
@@ -253,7 +256,6 @@ namespace LtlSharp.Buchi.LTL2Buchi
 
                 }
             }
-            automaton.AcceptanceSets = listAcceptanceSets.ToArray ();
 
             return automaton;
         }

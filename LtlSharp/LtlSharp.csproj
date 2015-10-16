@@ -109,6 +109,8 @@
     <Compile Include="Automata\Utils\ProbabilityTransitionExtensions.cs" />
     <Compile Include="Automata\Utils\LiteralSetTransitionExtensions.cs" />
     <Compile Include="Automata\Transitions\LiteralSetDecoration.cs" />
+    <Compile Include="Automata\AcceptanceConditions\GeneralizedBuchiAcceptance.cs" />
+    <Compile Include="Automata\OmegaAutomata\GeneralizedBuchiAutomaton.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Language\LTL.g" />

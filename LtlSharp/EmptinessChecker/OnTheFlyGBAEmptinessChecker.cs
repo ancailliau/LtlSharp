@@ -18,10 +18,10 @@ namespace LtlSharp.Buchi
         public Dictionary<AutomatonNode, HashSet<int>> label; 
         // index of the node, index of the acceptance set
         
-        TransitionGeneralizedBuchiAutomata a;
+        GeneralizedBuchiAutomaton<AutomatonNode> a;
         BuchiAutomaton<AutomatonNode> ba;
         
-        public OnTheFlyGBAEmptinessChecker (TransitionGeneralizedBuchiAutomata a, BuchiAutomaton<AutomatonNode> ba)
+        public OnTheFlyGBAEmptinessChecker (GeneralizedBuchiAutomaton<AutomatonNode> a, BuchiAutomaton<AutomatonNode> ba)
         {
             this.a = a;
             this.ba = ba;
@@ -29,22 +29,14 @@ namespace LtlSharp.Buchi
         
         public bool EmptinessSearch ()
         {
-            if (a.AcceptanceSets.Length == 0) {
-                throw new NotImplementedException ("EmptinessSearch (GeneralizedBuchiAutomata a)");
-            }
+            if (!a.AcceptanceCondition.IsSatisfiable)
+                return false;
             
             label = new Dictionary<AutomatonNode, HashSet<int>> ();
             processed = new HashSet<Tuple<AutomatonNode,AutomatonNode>> ();
             path = new Stack<Tuple<AutomatonNode,AutomatonNode>> ();
-            
-            foreach (var n1 in a.InitialNodes) {
-                var n2 = ba.InitialNode;
-                if (EmptinessSearch (n1, n2)) {
-                    return true;
-                }
-            }
-            
-            return false;
+
+            return EmptinessSearch (a.InitialNode, ba.InitialNode);
         }
         
         public bool EmptinessSearch (AutomatonNode qi, AutomatonNode bi)
@@ -60,10 +52,10 @@ namespace LtlSharp.Buchi
                 var succToProcess = new Stack<Tuple<AutomatonNode, AutomatonNode>> ();
                 
                 var pup = new HashSet<Tuple<AutomatonNode, AutomatonNode>> (path.Union (processed));
-                foreach (var t1 in a.OutTransitions (q.Item1)) {
-                    foreach (var t2 in ba.Post (q.Item2, t1.Item1)) {
+                foreach (var t1 in a.GetTransitions (q.Item1)) {
+                    foreach (var t2 in ba.Post (q.Item2, t1.Item2)) {
                         //if (t1.Labels.IsSubsetOf (t2.Labels)) { fixme
-                        var nt = new Tuple<AutomatonNode, AutomatonNode> (t1.Item2, t2);
+                        var nt = new Tuple<AutomatonNode, AutomatonNode> (t1.Item1, t2);
                             if (!pup.Contains (nt)) {
                                 ////Console.WriteLine ("pushing from (" + a.Nodes[q.Item1].Name + ", " + q.Item2.Name + ") to (" + a.Nodes[nt.Item1].Name + ", " + nt.Item2.Name + ")");
                                 succToProcess.Push (nt);
@@ -80,10 +72,10 @@ namespace LtlSharp.Buchi
                     
                     succToProcess = new Stack<Tuple<AutomatonNode, AutomatonNode>> ();
                     pup = new HashSet<Tuple<AutomatonNode,AutomatonNode>> (path.Union (processed));
-                    foreach (var t1 in a.OutTransitions (q.Item1)) {
-                        foreach (var t2 in ba.Post (q.Item2, t1.Item1)) {
+                    foreach (var t1 in a.GetTransitions (q.Item1)) {
+                        foreach (var t2 in ba.Post (q.Item2, t1.Item2)) {
                             //if (t1.Labels.IsSubsetOf (t2.Labels)) {
-                            var nt = new Tuple<AutomatonNode,AutomatonNode> (t1.Item2, t2);
+                            var nt = new Tuple<AutomatonNode,AutomatonNode> (t1.Item1, t2);
                                 if (!pup.Contains (nt)) {
                                     ////Console.WriteLine ("pushing from (" + a.Nodes[q.Item1].Name + ", " + ba.Nodes[q.Item2].Name + ") to (" + a.Nodes[nt.Item1].Name + ", " + ba.Nodes[nt.Item2].Name + ")");
                                     succToProcess.Push (nt);
@@ -94,14 +86,11 @@ namespace LtlSharp.Buchi
                     
                 }
                 ////Console.WriteLine ("----");
-                if (label[q.Item1].Count == 0 | a.AcceptanceSets.Any (x => x.Nodes.Contains (q.Item1))) {
-                    var labelsToPropagate = label [q.Item1].Union ((from x in a.AcceptanceSets
-                        where x.Nodes.Contains (q.Item1)
-                                                                             select x.Id));
-                    ////Console.WriteLine ("labelsToPropagate={0}", string.Join (",", labelsToPropagate));
-            
+                if (label[q.Item1].Count == 0 | a.AcceptanceCondition.Accept(q.Item1)) {
+                    var labelsToPropagate = label [q.Item1].Union (a.GetAcceptanceCondition().GetAcceptingConditions(q.Item1));
+                    
                     propagate (new [] { q }, labelsToPropagate);
-                    if (label[q.Item1].SetEquals (a.AcceptanceSets.Select (set => set.Id))) {
+                    if (label[q.Item1].SetEquals (a.GetAcceptanceCondition().AllKeys ())) {
                         goto ExitTrue;
                         // return true;
                     }
@@ -131,10 +120,10 @@ namespace LtlSharp.Buchi
                 // a.Transitions [q].Select (x => x.To).Intersect (path.Union (processed)).ToArray ();
                 
                 var pup = new HashSet<Tuple<AutomatonNode,AutomatonNode>> (path.Union (processed));
-                foreach (var t1 in a.OutTransitions (q.Item1)) {
-                    foreach (var t2 in ba.Post (q.Item2, t1.Item1)) {
+                foreach (var t1 in a.GetTransitions (q.Item1)) {
+                    foreach (var t2 in ba.Post (q.Item2, t1.Item2)) {
                         //if (t1.Labels.IsSubsetOf (t2.Labels)) {
-                        var nt = new Tuple<AutomatonNode,AutomatonNode> (t1.Item2, t2);
+                        var nt = new Tuple<AutomatonNode,AutomatonNode> (t1.Item1, t2);
                             if (pup.Contains (nt)) {
                                 successors.Push (nt);
                             }

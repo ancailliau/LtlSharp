@@ -65,6 +65,15 @@ namespace LtlSharp.Automata.AcceptanceConditions
         /// Returns the subset of nodes that are accepted by the acceptance condition when repeatedly reached.
         /// </summary>
         /// <returns>The accepting nodes.</returns>
+        public IEnumerable<T> GetAcceptingNodes ()
+        {
+            return AcceptingSet;
+        }
+        
+        /// <summary>
+        /// Returns the subset of nodes that are accepted by the acceptance condition when repeatedly reached.
+        /// </summary>
+        /// <returns>The accepting nodes.</returns>
         /// <param name="nodes">Nodes.</param>
         public IEnumerable<T> GetAcceptingNodes (HashSet<T> nodes)
         {
@@ -73,23 +82,23 @@ namespace LtlSharp.Automata.AcceptanceConditions
         
         #region IAcceptanceCondition<T> Members
 
-        bool IAcceptanceCondition<T>.IsSatisfiable {
+        public bool IsSatisfiable {
             get {
                 return AcceptingSet.Count > 0;
             }
         }
 
-        bool IAcceptanceCondition<T>.Accept (T node)
+        public bool Accept (T node)
         {
             return AcceptingSet.Contains (node);
         }
 
-        bool IAcceptanceCondition<T>.Accept (IEnumerable<T> nodes)
+        public bool Accept (IEnumerable<T> nodes)
         {
             return AcceptingSet.Intersect (nodes).Any ();
         }
 
-        IAcceptanceCondition<T1> IAcceptanceCondition<T>.Map<T1>(Func<T, IEnumerable<T1>> map)
+        public IAcceptanceCondition<T1> Map<T1>(Func<T, IEnumerable<T1>> map)
         {
             return new BuchiAcceptance<T1> (AcceptingSet.SelectMany (map));
         }
