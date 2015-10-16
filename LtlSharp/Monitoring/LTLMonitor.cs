@@ -22,7 +22,7 @@ namespace LtlSharp.Monitoring
         public PowerSetAutomatonNode<AutomatonNode> currentPositive;
         public NFA<PowerSetAutomatonNode<AutomatonNode>> negativeNFA;
         public NFA<PowerSetAutomatonNode<AutomatonNode>> positiveNFA;
-        ILTLTranslator translator = new Gia02 ();
+        Gia02 translator = new Gia02 ();
 
         public MonitorStatus Status { get; private set; }
         
