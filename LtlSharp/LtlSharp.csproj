@@ -91,7 +91,6 @@
     <Compile Include="Translators\Fold.cs" />
     <Compile Include="Utils\CollectionUtils.cs" />
     <Compile Include="Translators\Unfold.cs" />
-    <Compile Include="Automata\Utils\ProductAutomata.cs" />
     <Compile Include="Automata\OmegaAutomata\OmegaAutomaton.cs" />
     <Compile Include="Automata\AcceptanceConditions\IAcceptanceCondition.cs" />
     <Compile Include="Automata\AcceptanceConditions\BuchiAcceptance.cs" />
