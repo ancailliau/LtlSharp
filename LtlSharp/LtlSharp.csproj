@@ -111,6 +111,7 @@
     <Compile Include="Automata\Transitions\LiteralSetDecoration.cs" />
     <Compile Include="Automata\AcceptanceConditions\GeneralizedBuchiAcceptance.cs" />
     <Compile Include="Automata\OmegaAutomata\GeneralizedBuchiAutomaton.cs" />
+    <Compile Include="Automata\OmegaAutomata\DegeneralizerAutomaton.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Language\LTL.g" />
