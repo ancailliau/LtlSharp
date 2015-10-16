@@ -2,10 +2,11 @@
 using NUnit.Framework;
 using LtlSharp.Models;
 using System.Linq;
-using LtlSharp.ProbabilisticSystems;
+
 using System.Collections.Generic;
 using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
+using LtlSharp.Automata.Utils;
 
 namespace LtlSharp.Tests.Models
 {

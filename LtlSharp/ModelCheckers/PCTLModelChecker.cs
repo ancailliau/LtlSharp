@@ -2,8 +2,8 @@
 using LtlSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
-using LtlSharp.ProbabilisticSystems;
 using LtlSharp.Automata;
+using LtlSharp.Automata.Utils;
 
 namespace LtlSharp.ModelCheckers
 {

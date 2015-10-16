@@ -81,7 +81,7 @@
     <Compile Include="Language\LiteralSimplifier.cs" />
     <Compile Include="Translators\ILTLTranslator.cs" />
     <Compile Include="Automata\ProbabilisticAutomata\MarkovChain.cs" />
-    <Compile Include="ProbabilisticSystems\MarkovChainsAlgorithms.cs" />
+    <Compile Include="Automata\Utils\MarkovChainsExtensions.cs" />
     <Compile Include="Utils\TrajanAlgorithm.cs" />
     <Compile Include="Language\ITLFormula.cs" />
     <Compile Include="ModelCheckers\PCTLModelChecker.cs" />
@@ -113,6 +113,7 @@
     <Compile Include="Automata\Transitions\Factories\DegeneralizerAutomataTransitionFactory.cs" />
     <Compile Include="Automata\Transitions\DegeneralizerAutomataTransition.cs" />
     <Compile Include="Automata\Transitions\Factories\ProbabilityDecoratorFactory.cs" />
+    <Compile Include="Automata\Utils\ProbabilityTransitionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Language\LTL.g" />

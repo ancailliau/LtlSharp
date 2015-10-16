@@ -10,7 +10,7 @@ using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.Transitions.Factories;
-using LtlSharp.ProbabilisticSystems;
+using LtlSharp.Automata.Utils;
 
 namespace LtlSharp.Translators
 {
