@@ -39,7 +39,17 @@ namespace LtlSharp.Automata
             this.factory = factory;
             this.factoryTransition = factoryTransition;
         }
-
+        
+        /// <summary>
+        /// Gets the vertex with the specified name. Assume that the name uniquely identify the node.
+        /// </summary>
+        /// <returns>The vertex.</returns>
+        /// <param name="name">Name.</param>
+        public T GetVertex (string name)
+        {
+            return Nodes.Single (v => v.Name == name);
+        }
+        
         /// <summary>
         /// Maps the label of each transition using the specified function.
         /// </summary>

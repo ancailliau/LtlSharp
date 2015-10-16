@@ -103,7 +103,7 @@ namespace LtlSharp.Tests.Models
             var s8 = mc.AddNode ("8", new Proposition ("8"));
             var won = mc.AddNode ("won", new Proposition ("won"));
             var lost = mc.AddNode ("lost", new Proposition ("lost"));
-            mc.Initial.Add (start, 1);
+            mc.SetInitial (start, 1);
             
             mc.AddTransition (start, 2d/9, won);
             mc.AddTransition (start, 1d/12, s4);

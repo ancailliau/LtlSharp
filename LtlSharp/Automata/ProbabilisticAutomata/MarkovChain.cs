@@ -25,7 +25,7 @@ namespace LtlSharp.Models
         /// initial probability is 0.
         /// </summary>
         /// <value>The initial distribution .</value>
-        public Dictionary<T, double> Initial {
+        public Dictionary<T, ProbabilityTransitionDecorator> Initial {
             get;
             private set;
         }
@@ -37,7 +37,7 @@ namespace LtlSharp.Models
                             ProbabilityDecoratorFactory factoryTrans)
             : base (factory, factoryTrans)
         {
-            Initial = new Dictionary<T, double> ();
+            Initial = new Dictionary<T, ProbabilityTransitionDecorator> ();
             _factoryTrans = factoryTrans;
         }
 
@@ -62,7 +62,7 @@ namespace LtlSharp.Models
                     _factoryTrans.Clone (edge.Value)
                 ));
             }
-            Initial = new Dictionary<T, double> ();
+            Initial = new Dictionary<T, ProbabilityTransitionDecorator> ();
             foreach (var i in mc.Initial) {
                 Initial.Add (i.Key, i.Value);
             }
@@ -77,9 +77,9 @@ namespace LtlSharp.Models
         public void SetInitial (T node, double probability)
         {
             if (!Initial.ContainsKey (node)) {
-                Initial.Add (node, probability);
+                Initial.Add (node, _factoryTrans.Create (probability));
             }
-            Initial [node] = probability;
+            Initial [node] = _factoryTrans.Create (probability);
         }
 
         /// <summary>
@@ -88,18 +88,8 @@ namespace LtlSharp.Models
         /// <returns><c>true</c>, if probability distributions are valid, <c>false</c> otherwise.</returns>
         public bool CheckProbabilityDistributions ()
         {
-            return Initial.Values.Sum () == 1d &&
+            return Initial.Values.Sum (x => x.Probability) == 1d &&
                           graph.Vertices.All (v => graph.OutEdges (v).Sum (x => x.Value.Probability) == 1d);
-        }
-
-        /// <summary>
-        /// Gets the vertex with the specified name. Assume that the name uniquely identify the node.
-        /// </summary>
-        /// <returns>The vertex.</returns>
-        /// <param name="name">Name.</param>
-        public T GetVertex (string name)
-        {
-            return Nodes.Single (v => v.Name == name);
         }
 
         /// <summary>
@@ -123,6 +113,13 @@ namespace LtlSharp.Models
             graph.AddEdge (new ParametrizedEdge<T, ProbabilityTransitionDecorator> (source, target, _factoryTrans.Create (probability)));
         }
 
+        /// <summary>
+        /// Sets the probability for the transition between the source and the target.
+        /// </summary>
+        /// <remarks>The transition will be updated if it exists, created if not.</remarks>
+        /// <param name="source">Source.</param>
+        /// <param name="target">Target.</param>
+        /// <param name="value">Value.</param>
         public void SetProbability (T source, T target, double value)
         {
             var t = graph.OutEdges (source).SingleOrDefault (e => e.Target.Equals (target));
@@ -137,6 +134,12 @@ namespace LtlSharp.Models
             }
         }
 
+        /// <summary>
+        /// Gets the probability of taking the transition from source to target.
+        /// </summary>
+        /// <returns>The probability.</returns>
+        /// <param name="source">Source.</param>
+        /// <param name="target">Target.</param>
         public double GetProbability (T source, T target)
         {
             return graph.OutEdges (source).SingleOrDefault (x => x.Target.Equals (target))?.Value.Probability ?? 0;

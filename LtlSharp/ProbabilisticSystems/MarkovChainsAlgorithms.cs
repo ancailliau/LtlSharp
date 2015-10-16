@@ -278,7 +278,7 @@ namespace LtlSharp.ProbabilisticSystems
             // Compute theta^M
             var theta = new double [len];
             for (int i = 0; i < len; i++) {
-                theta [i] = mc.Initial.ContainsKey(nodes[i]) ? mc.Initial[nodes [i]] : 0;
+                theta [i] = mc.Initial.ContainsKey(nodes[i]) ? mc.Initial[nodes [i]].Probability : 0;
             }
             
             var y = new double [len];
