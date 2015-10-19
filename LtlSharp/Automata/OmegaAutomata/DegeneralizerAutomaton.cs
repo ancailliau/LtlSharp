@@ -11,7 +11,7 @@ namespace LtlSharp.Automata.OmegaAutomata
     {
         BuchiAcceptance<T> _acceptanceSet;
 
-        public override IAcceptanceCondition<T> AcceptanceCondition {
+        public BuchiAcceptance<T> AcceptanceCondition {
             get {
                 throw new NotImplementedException ();
             }

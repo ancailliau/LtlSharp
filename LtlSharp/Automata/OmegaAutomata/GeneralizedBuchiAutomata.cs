@@ -16,14 +16,14 @@ namespace LtlSharp.Automata.OmegaAutomata
         : OmegaAutomaton<T, LiteralSetDecoration>
         where T : IAutomatonNode
     {
-        public override AcceptanceConditions.IAcceptanceCondition<T> AcceptanceCondition {
+        GeneralizedBuchiAcceptance<AutomataTransition<T, LiteralSetDecoration>> _acceptanceCondition;
+
+        public GeneralizedBuchiAcceptance<AutomataTransition<T, LiteralSetDecoration>> AcceptanceCondition {
             get {
-                throw new NotImplementedException ();
+                return _acceptanceCondition;
             }
         }
 
-        GeneralizedBuchiAcceptance<AutomataTransition<T, LiteralSetDecoration>> _acceptanceCondition;
-        
         public TransitionGeneralizedBuchiAutomata (IAutomatonNodeFactory<T> factory)
             : base (factory)
         {

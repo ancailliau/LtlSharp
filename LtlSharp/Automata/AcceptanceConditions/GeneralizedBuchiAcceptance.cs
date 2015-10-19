@@ -65,7 +65,7 @@ namespace LtlSharp.Automata.AcceptanceConditions
         
         #region IAcceptanceCondition<T> Members
 
-        bool IAcceptanceCondition<T>.IsSatisfiable {
+        public bool IsSatisfiable {
             get {
                 return _buchiAcceptances.All (kv => ((IAcceptanceCondition<T>)kv.Value).IsSatisfiable);
             }
@@ -77,17 +77,17 @@ namespace LtlSharp.Automata.AcceptanceConditions
             }
         }
 
-		bool IAcceptanceCondition<T>.Accept (System.Collections.Generic.IEnumerable<T> nodes)
+        public bool Accept (System.Collections.Generic.IEnumerable<T> nodes)
         {
             throw new NotImplementedException ();
         }
 
-        bool IAcceptanceCondition<T>.Accept (T node)
+        public bool Accept (T node)
         {
             return _buchiAcceptances.Any ((arg) => ((IAcceptanceCondition<T>) arg.Value).Accept (node));
         }
 
-        IAcceptanceCondition<T1> IAcceptanceCondition<T>.Map<T1>(Func<T, System.Collections.Generic.IEnumerable<T1>> map)
+        public IAcceptanceCondition<T1> Map<T1>(Func<T, System.Collections.Generic.IEnumerable<T1>> map)
         {
             throw new NotImplementedException ();
         }

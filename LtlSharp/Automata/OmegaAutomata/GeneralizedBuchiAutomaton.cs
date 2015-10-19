@@ -11,7 +11,7 @@ namespace LtlSharp.Automata.OmegaAutomata
     {
         GeneralizedBuchiAcceptance<T> _acceptanceCondition;
         
-        public override AcceptanceConditions.IAcceptanceCondition<T> AcceptanceCondition {
+        public GeneralizedBuchiAcceptance<T> AcceptanceCondition {
             get {
                 return _acceptanceCondition;
             }

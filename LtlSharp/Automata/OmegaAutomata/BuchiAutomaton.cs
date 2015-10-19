@@ -18,8 +18,10 @@ namespace LtlSharp.Automata.OmegaAutomata
     {
         BuchiAcceptance<T> _acceptanceCondition;
         
-        public override IAcceptanceCondition<T> AcceptanceCondition {
-            get { return _acceptanceCondition; }
+        public BuchiAcceptance<T> AcceptanceCondition {
+            get { 
+                return _acceptanceCondition;
+            }
         }
 
         public BuchiAutomaton (IAutomatonNodeFactory<T> factory) : base (factory)

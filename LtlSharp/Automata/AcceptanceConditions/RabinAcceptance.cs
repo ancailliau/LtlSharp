@@ -45,23 +45,23 @@ namespace LtlSharp.Automata.AcceptanceConditions
         
         #region IAcceptanceCondition<T> Members 
         
-        bool IAcceptanceCondition<T>.IsSatisfiable {
+        public bool IsSatisfiable {
             get {
                 return Conditions.All (c => c.IsSatisfiable);
             }
         }
 
-        bool IAcceptanceCondition<T>.Accept (IEnumerable<T> nodes)
+        public bool Accept (IEnumerable<T> nodes)
         {
             return Conditions.Any (c => c.Rejecting.Intersect (nodes).Count () == 0 && (c.Accepting.Intersect (nodes).Count () > 0));
         }
 
-        bool IAcceptanceCondition<T>.Accept (T nodes)
+        public bool Accept (T nodes)
         {
             return Conditions.Any (c => !c.Rejecting.Contains (nodes) && c.Accepting.Contains (nodes));
         }
         
-        IAcceptanceCondition<T1> IAcceptanceCondition<T>.Map<T1>(Func<T, IEnumerable<T1>> map)
+        public IAcceptanceCondition<T1> Map<T1>(Func<T, IEnumerable<T1>> map)
         {
             var nacc = new RabinAcceptance<T1> ();
 

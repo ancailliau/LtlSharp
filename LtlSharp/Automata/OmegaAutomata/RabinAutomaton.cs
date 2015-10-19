@@ -15,8 +15,7 @@ namespace LtlSharp.Automata.OmegaAutomata
     {
         RabinAcceptance<T> _acceptanceCondition;
         
-
-        public override IAcceptanceCondition<T> AcceptanceCondition {
+        public RabinAcceptance<T> AcceptanceCondition {
             get {
                 return _acceptanceCondition;
             }

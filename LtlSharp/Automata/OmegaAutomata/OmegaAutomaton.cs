@@ -19,7 +19,6 @@ namespace LtlSharp.Automata.OmegaAutomata
     {
 
         public T1 InitialNode { get; protected set; }
-        public abstract IAcceptanceCondition<T1> AcceptanceCondition { get; }
 
         public OmegaAutomaton (IAutomatonNodeFactory<T1> factory) 
             : base (factory)
