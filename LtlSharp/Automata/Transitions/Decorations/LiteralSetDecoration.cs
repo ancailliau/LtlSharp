@@ -3,14 +3,29 @@ using System.Collections.Generic;
 
 namespace LtlSharp.Automata.Transitions.Decorations
 {
+    /// <summary>
+    /// Defines a decoration with a literal set.
+    /// </summary>
     public class LiteralSetDecoration : ITransitionDecoration<LiteralSetDecoration>
     {
         private LiteralsSet _literalSet;
         
+        /// <summary>
+        /// Initializes a new instance of the
+        /// <see cref="T:LtlSharp.Automata.Transitions.Decorations.LiteralSetDecoration"/> class with an empty set of
+        /// literals.
+        /// </summary>
         public LiteralSetDecoration ()
         {
+            _literalSet = new LiteralsSet ();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the
+        /// <see cref="T:LtlSharp.Automata.Transitions.Decorations.LiteralSetDecoration"/> class with the specified
+        /// literals.
+        /// </summary>
+        /// <param name="nl">Nl.</param>
         public LiteralSetDecoration (IEnumerable<ILiteral> nl)
         {
             _literalSet = new LiteralsSet (nl);
@@ -28,6 +43,10 @@ namespace LtlSharp.Automata.Transitions.Decorations
             throw new NotImplementedException ();
         }
 
+        /// <summary>
+        /// Returns the set of literals.
+        /// </summary>
+        /// <returns>The literal set.</returns>
         public LiteralsSet ToLiteralSet ()
         {
             return _literalSet;

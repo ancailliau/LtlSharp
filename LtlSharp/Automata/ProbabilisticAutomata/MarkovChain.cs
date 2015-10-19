@@ -89,7 +89,13 @@ namespace LtlSharp.Models
         /// <param name="target">Target node.</param>
         public void AddTransition (T source, double probability, T target)
         {
-            graph.AddEdge (new ParametrizedEdge<T, ProbabilityDecoration> (source, target, new ProbabilityDecoration (probability)));
+            graph.AddEdge (
+                new ParametrizedEdge<T, ProbabilityDecoration> (
+                    source, 
+                    target, 
+                    new ProbabilityDecoration (probability)
+                )
+            );
         }
 
         public override string ToDot ()
