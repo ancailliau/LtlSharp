@@ -15,7 +15,7 @@ using LtlSharp.Automata.Transitions.Decorations;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
-    public class Gia02
+    public class Gia02 : ILTL2BuchiAutomaton<AutomatonNode>
     {
         private class InternalNode
         {
@@ -463,11 +463,10 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
 
-
         public Gia02 ()
         { }
 
-        public BuchiAutomaton<AutomatonNode> GetAutomaton (ITLFormula phi)
+        public BuchiAutomaton<AutomatonNode> GetBuchiAutomaton (ITLFormula phi)
         {
             phi = phi.Normalize ();
 

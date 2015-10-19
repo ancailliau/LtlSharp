@@ -23,7 +23,7 @@ namespace LtlSharp.Tests
 
             var gba = gpvw.GetGBA (f);
             var ba = gba.ToBA ();
-            var ba2 = ltl2buchi.GetAutomaton (f);
+            var ba2 = ltl2buchi.GetBuchiAutomaton (f);
             
             Console.WriteLine (ba.ToDot ());
             Console.WriteLine (ba2.ToDot ());

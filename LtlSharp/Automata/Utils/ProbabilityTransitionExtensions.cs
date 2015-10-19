@@ -277,7 +277,7 @@ namespace LtlSharp.Automata.Utils
             IDictionary<ProductAutomatonNode<T, AutomatonNode>, double> probabilities;
             Dictionary<T, double> dict;
 
-            var buchi = (new Gia02 ()).GetAutomaton (formula);
+            var buchi = (new Gia02 ()).GetBuchiAutomaton (formula);
             
             Console.WriteLine ("/*");
             Console.WriteLine (buchi.ToDot ());

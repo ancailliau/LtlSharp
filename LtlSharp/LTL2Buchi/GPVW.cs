@@ -13,7 +13,7 @@ using LtlSharp.Automata.Utils;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
-    public class GPVW : ILTLTranslator
+    public class GPVW : ILTL2BuchiAutomaton<AutomatonNode>
     {
         public GPVW ()
         {
@@ -55,7 +55,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             throw new NotImplementedException ();
         }
         
-        public HashSet<Node> Expand (Node node, HashSet<Node> nodeSet)
+        HashSet<InternalNode> Expand (InternalNode node, HashSet<InternalNode> nodeSet)
         {
             if (node.New.Count == 0) {
                 var nd = nodeSet.FirstOrDefault (x => 
@@ -68,7 +68,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     return nodeSet;
                 }
                 
-                var new_node = new Node () {
+                var new_node = new InternalNode () {
                     Incoming = new HashSet<string> (new[] { node.Name }),
                     New = new HashSet<ITLFormula> (node.Next)
                 };
@@ -94,14 +94,14 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     var olist1 = new HashSet<ITLFormula> (node.Old.Union (new [] { eta }));
                     var xlist1 = new HashSet<ITLFormula> (node.Next.Union (Next1 (eta)));
                                         
-                    var node1 = new Node () {
+                    var node1 = new InternalNode () {
                         Incoming = new HashSet<string> (node.Incoming),
                         New = nlist1,
                         Old = olist1,
                         Next = xlist1
                     };
                     
-                    var node2 = new Node () {
+                    var node2 = new InternalNode () {
                         Incoming = new HashSet<string> (node.Incoming),
                         New = nlist2,
                         Old = new HashSet<ITLFormula> (olist1),
@@ -118,7 +118,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     if (!node.Old.Contains (ceta.Right))
                         list.Add (ceta.Right);
                     
-                    var n = new Node (node.Name) {
+                    var n = new InternalNode (node.Name) {
                         Incoming = new HashSet<string> (node.Incoming),
                         New = list,
                         Old = new HashSet<ITLFormula> (node.Old.Union (new [] { eta })),
@@ -127,7 +127,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     return Expand (n, nodeSet);  
                 } else if (eta is Next) {
                     
-                    var n = new Node (node.Name) {
+                    var n = new InternalNode (node.Name) {
                         Incoming = new HashSet<string> (node.Incoming),
                         New = new HashSet<ITLFormula> (node.New),
                         Old = new HashSet<ITLFormula> (node.Old.Union (new [] { eta })),
@@ -142,20 +142,20 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
         }
         
-        public BuchiAutomaton<AutomatonNode> GetAutomaton (ITLFormula phi) {
+        public BuchiAutomaton<AutomatonNode> GetBuchiAutomaton (ITLFormula phi) {
             return GetGBA (phi).ToBA ();
         }
         
-        HashSet<Node> CreateGraph (ITLFormula phi)
+        HashSet<InternalNode> CreateGraph (ITLFormula phi)
         {
-            var n = new Node () {
+            var n = new InternalNode () {
                 Incoming = new HashSet<string> (new [] { "init" }),
                 New = new HashSet<ITLFormula> (new [] { phi }),
             };
             
-            var set = Expand (n, new HashSet<Node> ());
+            var set = Expand (n, new HashSet<InternalNode> ());
             
-            var init = new Node () {
+            var init = new InternalNode () {
                 Name = "init"
             };
             set.Add (init);
@@ -187,7 +187,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
 
             // Build the transitions
-            foreach (Node node in nodesSet) {
+            foreach (InternalNode node in nodesSet) {
                 foreach (var incomingNodeName in node.Incoming) {
                     //var transition = new AutomatonTransition<AutomatonNode> (
                     //    mapping [incomingNodeName],
@@ -261,105 +261,75 @@ namespace LtlSharp.Buchi.LTL2Buchi
 
             return automaton;
         }
-            
-        /*
-        public GeneralizedBuchiAutomata GetAutomaton (ILTLFormula phi) {
-            var formula = phi.Normalize ();
-            
-            var nodesSet = CreateGraph (formula);
-            
-            var automaton = new GeneralizedBuchiAutomata (nodesSet.Count);
-            
-            int i = 0;
-            var mapping = new Dictionary<string, AutomatonNode> ();
-            var literals = new HashSet<ILiteral> ();
-            foreach (var n in nodesSet) {
-                var newNode = new AutomatonNode ("s" + i);
-                automaton.AddVertex (newNode);
-                if (n.Incoming.Contains ("init"))
-                    automaton.InitialNodes.Add (newNode);
-                
-                
-                literals.Clear ();
-                bool contradiction = false;
-                foreach (var f in n.Old) {
-                    if (f is Proposition | f is Negation) {
-                        if (f is Negation) {
-                            if (literals.Contains (((Negation) f).Enclosed)) {
-                                contradiction = true;
-                                break;
-                            }
-                        }
-                        literals.Add ((ILiteral) f);
-                    }
-                }
-                if (!contradiction) {
-                    newNode.Labels = literals;
-                }
-                
-                mapping.Add (n.Name, newNode);
-                i++;
+
+        private class InternalNode
+        {
+            public string Name {
+                get;
+                set;
             }
 
-            // Build the transitions
-            foreach (Node node in nodesSet) {
-                foreach (var incomingNodeName in node.Incoming.Except (new [] { "init" })) {
-                    automaton.AddEdge (
-                        new AutomataTransition<AutomatonNode> (
-                            mapping [incomingNodeName],
-                            mapping [node.Name]
-                        )
-                    );
+            public HashSet<string> Incoming {
+                get;
+                set;
+            }
+
+            public HashSet<ITLFormula> New {
+                get;
+                set;
+            }
+
+            public HashSet<ITLFormula> Old {
+                get;
+                set;
+            }
+
+            public HashSet<ITLFormula> Next {
+                get;
+                set;
+            }
+
+            public InternalNode () : this (Guid.NewGuid ().ToString ()) 
+            {}
+
+            public InternalNode (string name)
+            {
+                Name = name;
+                Incoming = new HashSet<string> ();
+                New = new HashSet<ITLFormula> ();
+                Old = new HashSet<ITLFormula> ();
+                Next = new HashSet<ITLFormula> ();
+            }
+
+            public override bool Equals (object obj)
+            {
+                if (obj == null)
+                    return false;
+                if (ReferenceEquals (this, obj))
+                    return true;
+                if (obj.GetType () != typeof(InternalNode))
+                    return false;
+                InternalNode other = (InternalNode)obj;
+                return Name == other.Name;
+            }
+
+
+            public override int GetHashCode ()
+            {
+                unchecked {
+                    return (Name != null ? Name.GetHashCode () : 0);
                 }
             }
-            
-            // automaton.Edges = transitions;
 
-            // The acceptance set contains a separate set of states for
-            // each subformula of the form x U y. The set contains the
-            // states n such that y in Old(n) or x U y not in Old(n).
-            var listAcceptanceSets = new LinkedList<GBAAcceptanceSet>();
-
-            // Subformulas are processed in a DFS-fashioned way
-            Stack<ILTLFormula> formulasToProcess = new Stack<ILTLFormula>();
-            formulasToProcess.Push(formula);
-
-            int setIndex = 0;
-
-            while(formulasToProcess.Count > 0) {
-                ILTLFormula considered = formulasToProcess.Pop();
-
-                if (considered is Until) {
-                    Until consideredUntil = considered as Until;
-                    var set = new HashSet<AutomatonNode>();
-
-                    // Adds all nodes containing right member of until
-                    // or not the until in their old set.
-                    foreach (var q in nodesSet.Where(n => n.Old.Contains(consideredUntil.Right) | !n.Old.Contains(consideredUntil))) 
-                    {
-                        set.Add (mapping[q.Name]);
-                    }
-
-                    listAcceptanceSets.AddLast(new GBAAcceptanceSet (setIndex, set.ToArray ()));
-                    setIndex++;
-
-                } 
-
-                if (considered is IBinaryOperator) {
-                    formulasToProcess.Push(((IBinaryOperator) considered).Left);
-                    formulasToProcess.Push(((IBinaryOperator) considered).Right);
-
-                } else if (considered is IUnaryOperator) {
-                    formulasToProcess.Push(((IUnaryOperator) considered).Enclosed);
-
-                }
+            public override string ToString ()
+            {
+                return string.Format ("[Node: Name={0}, New={{{1}}}, Old={{{2}}}, Next={{{3}}}]", 
+                                  Name.Substring(0, 5) + "...", string.Join(",", New), string.Join(",", Old), string.Join(",",Next));
             }
-            automaton.AcceptanceSets = listAcceptanceSets.ToArray ();
-            
-            return automaton;
+
+
         }
-        */
-    
+        
     }
 }
 

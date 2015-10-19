@@ -5,9 +5,10 @@ using LtlSharp.Automata.OmegaAutomata;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
-    public interface ILTLTranslator
+    public interface ILTL2BuchiAutomaton<T>
+        where T : IAutomatonNode
     {
-        BuchiAutomaton<AutomatonNode> GetAutomaton (ITLFormula phi);
+        BuchiAutomaton<T> GetBuchiAutomaton (ITLFormula phi);
     }
 }
 
