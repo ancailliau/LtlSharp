@@ -124,8 +124,6 @@
     <Folder Include="EmptinessChecker\" />
     <Folder Include="Translators\" />
     <Folder Include="Language\" />
-    <Folder Include="Models\" />
-    <Folder Include="ProbabilisticSystems\" />
     <Folder Include="ModelCheckers\" />
     <Folder Include="Automata\AcceptanceConditions\" />
     <Folder Include="Automata\OmegaAutomata\" />

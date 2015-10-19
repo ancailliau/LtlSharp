@@ -28,8 +28,8 @@ namespace LtlSharp.Monitoring
         
         public LTLMonitor (ITLFormula formula)
         {
-            var tpositiveNFA = BA2NFA.Transform (translator.GetAutomaton (formula));
-            var tnegativeNFA = BA2NFA.Transform (translator.GetAutomaton (formula.Negate ()));
+            var tpositiveNFA = BA2NFA.ToNFA (translator.GetAutomaton (formula));
+            var tnegativeNFA = BA2NFA.ToNFA (translator.GetAutomaton (formula.Negate ()));
 
             positiveNFA = tpositiveNFA.Determinize ();
             negativeNFA = tnegativeNFA.Determinize ();

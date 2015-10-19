@@ -11,23 +11,28 @@ namespace LtlSharp.Buchi.Translators
 {
     public static class BA2NFA
     {
-        public static NFA<AutomatonNode> Transform (BuchiAutomaton<AutomatonNode> automaton)
+        public static NFA<T> ToNFA<T> (this BuchiAutomaton<T> automaton)
+            where T : IAutomatonNode
         {
-            var emptinessChecker = new EmptinessChecker<AutomatonNode> (automaton);
+            var emptinessChecker = new EmptinessChecker<T> (automaton);
 
-            var newAcceptanceSet = new HashSet<AutomatonNode> ();
+            var newAcceptanceSet = new HashSet<T> ();
             foreach (var n in automaton.Nodes) {
                 if (emptinessChecker.Emptiness (n)) {
                     newAcceptanceSet.Add (n);
                 }
             }
 
-            var nfa = new NFA<AutomatonNode> (new AutomatonNodeFactory ());
-            // TODO fixme
-            //nfa.AddVertexRange (automaton.Vertices);
-            //nfa.AddEdgeRange (automaton.Edges);
-            //nfa.AcceptanceSet = newAcceptanceSet;
-            //nfa.InitialNodes = new HashSet<AutomatonNode> (new [] { automaton.InitialNode });
+            var nfa = new NFA<T> (automaton.GetNodeFactory ());
+
+            nfa.AddNodes (automaton.Nodes);
+            foreach (var t in automaton.Edges) {
+                nfa.AddTransition (t.Source, t.Target, t.Decoration);
+            }
+
+            nfa.SetAcceptingNodes (newAcceptanceSet);
+            nfa.SetInitialNode (automaton.InitialNode);
+            
             return nfa;
         }
     }

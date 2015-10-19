@@ -25,20 +25,20 @@ namespace LtlSharp.Automata.FiniteAutomata
     /// TOSEM" for more details.
     /// </remarks>
     /// <typeparam name="T">Type of nodes</typeparam>
-    public class NFA<T> 
+    public class NFA<T>
         : Automaton<T, LiteralSetDecoration>
         where T : IAutomatonNode
-    {   
-        
+    {
+
         /// <summary>
         /// Gets or sets the initial node of the automaton.
         /// </summary>
         /// <value>The initial node.</value>
-        public T InitialNode { 
-            get; 
-            protected set; 
+        public T InitialNode {
+            get;
+            protected set;
         }
-        
+
         /// <summary>
         /// Gets the set of node accepting the finite word.
         /// </summary>
@@ -47,13 +47,13 @@ namespace LtlSharp.Automata.FiniteAutomata
             get;
             private set;
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.FiniteAutomata.NFA`1"/> class with the
         /// specified factory and an empty set of accepting nodes.
         /// </summary>
         /// <param name="factory">Factory.</param>
-        public NFA (IAutomatonNodeFactory<T> factory) 
+        public NFA (IAutomatonNodeFactory<T> factory)
             : base (factory)
         {
             AcceptingNodes = new HashSet<T> ();
@@ -67,7 +67,7 @@ namespace LtlSharp.Automata.FiniteAutomata
         {
             InitialNode = node;
         }
-        
+
         /// <summary>
         /// Determinize the automaton using the power set construction.
         /// </summary>
@@ -76,7 +76,7 @@ namespace LtlSharp.Automata.FiniteAutomata
             this.UnfoldTransitions ();
 
             var factory = new PowerSetAutomatonNodeFactory<T> ();
-            
+
             var deterministicAutomaton = new NFA<PowerSetAutomatonNode<T>> (factory);
 
             var initialPowerSet = new [] { InitialNode };
@@ -84,26 +84,26 @@ namespace LtlSharp.Automata.FiniteAutomata
             var mapping = new Dictionary<HashSet<T>, PowerSetAutomatonNode<T>> (HashSet<T>.CreateSetComparer ());
             var node = factory.Create (initialPowerSet);
             mapping.Add (new HashSet<T> (initialPowerSet), node);
-            
+
             deterministicAutomaton.AddNode (node);
             deterministicAutomaton.SetInitialNode (node);
-            
+
             if (AcceptingNodes.Contains (InitialNode)) {
                 deterministicAutomaton.AcceptingNodes.Add (node);
             }
 
             var pending = new Stack<PowerSetAutomatonNode<T>> ();
             pending.Push (node);
-            
+
             var visited = new HashSet<PowerSetAutomatonNode<T>> ();
-            
+
             while (pending.Count > 0) {
                 var current = pending.Pop ();
                 visited.Add (current);
-                
+
                 var currentPowerSet = current.Nodes;
                 var outLabels = GetOutDecorations (currentPowerSet);
-                
+
                 foreach (var label in outLabels) {
                     var successorPowerSet = new HashSet<T> ();
                     foreach (var state in currentPowerSet) {
@@ -111,32 +111,37 @@ namespace LtlSharp.Automata.FiniteAutomata
                             successorPowerSet.Add (successor);
                         }
                     }
-                    
+
                     node = factory.Create (successorPowerSet);
                     if (!visited.Contains (node)) {
                         deterministicAutomaton.AddNode (node);
-                        
+
                         if (successorPowerSet.Any (succ => AcceptingNodes.Contains (succ))) {
                             deterministicAutomaton.AcceptingNodes.Add (node);
                         }
                     }
-                    
+
                     if (!visited.Contains (node) & !pending.Contains (node)) {
                         pending.Push (node);
                     }
 
                     deterministicAutomaton.AddTransition (current, node, label);
-                }   
+                }
             }
-            
+
             deterministicAutomaton.SimplifyTransitions ();
-            
+
             return deterministicAutomaton;
         }
 
         public override Automaton<T, LiteralSetDecoration> Clone ()
         {
             throw new NotImplementedException ();
+        }
+
+        public void SetAcceptingNodes (IEnumerable<T> newAcceptanceSet)
+        {
+            AcceptingNodes = new HashSet<T> (newAcceptanceSet);
         }
     }
 }
