@@ -11,7 +11,7 @@ using LtlSharp.Utils;
 using QuickGraph;
 using QuickGraph.Graphviz;
 using LtlSharp.Automata.Transitions;
-
+using LtlSharp.Automata.Transitions.Decorations;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
@@ -479,7 +479,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             // This is necessary as it might be the case that we don't reach states generating all acceptance condition
             // sets (i.e. one will be empty). See LtlSharp.Tests.TestEmptiness.TestMobilizedWhenAlloc for a test case.
             for (int i = 0; i < init.Untils.Length; i++) {
-                automaton.AcceptanceCondition.Add (i, Enumerable.Empty<AutomataTransition<AutomatonNode, LiteralSetDecoration>> ());
+                automaton.AcceptanceCondition.Add (i, Enumerable.Empty<AutomataTransition<AutomatonNode, LtlSharp.Automata.Transitions.Decorations.LiteralSetDecoration>> ());
             }
 
             var correspondingState = new Dictionary<int, AutomatonNode> ();

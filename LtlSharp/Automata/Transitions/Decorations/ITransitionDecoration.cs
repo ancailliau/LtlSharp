@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using LtlSharp.Automata;
 using LtlSharp.Automata.Transitions;
 
-namespace LtlSharp.Automata
+namespace LtlSharp.Automata.Transitions.Decorations
 {
     /// <summary>
     /// Defines a generic structure for decoration on transitions

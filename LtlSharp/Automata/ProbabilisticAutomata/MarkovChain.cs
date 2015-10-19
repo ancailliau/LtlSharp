@@ -7,7 +7,7 @@ using QuickGraph.Graphviz.Dot;
 using LtlSharp.Automata;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Utils;
-
+using LtlSharp.Automata.Transitions.Decorations;
 
 namespace LtlSharp.Models
 {

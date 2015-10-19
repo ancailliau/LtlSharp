@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using LtlSharp.Utils;
 using System.Linq;
 
-namespace LtlSharp.Automata.Transitions
+namespace LtlSharp.Automata.Transitions.Decorations
 {
     public class DegeneralizerDecoration
         : ITransitionDecoration<DegeneralizerDecoration>

@@ -2,6 +2,7 @@
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Automata.Transitions;
+using LtlSharp.Automata.Transitions.Decorations;
 
 namespace LtlSharp.Automata.OmegaAutomata
 {

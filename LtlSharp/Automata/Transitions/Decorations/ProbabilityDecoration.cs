@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using LtlSharp.Automata.Transitions;
 using QuickGraph;
 
-namespace LtlSharp.Automata
+namespace LtlSharp.Automata.Transitions.Decorations
 {
     /// <summary>
     /// Represents a Markov Transition.

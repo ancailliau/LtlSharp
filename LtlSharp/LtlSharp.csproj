@@ -94,8 +94,8 @@
     <Compile Include="Automata\AcceptanceConditions\BuchiAcceptance.cs" />
     <Compile Include="Automata\AcceptanceConditions\RabinAcceptance.cs" />
     <Compile Include="Automata\Nodes\IAutomatonNode.cs" />
-    <Compile Include="Automata\Transitions\ITransitionDecoration.cs" />
-    <Compile Include="Automata\Transitions\ProbabilityDecoration.cs" />
+    <Compile Include="Automata\Transitions\Decorations\ITransitionDecoration.cs" />
+    <Compile Include="Automata\Transitions\Decorations\ProbabilityDecoration.cs" />
     <Compile Include="Automata\Nodes\ProductAutomatonNode.cs" />
     <Compile Include="Automata\Nodes\PowerSetAutomatonNode.cs" />
     <Compile Include="Automata\Nodes\Factories\IAutomatonNodeFactory.cs" />
@@ -105,13 +105,14 @@
     <Compile Include="Utils\QuickGraphUtils.cs" />
     <Compile Include="LiteralsSet.cs" />
     <Compile Include="Automata\Automata.cs" />
-    <Compile Include="Automata\Transitions\DegeneralizerDecoration.cs" />
+    <Compile Include="Automata\Transitions\Decorations\DegeneralizerDecoration.cs" />
     <Compile Include="Automata\Utils\ProbabilityTransitionExtensions.cs" />
     <Compile Include="Automata\Utils\LiteralSetTransitionExtensions.cs" />
-    <Compile Include="Automata\Transitions\LiteralSetDecoration.cs" />
+    <Compile Include="Automata\Transitions\Decorations\LiteralSetDecoration.cs" />
     <Compile Include="Automata\AcceptanceConditions\GeneralizedBuchiAcceptance.cs" />
     <Compile Include="Automata\OmegaAutomata\GeneralizedBuchiAutomaton.cs" />
     <Compile Include="Automata\OmegaAutomata\DegeneralizerAutomaton.cs" />
+    <Compile Include="Automata\Transitions\AutomataTransition.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Language\LTL.g" />
@@ -134,6 +135,7 @@
     <Folder Include="Automata\Transitions\" />
     <Folder Include="Automata\Nodes\Factories\" />
     <Folder Include="Automata\Utils\" />
+    <Folder Include="Automata\Transitions\Decorations\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

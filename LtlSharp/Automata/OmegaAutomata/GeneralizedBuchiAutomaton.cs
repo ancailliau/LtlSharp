@@ -3,6 +3,7 @@ using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.Nodes.Factories;
 using System.Collections.Generic;
+using LtlSharp.Automata.Transitions.Decorations;
 
 namespace LtlSharp.Automata.OmegaAutomata
 {

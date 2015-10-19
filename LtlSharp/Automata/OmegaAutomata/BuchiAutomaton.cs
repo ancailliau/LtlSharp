@@ -10,7 +10,7 @@ using LtlSharp.Utils;
 using LtlSharp.Language;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.Nodes.Factories;
-
+using LtlSharp.Automata.Transitions.Decorations;
 
 namespace LtlSharp.Automata.OmegaAutomata
 {

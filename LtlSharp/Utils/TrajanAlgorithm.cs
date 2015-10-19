@@ -3,7 +3,7 @@ using LtlSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using LtlSharp.Automata;
-
+using LtlSharp.Automata.Transitions.Decorations;
 
 namespace LtlSharp.Utils
 {

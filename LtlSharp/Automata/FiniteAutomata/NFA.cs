@@ -13,6 +13,7 @@ using LtlSharp.Utils;
 using LtlSharp.Automata.Nodes.Factories;
 
 using LtlSharp.Automata.Utils;
+using LtlSharp.Automata.Transitions.Decorations;
 
 namespace LtlSharp.Automata.FiniteAutomata
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LtlSharp.Automata.Transitions
+namespace LtlSharp.Automata.Transitions.Decorations
 {
     public class LiteralSetDecoration : ITransitionDecoration<LiteralSetDecoration>
     {
