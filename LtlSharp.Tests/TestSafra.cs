@@ -54,8 +54,7 @@ namespace LtlSharp.Tests
             ba.SetInitialNode (q);
             ba.SetAcceptanceCondition (new BuchiAcceptance<AutomatonNode> (new [] { f, g }));
 
-            var safra = new SafraDeterminization ();
-            var rabin = safra.Transform (ba);
+            var rabin = ba.Determinize ();
 
             //var folder = new Fold<RabinAutomaton<AutomatonNode>, AutomatonNode> ();
             //rabin = folder.Transform (rabin);

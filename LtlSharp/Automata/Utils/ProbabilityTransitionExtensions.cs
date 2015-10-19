@@ -301,8 +301,7 @@ namespace LtlSharp.Automata.Utils
                 return dict;
             }
 
-            var safra = new SafraDeterminization ();
-            var rabin = safra.Transform (buchi);
+            var rabin = buchi.Determinize ();
 
             IAcceptanceCondition<ProductAutomatonNode<T, AutomatonNode>> conditions;
             productMC = mc.Product (rabin, mc.Nodes, out conditions, out correspondingNodes);
