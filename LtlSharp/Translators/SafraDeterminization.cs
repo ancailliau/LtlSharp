@@ -351,7 +351,7 @@ namespace LtlSharp.Translators
                     var target = source.Clone ();
                     target.RemoveAllMarks (); // Step 1
                     target.Create (); // Step 2
-                    target.Update (a.ToLiteralSet ()); // Step 3
+                    target.Update (a.LiteralSet); // Step 3
                     target.HorizontalMerge (); // Step 4
                     target.RemoveEmpty (); // Step 5
                     if (target.MacroState.Count > 0) {
@@ -360,7 +360,7 @@ namespace LtlSharp.Translators
                         if (!Transitions.ContainsKey (source)) {
                             Transitions.Add (source, new List<SafraTransition> ());
                         }
-                        Transitions[source].Add (new SafraTransition (a.ToLiteralSet (), target));
+                        Transitions[source].Add (new SafraTransition (a.LiteralSet, target));
                         
                         if (!Transitions.ContainsKey (target) & !pending.Contains (target)) {
                             pending.Push (target);

@@ -10,6 +10,12 @@ namespace LtlSharp.Automata.Transitions.Decorations
     {
         private LiteralsSet _literalSet;
         
+        public LiteralsSet LiteralSet {
+            get {
+                return _literalSet;
+            }
+        }
+        
         /// <summary>
         /// Initializes a new instance of the
         /// <see cref="T:LtlSharp.Automata.Transitions.Decorations.LiteralSetDecoration"/> class with an empty set of
@@ -29,33 +35,6 @@ namespace LtlSharp.Automata.Transitions.Decorations
         public LiteralSetDecoration (IEnumerable<ILiteral> nl)
         {
             _literalSet = new LiteralsSet (nl);
-        }
-        
-        [Obsolete]
-        public bool Entails (LiteralSetDecoration l)
-        {
-            throw new NotImplementedException ();
-        }
-        
-        [Obsolete]
-        public IEnumerable<ILiteral> GetAlphabet ()
-        {
-            throw new NotImplementedException ();
-        }
-
-        /// <summary>
-        /// Returns the set of literals.
-        /// </summary>
-        /// <returns>The literal set.</returns>
-        public LiteralsSet ToLiteralSet ()
-        {
-            return _literalSet;
-        }
-
-        [Obsolete]
-        public IEnumerable<LiteralSetDecoration> UnfoldLabels (IEnumerable<ILiteral> enumerable)
-        {
-            throw new NotImplementedException ();
         }
         
         public override string ToString ()

@@ -14,7 +14,7 @@ namespace LtlSharp.Automata.Utils
         {
             foreach (var trans in automata.Edges) {
                 var sameTarget = automata.Edges.Where (t => t.Target.Equals (trans.Target)).ToList ();
-                var labels = sameTarget.Select (x => x.Decoration.ToLiteralSet ());
+                var labels = sameTarget.Select (x => x.Decoration.LiteralSet);
                     var lf = new LiteralFormula (labels);
                     var newLabels = lf.Simplify ();
                     foreach (var e in sameTarget) {
@@ -31,7 +31,7 @@ namespace LtlSharp.Automata.Utils
         {
             var alphabet = automata.Alphabet ().ToList ();
             Console.WriteLine ("Alphabet = {" + string.Join (",", alphabet) + "}");
-            automata.MapLabel ((arg) => arg.ToLiteralSet().Expand (alphabet).Select (x => new LiteralSetDecoration (x)));
+            automata.MapLabel ((arg) => arg.LiteralSet.Expand (alphabet).Select (x => new LiteralSetDecoration (x)));
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace LtlSharp.Automata.Utils
         public static IEnumerable<ILiteral> Alphabet<T> (this Automata<T, LiteralSetDecoration> automata)
             where T : IAutomatonNode
         {
-            return automata.Edges.SelectMany (e => e.Decoration.ToLiteralSet ().GetAlphabet ()).Distinct ();
+            return automata.Edges.SelectMany (e => e.Decoration.LiteralSet.GetAlphabet ()).Distinct ();
         }
         
         
@@ -65,7 +65,7 @@ namespace LtlSharp.Automata.Utils
                 // TODO Simpler expression MUST exist !
                 foreach (var c in transitions.Select (x => x.Decoration)) {
                     // Better use POST with a predicate
-                    var succ = transitions.Where (t => c.ToLiteralSet ().Entails(t.Decoration.ToLiteralSet ())).Select (t => t.Target);
+                    var succ = transitions.Where (t => c.LiteralSet.Entails(t.Decoration.LiteralSet)).Select (t => t.Target);
                     if (succ.Count () > 1)
                         return false;
 
@@ -88,7 +88,7 @@ namespace LtlSharp.Automata.Utils
         public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, T node, LiteralsSet labels)
             where T : IAutomatonNode
         {
-            return automata.Post (node, (l, target) => labels.Entails(l.ToLiteralSet ()));
+            return automata.Post (node, (l, target) => labels.Entails(l.LiteralSet));
         }
 
         /// <summary>
