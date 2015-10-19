@@ -81,7 +81,7 @@
     <Compile Include="LTL2Buchi\ILTL2BuchiAutomaton.cs" />
     <Compile Include="Automata\ProbabilisticAutomata\MarkovChain.cs" />
     <Compile Include="Automata\Utils\MarkovChainsExtensions.cs" />
-    <Compile Include="Utils\TrajanAlgorithm.cs" />
+    <Compile Include="Automata\Utils\TrajanAlgorithm.cs" />
     <Compile Include="Language\ITLFormula.cs" />
     <Compile Include="ModelCheckers\PCTLModelChecker.cs" />
     <Compile Include="Automata\Utils\RabinExtensions.cs" />
