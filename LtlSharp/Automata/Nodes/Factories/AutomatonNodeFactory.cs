@@ -9,19 +9,26 @@ namespace LtlSharp.Automata.Nodes.Factories
     public class AutomatonNodeFactory 
         : IAutomatonNodeFactory<AutomatonNode>
     {
+        int currentId ;
+        
+        public AutomatonNodeFactory ()
+        {
+            currentId = 0;
+        }
+        
         #region IAutomatonNodeFactory<T> Members
         
         AutomatonNode IAutomatonNodeFactory<AutomatonNode>.Create ()
         {
-            return new AutomatonNode ();
+            return new AutomatonNode (currentId++);
         }
         AutomatonNode IAutomatonNodeFactory<AutomatonNode>.Create (string name)
         {
-            return new AutomatonNode (name);
+            return new AutomatonNode (currentId++, name);
         }
         AutomatonNode IAutomatonNodeFactory<AutomatonNode>.Create (string name, IEnumerable<ILiteral> labels)
         {
-            return new AutomatonNode (name, labels);
+            return new AutomatonNode (currentId++, name, labels);
         }
         
         #endregion

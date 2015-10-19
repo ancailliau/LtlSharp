@@ -14,22 +14,29 @@ namespace LtlSharp.Automata.Nodes.Factories
         where T1 : IAutomatonNode
         where T2 : IAutomatonNode
     {
+        int currentId;
+        
+        public AutomatonNodeProductFactory ()
+        {
+            currentId = 0;
+        }
+        
         #region IAutomatonNodeFactory<ProductAutomatonNode<T1, T2>> Members
         
         ProductAutomatonNode<T1, T2> IAutomatonNodeFactory<ProductAutomatonNode<T1, T2>>.Create ()
         {
-            return new ProductAutomatonNode<T1, T2> ();
+            return new ProductAutomatonNode<T1, T2> (currentId++);
         }
         
         ProductAutomatonNode<T1, T2> IAutomatonNodeFactory<ProductAutomatonNode<T1, T2>>.Create (string name)
         {
-            return new ProductAutomatonNode<T1, T2> (name);
+            return new ProductAutomatonNode<T1, T2> (currentId++, name);
         }
         
         ProductAutomatonNode<T1, T2> IAutomatonNodeFactory<ProductAutomatonNode<T1, T2>>.Create (string name, 
                                                                                                  IEnumerable<ILiteral> labels)
         {
-            return new ProductAutomatonNode<T1, T2> (name, labels);
+            return new ProductAutomatonNode<T1, T2> (currentId++, name, labels);
         }
         
         #endregion
@@ -44,7 +51,8 @@ namespace LtlSharp.Automata.Nodes.Factories
         /// <param name="node2">Node of the second automaton.</param>
         public ProductAutomatonNode<T1, T2> Create (T1 node1, T2 node2)
         {
-            return new ProductAutomatonNode<T1, T2> (string.Format ("{0} x {1}", node1.Name, node2.Name),
+            return new ProductAutomatonNode<T1, T2> (currentId++,
+                                                     string.Format ("{0} x {1}", node1.Name, node2.Name),
                                                      node1.Labels.Union (node2.Labels).Distinct(), 
                                                      node1,
                                                      node2);
@@ -59,7 +67,8 @@ namespace LtlSharp.Automata.Nodes.Factories
         /// <param name="node2">Node of the second automaton.</param>
         public ProductAutomatonNode<T1, T2> Create (T1 node1, T2 node2, IEnumerable<ILiteral> labels)
         {
-            return new ProductAutomatonNode<T1, T2> (string.Format ("{0} x {1}", node1.Name, node2.Name),
+            return new ProductAutomatonNode<T1, T2> (currentId++,
+                                                     string.Format ("{0} x {1}", node1.Name, node2.Name),
                                                      labels, 
                                                      node1,
                                                      node2);

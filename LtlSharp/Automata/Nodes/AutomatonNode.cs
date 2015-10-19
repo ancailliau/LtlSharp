@@ -12,9 +12,6 @@ namespace LtlSharp.Automata
     /// </summary>
     public class AutomatonNode : IAutomatonNode
     {
-        // TODO Move this to factories
-        static int currentId = 0;
-
         /// <summary>
         /// Gets the identifier of the node.
         /// </summary>
@@ -46,28 +43,17 @@ namespace LtlSharp.Automata
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.AutomatonNode"/> class with an empty name
         /// and an empty label.
         /// </summary>
-        public AutomatonNode () 
-            : this ("")
+        public AutomatonNode (int id) 
+            : this (id, "")
         {}
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.AutomatonNode"/> class with the name of the
-        /// specified node and the same label.
-        /// </summary>
-        /// <param name="node">Node.</param>
-        public AutomatonNode (IAutomatonNode node) 
-            : this (node.Name, node.Labels)
-        {}
-        
         /// <summary>
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.AutomatonNode"/> class with the specified
         /// name and an empty label.
         /// </summary>
         /// <param name="name">Name.</param>
-        public AutomatonNode (string name) : this (name, Enumerable.Empty<ILiteral> ())
-        {
-            Name = name;
-        }
+        public AutomatonNode (int id, string name) : this (id, name, Enumerable.Empty<ILiteral> ())
+        { }
         
         /// <summary>
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.AutomatonNode"/> class with the specified
@@ -75,9 +61,9 @@ namespace LtlSharp.Automata
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="literals">Literals.</param>
-        public AutomatonNode (string name, IEnumerable<ILiteral> literals)
+        public AutomatonNode (int id, string name, IEnumerable<ILiteral> literals)
         {
-            Id = currentId++;
+            Id = id;
             Name = string.IsNullOrEmpty (name) ? "s" + Id : name;
             Label = new LiteralSet (literals);
         }

@@ -482,10 +482,8 @@ namespace LtlSharp.Buchi.LTL2Buchi
             }
 
             var correspondingState = new Dictionary<int, AutomatonNode> ();
-            int index = 0;
             foreach (var state in states) {
-                var node = new AutomatonNode ("S" + (index++));
-                automaton.AddNode (node);
+                var node = automaton.AddNode ();
                 correspondingState.Add (state.StateId, node);
             }
 
@@ -610,11 +608,10 @@ namespace LtlSharp.Buchi.LTL2Buchi
             AutomatonNode cachedNode = null;
             var key = new Tuple<AutomatonNode, AutomatonNode> (n0, n1);
             if (!cache.TryGetValue (key, out cachedNode)) {
-                cachedNode = new AutomatonNode (n0.Name + " x " + n1.Name);
+                cachedNode = ba.AddNode (n0.Name + " x " + n1.Name);
                 if (degeneralizer.AcceptanceCondition.Accept (n1)) {
                     ba.AddToAcceptance (cachedNode);
                 }
-                ba.AddNode (cachedNode);
                 cache.Add (key, cachedNode);
             }
 
@@ -631,8 +628,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var nodes = new AutomatonNode [nNodes];
             var last = nAcceptingSets;
             for (int i = 0; i < nNodes; i++) {
-                nodes [i] = new AutomatonNode ("S" + i);
-                automaton.AddNode (nodes [i]);
+                nodes [i] = automaton.AddNode ();
             }
 
             for (int i = 0; i < last; i++) {

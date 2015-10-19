@@ -173,17 +173,14 @@ namespace LtlSharp.Buchi.LTL2Buchi
             );
             
 
-            int i = 0;
             var mapping = new Dictionary<string, AutomatonNode> ();
             foreach (var n in nodesSet) {
-                var newNode = new AutomatonNode ("s" + i);
-                automaton.AddNode (newNode);
+                var newNode = automaton.AddNode ();
                 if (n.Name == "init") {
                     automaton.SetInitialNode (newNode);
                 }
 
                 mapping.Add (n.Name, newNode);
-                i++;
             }
 
             // Build the transitions

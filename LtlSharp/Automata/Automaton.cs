@@ -271,6 +271,13 @@ namespace LtlSharp.Automata
         {
             graph.AddVertex (node);
         }
+
+        public T AddNode ()
+        {
+            var t = factory.Create ();
+            graph.AddVertex (t);
+            return t;
+        }
         
         public T AddNode (string name)
         {

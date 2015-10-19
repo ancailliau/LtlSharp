@@ -8,22 +8,29 @@ namespace LtlSharp.Automata.Nodes.Factories
         : IAutomatonNodeFactory<PowerSetAutomatonNode<T>> 
         where T : IAutomatonNode
     {
+        int currentId ;
+
+        public PowerSetAutomatonNodeFactory ()
+        {
+            currentId = 0;
+        }
+        
         #region IAutomatonNodeFactory<PowerSetAutomatonNode<T>> Members
         
         PowerSetAutomatonNode<T> IAutomatonNodeFactory<PowerSetAutomatonNode<T>>.Create ()
         {
-            return new PowerSetAutomatonNode<T> ();
+            return new PowerSetAutomatonNode<T> (currentId++);
         }
         
         PowerSetAutomatonNode<T> IAutomatonNodeFactory<PowerSetAutomatonNode<T>>.Create (string name)
         {
-            return new PowerSetAutomatonNode<T> (name);
+            return new PowerSetAutomatonNode<T> (currentId++, name);
         }
         
         PowerSetAutomatonNode<T> IAutomatonNodeFactory<PowerSetAutomatonNode<T>>.Create (string name, 
                                                                                          IEnumerable<ILiteral> labels)
         {
-            return new PowerSetAutomatonNode<T> (name, labels);
+            return new PowerSetAutomatonNode<T> (currentId++, name, labels);
         }
         
         #endregion
@@ -40,6 +47,7 @@ namespace LtlSharp.Automata.Nodes.Factories
         public PowerSetAutomatonNode<T> Create (IEnumerable<T> nodes)
         {
             return new PowerSetAutomatonNode<T> (
+                currentId++,
                 string.Join (",", nodes.Select (x => x.ToString ())),
                 nodes.SelectMany (n => n.Labels).Distinct (),
                 nodes

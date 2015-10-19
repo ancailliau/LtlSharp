@@ -27,27 +27,27 @@ namespace LtlSharp.Automata
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.ProductAutomatonNode`1"/> class with
         /// both null automaton nodes.
         /// </summary>
-        public PowerSetAutomatonNode () 
-            : base ()
+        public PowerSetAutomatonNode (int id) 
+            : base (id)
         {}
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.ProductAutomatonNode`1"/> class with the 
         /// specified name, and both null automaton nodes.
         /// </summary>
         /// <param name="name">Name.</param>
-        public PowerSetAutomatonNode (string name) 
-            : base(name)
+        public PowerSetAutomatonNode (int id, string name) 
+            : base(id, name)
         {}
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.ProductAutomatonNode`1"/> class with the
         /// specified name and label, and both null automaton nodes.
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="labels">Labels.</param>
-        public PowerSetAutomatonNode (string name, IEnumerable<ILiteral> labels)
-            : base (name, labels)
+        public PowerSetAutomatonNode (int id, string name, IEnumerable<ILiteral> labels)
+            : base (id, name, labels)
         {}
 
         /// <summary>
@@ -58,8 +58,8 @@ namespace LtlSharp.Automata
         /// <param name="labels">Labels.</param>
         /// <param name="node1">Node of the first automaton.</param>
         /// <param name="node2">Node of the second automaton.</param>
-        public PowerSetAutomatonNode (string name, IEnumerable<ILiteral> labels, IEnumerable<T> nodes)
-            : base (name, labels)
+        public PowerSetAutomatonNode (int id, string name, IEnumerable<ILiteral> labels, IEnumerable<T> nodes)
+            : base (id, name, labels)
         {
             Nodes = new HashSet<T> (nodes);
         }

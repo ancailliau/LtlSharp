@@ -67,9 +67,8 @@ namespace LtlSharp.Automata.Utils
                 return mapping [acceptanceIndex][node];
             }
             
-            var newNode = new AutomatonNode (node.Name + " x " + acceptanceIndex);
+            var newNode = buchiAutomaton.AddNode (node.Name + " x " + acceptanceIndex);
             mapping [acceptanceIndex].Add(node, newNode);
-            buchiAutomaton.AddNode (newNode);
             
             if (generalizedBuchiAutomaton.InitialNode.Equals (node) & acceptanceIndex == 0) {
                 buchiAutomaton.SetInitialNode (newNode);

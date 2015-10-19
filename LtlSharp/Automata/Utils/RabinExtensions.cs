@@ -60,10 +60,8 @@ namespace LtlSharp.Automata.Utils
             
             var rabin = new RabinAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
             var mapping = new Dictionary<SafraTree, AutomatonNode> ();
-            int i = 0;
             foreach (var t in Transitions.Keys) {
-                var n = new AutomatonNode ("s" + (i++));
-                rabin.AddNode (n);
+                var n = rabin.AddNode ();
                 mapping.Add (t, n);
             }
             

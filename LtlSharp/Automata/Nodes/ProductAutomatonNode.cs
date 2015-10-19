@@ -36,27 +36,27 @@ namespace LtlSharp.Automata
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.ProductAutomatonNode`1"/> class with
         /// both null automaton nodes.
         /// </summary>
-        public ProductAutomatonNode () 
-            : base ()
+        public ProductAutomatonNode (int id) 
+            : base (id)
         {}
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.ProductAutomatonNode`1"/> class with the 
         /// specified name, and both null automaton nodes.
         /// </summary>
         /// <param name="name">Name.</param>
-        public ProductAutomatonNode (string name) 
-            : base(name)
+        public ProductAutomatonNode (int id, string name) 
+            : base(id, name)
         {}
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:LtlSharp.Automata.ProductAutomatonNode`1"/> class with the
         /// specified name and label, and both null automaton nodes.
         /// </summary>
         /// <param name="name">Name.</param>
         /// <param name="labels">Labels.</param>
-        public ProductAutomatonNode (string name, IEnumerable<ILiteral> labels)
-            : base (name, labels)
+        public ProductAutomatonNode (int id, string name, IEnumerable<ILiteral> labels)
+            : base (id, name, labels)
         {}
 
         /// <summary>
@@ -67,13 +67,13 @@ namespace LtlSharp.Automata
         /// <param name="labels">Labels.</param>
         /// <param name="node1">Node of the first automaton.</param>
         /// <param name="node2">Node of the second automaton.</param>
-        public ProductAutomatonNode (string name, IEnumerable<ILiteral> labels, T1 node1, T2 node2)
-            : base (name, labels)
+        public ProductAutomatonNode (int id, string name, IEnumerable<ILiteral> labels, T1 node1, T2 node2)
+            : base (id, name, labels)
         {
             Node1 = node1;
             Node2 = node2;
         }
-
+        
         /// <summary>
         /// Sets the nodes.
         /// </summary>
