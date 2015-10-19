@@ -3,7 +3,6 @@ using NUnit.Framework;
 using LtlSharp.Buchi;
 using LtlSharp;
 using System.Collections.Generic;
-using LtlSharp.Translators;
 using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;

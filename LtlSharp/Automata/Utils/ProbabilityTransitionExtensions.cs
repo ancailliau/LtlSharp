@@ -6,7 +6,6 @@ using System.Diagnostics;
 using LtlSharp.Utils;
 using LtlSharp.Automata;
 using LtlSharp.Buchi.LTL2Buchi;
-using LtlSharp.Translators;
 using System.Collections;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
