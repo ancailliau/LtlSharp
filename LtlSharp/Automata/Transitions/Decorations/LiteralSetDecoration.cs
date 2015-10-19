@@ -10,6 +10,10 @@ namespace LtlSharp.Automata.Transitions.Decorations
     {
         private LiteralSet _literalSet;
         
+        /// <summary>
+        /// Gets the set of literal.
+        /// </summary>
+        /// <value>The literal set.</value>
         public LiteralSet LiteralSet {
             get {
                 return _literalSet;

@@ -6,12 +6,8 @@ using QuickGraph;
 namespace LtlSharp.Automata.Transitions.Decorations
 {
     /// <summary>
-    /// Represents a Markov Transition.
+    /// Represents a probability decoration.
     /// </summary>
-    /// <description>
-    /// A Markov Transition has a source Markov node and a target Markov node. 
-    /// The transition is decorated with its probability.
-    /// </description>
     public class ProbabilityDecoration 
         : ITransitionDecoration<ProbabilityDecoration>
     {   
