@@ -63,11 +63,11 @@ namespace LtlSharp.Buchi
                 }
                 //Console.WriteLine ("----");
                 if (label[q].Count == 0 | a.AcceptanceCondition.Accept(q)) { //  a.AcceptanceSets.Any (x => x.Nodes.Contains (q))
-                    var labelsToPropagate = label [q].Union (a.GetAcceptanceCondition().GetAcceptingConditions(q));
+                    var labelsToPropagate = label [q].Union (a.AcceptanceCondition.GetAcceptingConditions(q));
                     //Console.WriteLine ("labelsToPropagate={0}", string.Join (",", labelsToPropagate));
             
                     propagate (a, new [] { q }, labelsToPropagate);
-                    if (label[q].SetEquals (a.GetAcceptanceCondition().AllKeys ())) {
+                    if (label[q].SetEquals (a.AcceptanceCondition.AllKeys ())) {
                         goto ExitTrue;
                         // return true;
                     }

@@ -87,10 +87,10 @@ namespace LtlSharp.Buchi
                 }
                 ////Console.WriteLine ("----");
                 if (label[q.Item1].Count == 0 | a.AcceptanceCondition.Accept(q.Item1)) {
-                    var labelsToPropagate = label [q.Item1].Union (a.GetAcceptanceCondition().GetAcceptingConditions(q.Item1));
+                    var labelsToPropagate = label [q.Item1].Union (a.AcceptanceCondition.GetAcceptingConditions(q.Item1));
                     
                     propagate (new [] { q }, labelsToPropagate);
-                    if (label[q.Item1].SetEquals (a.GetAcceptanceCondition().AllKeys ())) {
+                    if (label[q.Item1].SetEquals (a.AcceptanceCondition.AllKeys ())) {
                         goto ExitTrue;
                         // return true;
                     }

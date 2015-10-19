@@ -25,24 +25,24 @@ namespace LtlSharp.Buchi.Translators
         public static BuchiAutomaton<AutomatonNode> Transform (GeneralizedBuchiAutomaton<AutomatonNode> gba)
         {
             // A GBA without acceptance set the same than a GBA with one acceptance set containing all nodes.
-            if (gba.GetAcceptanceCondition().IsEmpty) {
-                gba.GetAcceptanceCondition ().Add (0, gba.Nodes);
+            if (gba.AcceptanceCondition.IsEmpty) {
+                gba.AcceptanceCondition.Add (0, gba.Nodes);
             }
             
             // If the GBA contains only one acceptance set, then it is a BA.
-            if (gba.GetAcceptanceCondition().IsBuchi) {
+            if (gba.AcceptanceCondition.IsBuchi) {
                 var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
                 automata.AddNodes (gba.Nodes);
                 foreach (var e in gba.Edges) {
                     automata.AddTransition (e.Source, e.Target, e.Decoration);
                 }
                 automata.SetInitialNode (gba.InitialNode);
-                automata.SetAcceptanceCondition (gba.GetAcceptanceCondition()[0]);
+                automata.SetAcceptanceCondition (gba.AcceptanceCondition[0]);
                 return automata;
             }
             
             mapping = new Dictionary<int, Dictionary<AutomatonNode,AutomatonNode>> ();
-            var enumerator = gba.GetAcceptanceCondition ().GetEnumerator ();
+            var enumerator = gba.AcceptanceCondition.GetEnumerator ();
             for (int i = 0; enumerator.MoveNext (); i ++) {
                 mapping [i] = new Dictionary<AutomatonNode, AutomatonNode> ();
             }
@@ -50,7 +50,7 @@ namespace LtlSharp.Buchi.Translators
             var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
             Recur (gba.InitialNode, ba, 0, gba);
             
-            foreach (var acceptingNode in gba.GetAcceptanceCondition()[0].GetAcceptingNodes ()) {
+            foreach (var acceptingNode in gba.AcceptanceCondition[0].GetAcceptingNodes ()) {
                 AutomatonNode n;
                 if (mapping[0].TryGetValue (acceptingNode, out n)) {
                     ba.AddToAcceptance (n);
@@ -78,8 +78,8 @@ namespace LtlSharp.Buchi.Translators
             }
             
             int newAcceptanceIndex = acceptanceIndex;
-            if (generalizedBuchiAutomaton.GetAcceptanceCondition()[acceptanceIndex].Accept (node)) {
-                newAcceptanceIndex = (acceptanceIndex + 1) % generalizedBuchiAutomaton.GetAcceptanceCondition().Count;
+            if (generalizedBuchiAutomaton.AcceptanceCondition[acceptanceIndex].Accept (node)) {
+                newAcceptanceIndex = (acceptanceIndex + 1) % generalizedBuchiAutomaton.AcceptanceCondition.Count;
             }
             
             foreach (var t in generalizedBuchiAutomaton.GetTransitions (node)) {

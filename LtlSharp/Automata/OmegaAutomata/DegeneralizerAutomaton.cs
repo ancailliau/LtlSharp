@@ -13,7 +13,7 @@ namespace LtlSharp.Automata.OmegaAutomata
 
         public BuchiAcceptance<T> AcceptanceCondition {
             get {
-                throw new NotImplementedException ();
+                return _acceptanceSet;
             }
         }
 
@@ -25,11 +25,6 @@ namespace LtlSharp.Automata.OmegaAutomata
         public override Automata<T, DegeneralizerAutomataTransition> Clone ()
         {
             throw new NotImplementedException ();
-        }
-
-        public BuchiAcceptance<T> GetAcceptanceCondition ()
-        {
-            return _acceptanceSet;
         }
     }
 }

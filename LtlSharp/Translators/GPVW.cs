@@ -242,7 +242,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                         set.Add (mapping[q.Name]);
                     }
 
-                    automaton.GetAcceptanceCondition().Add (setIndex, set);
+                    automaton.AcceptanceCondition.Add (setIndex, set);
                     setIndex++;
 
                 } 

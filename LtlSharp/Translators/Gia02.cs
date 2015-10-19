@@ -479,7 +479,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             // This is necessary as it might be the case that we don't reach states generating all acceptance condition
             // sets (i.e. one will be empty). See LtlSharp.Tests.TestEmptiness.TestMobilizedWhenAlloc for a test case.
             for (int i = 0; i < init.Untils.Length; i++) {
-                automaton.GetAcceptanceCondition ().Add (i, Enumerable.Empty<AutomataTransition<AutomatonNode, LiteralSetDecoration>> ());
+                automaton.AcceptanceCondition.Add (i, Enumerable.Empty<AutomataTransition<AutomatonNode, LiteralSetDecoration>> ());
             }
 
             var correspondingState = new Dictionary<int, AutomatonNode> ();
@@ -504,14 +504,14 @@ namespace LtlSharp.Buchi.LTL2Buchi
 
                         for (int i = 0; i < transition.Accepting.Length; i++) {
                             if (!transition.Accepting.Get (i)) {
-                                automaton.GetAcceptanceCondition () [i].Add (ltrans);
+                                automaton.AcceptanceCondition [i].Add (ltrans);
                             }
                         }
                     }
                 }
             }
 
-            var degeneralizer = Generate (automaton.GetAcceptanceCondition ().Count);
+            var degeneralizer = Generate (automaton.AcceptanceCondition.Count);
             return SynchrounousProduct (automaton, degeneralizer);
         }
 
@@ -570,8 +570,8 @@ namespace LtlSharp.Buchi.LTL2Buchi
 
                     } else {
                         found = true;
-                        for (int i = 0; i < tgba.GetAcceptanceCondition ().Count; i++) {
-                            var b0 = tgba.GetAcceptanceCondition () [i].Accept (e0);
+                        for (int i = 0; i < tgba.AcceptanceCondition.Count; i++) {
+                            var b0 = tgba.AcceptanceCondition [i].Accept (e0);
                             var b1 = e1.Decoration.Labels.Contains (i);
                             if (b1 & !b0) {
                                 found = false;
@@ -612,7 +612,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var key = new Tuple<AutomatonNode, AutomatonNode> (n0, n1);
             if (!cache.TryGetValue (key, out cachedNode)) {
                 cachedNode = new AutomatonNode (n0.Name + " x " + n1.Name);
-                if (degeneralizer.GetAcceptanceCondition ().Accept (n1)) {
+                if (degeneralizer.AcceptanceCondition.Accept (n1)) {
                     ba.AddToAcceptance (cachedNode);
                 }
                 ba.AddNode (cachedNode);
@@ -663,7 +663,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 }
             }
 
-            automaton.GetAcceptanceCondition ().Add (nodes [last]);
+            automaton.AcceptanceCondition.Add (nodes [last]);
             automaton.SetInitialNode (nodes [last]);
 
             return automaton;

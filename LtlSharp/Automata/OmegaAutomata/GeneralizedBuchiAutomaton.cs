@@ -26,11 +26,6 @@ namespace LtlSharp.Automata.OmegaAutomata
         {
             throw new NotImplementedException ();
         }
-        
-        public GeneralizedBuchiAcceptance<T> GetAcceptanceCondition ()
-        {
-            return _acceptanceCondition;
-        }
     }
 }
 
