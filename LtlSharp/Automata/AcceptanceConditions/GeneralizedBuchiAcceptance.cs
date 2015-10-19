@@ -5,7 +5,8 @@ using System.Linq;
 
 namespace LtlSharp.Automata.AcceptanceConditions
 {
-    public class GeneralizedBuchiAcceptance<T> : IAcceptanceCondition<T>, IEnumerable<BuchiAcceptance<T>>
+    public class GeneralizedBuchiAcceptance<T> 
+        : IAcceptanceCondition<T>, IEnumerable<BuchiAcceptance<T>>
     {
         Dictionary<int, BuchiAcceptance<T>> _buchiAcceptances;
         
@@ -91,7 +92,11 @@ namespace LtlSharp.Automata.AcceptanceConditions
         {
             throw new NotImplementedException ();
         }
-
+        
+        #endregion
+        
+        #region IEnumerable<BuchiAcceptance<T>> Members
+        
         public IEnumerator<BuchiAcceptance<T>> GetEnumerator ()
         {
             return _buchiAcceptances.Values.GetEnumerator ();
