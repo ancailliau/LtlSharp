@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using LtlSharp.Buchi;
 using LtlSharp.Buchi.LTL2Buchi;
-using LtlSharp.Buchi.Translators;
+
 using QuickGraph.Graphviz;
 using QuickGraph;
 using LtlSharp.Language;
 using LtlSharp.Automata;
 using LtlSharp.Automata.FiniteAutomata;
+using LtlSharp.Automata.Utils;
 
 namespace LtlSharp.Monitoring
 {
@@ -28,8 +29,8 @@ namespace LtlSharp.Monitoring
         
         public LTLMonitor (ITLFormula formula)
         {
-            var tpositiveNFA = BA2NFA.ToNFA (translator.GetAutomaton (formula));
-            var tnegativeNFA = BA2NFA.ToNFA (translator.GetAutomaton (formula.Negate ()));
+            var tpositiveNFA = translator.GetAutomaton (formula).ToNFA();
+            var tnegativeNFA = translator.GetAutomaton (formula.Negate ()).ToNFA();
 
             positiveNFA = tpositiveNFA.Determinize ();
             negativeNFA = tnegativeNFA.Determinize ();

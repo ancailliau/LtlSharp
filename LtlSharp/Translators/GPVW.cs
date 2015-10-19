@@ -2,13 +2,14 @@
 using System.Linq;
 using System.Collections.Generic;
 using LtlSharp.Buchi;
-using LtlSharp.Buchi.Translators;
+
 using LtlSharp.Automata;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Transitions;
 using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.Transitions.Decorations;
+using LtlSharp.Automata.Utils;
 
 namespace LtlSharp.Buchi.LTL2Buchi
 {
@@ -142,7 +143,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         }
         
         public BuchiAutomaton<AutomatonNode> GetAutomaton (ITLFormula phi) {
-            return GBA2BA.Transform (GetGBA (phi));
+            return GetGBA (phi).ToBA ();
         }
         
         HashSet<Node> CreateGraph (ITLFormula phi)

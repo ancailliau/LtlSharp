@@ -2,13 +2,14 @@
 using NUnit.Framework;
 using LtlSharp.Buchi.LTL2Buchi;
 using LtlSharp;
-using LtlSharp.Buchi.Translators;
+
 using LtlSharp.Buchi;
 using LittleSharp.Buchi;
 using System.Linq;
 using QuickGraph.Graphviz;
 using QuickGraph.Graphviz.Dot;
 using LtlSharp.Automata;
+using LtlSharp.Automata.Utils;
 
 namespace LtlSharp.Tests
 {
@@ -21,7 +22,7 @@ namespace LtlSharp.Tests
             var ltl2buchi = new Gia02 ();
 
             var gba = gpvw.GetGBA (f);
-            var ba = GBA2BA.Transform (gba);
+            var ba = gba.ToBA ();
             var ba2 = ltl2buchi.GetAutomaton (f);
             
             Console.WriteLine (ba.ToDot ());

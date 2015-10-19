@@ -7,7 +7,7 @@ using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Nodes.Factories;
 
 
-namespace LtlSharp.Buchi.Translators
+namespace LtlSharp.Automata.Utils
 {
     public static class BA2NFA
     {
@@ -21,7 +21,7 @@ namespace LtlSharp.Buchi.Translators
                 if (emptinessChecker.Emptiness (n)) {
                     newAcceptanceSet.Add (n);
                 }
-            }
+            } 
 
             var nfa = new NFA<T> (automaton.GetNodeFactory ());
 

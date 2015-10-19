@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using LtlSharp.Buchi.LTL2Buchi;
 using LtlSharp;
-using LtlSharp.Buchi.Translators;
+
 using LtlSharp.Buchi;
 using LittleSharp.Buchi;
 using System.Linq;
@@ -11,6 +11,7 @@ using LtlSharp.Automata;
 using LtlSharp.Automata.AcceptanceConditions;
 using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Nodes.Factories;
+using LtlSharp.Automata.Utils;
 
 
 namespace LtlSharp.Tests
@@ -23,7 +24,7 @@ namespace LtlSharp.Tests
             var t = new GPVW ();
 
             var gba = t.GetGBA (f);
-            var ba = GBA2BA.Transform (gba);
+            var ba = gba.ToBA ();
 
             var ec = new GBAEmptinessChecker ();
             var e1 = ec.EmptinessSearch (gba);
@@ -86,7 +87,7 @@ namespace LtlSharp.Tests
             
             var t = new GPVW ();
             var gba = t.GetGBA (f);
-            var ba = GBA2BA.Transform (gba);
+            var ba = gba.ToBA ();
             
             var otfec = new OnTheFlyEmptinessChecker<AutomatonNode,AutomatonNode> (ba, lts);
             var e1 = otfec.Emptiness ();

@@ -4,7 +4,7 @@ using System.Linq;
 using LtlSharp.Automata;
 using LtlSharp.Automata.FiniteAutomata;
 using LtlSharp.Buchi.LTL2Buchi;
-using LtlSharp.Buchi.Translators;
+
 using QuickGraph.Graphviz;
 
 namespace LtlSharp.Monitoring

@@ -8,21 +8,18 @@ using LtlSharp.Automata.OmegaAutomata;
 using LtlSharp.Automata.Nodes.Factories;
 
 
-namespace LtlSharp.Buchi.Translators
+namespace LtlSharp.Automata.Utils
 {
     /// <summary>
     /// Provides static methods for transforming a Generalized Büchi Automata to a Büchi Automata
     /// </summary>
     public static class GBA2BA
     {
-        // Cache for acceptance condition set x node
-        private static Dictionary<int, Dictionary<AutomatonNode,AutomatonNode>> mapping;
-        
         /// <summary>
         /// Returns the Büchi Automata corresponding to the specified GBA.
         /// </summary>
         /// <param name="gba">A Generalized Büchi Automata.</param>
-        public static BuchiAutomaton<AutomatonNode> Transform (GeneralizedBuchiAutomaton<AutomatonNode> gba)
+        public static BuchiAutomaton<AutomatonNode> ToBA (this GeneralizedBuchiAutomaton<AutomatonNode> gba)
         {
             // A GBA without acceptance set the same than a GBA with one acceptance set containing all nodes.
             if (gba.AcceptanceCondition.IsEmpty) {
@@ -41,14 +38,14 @@ namespace LtlSharp.Buchi.Translators
                 return automaton;
             }
             
-            mapping = new Dictionary<int, Dictionary<AutomatonNode,AutomatonNode>> ();
+            var mapping = new Dictionary<int, Dictionary<AutomatonNode,AutomatonNode>> ();
             var enumerator = gba.AcceptanceCondition.GetEnumerator ();
             for (int i = 0; enumerator.MoveNext (); i ++) {
                 mapping [i] = new Dictionary<AutomatonNode, AutomatonNode> ();
             }
             
             var ba = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
-            Recur (gba.InitialNode, ba, 0, gba);
+            Recur (gba.InitialNode, ba, 0, gba, mapping);
             
             foreach (var acceptingNode in gba.AcceptanceCondition[0].GetAcceptingNodes ()) {
                 AutomatonNode n;
@@ -63,7 +60,8 @@ namespace LtlSharp.Buchi.Translators
         static AutomatonNode Recur (AutomatonNode node, 
                                     BuchiAutomaton<AutomatonNode> buchiAutomaton, 
                                     int acceptanceIndex, 
-                                    GeneralizedBuchiAutomaton<AutomatonNode> generalizedBuchiAutomaton)
+                                    GeneralizedBuchiAutomaton<AutomatonNode> generalizedBuchiAutomaton,
+                                    Dictionary<int, Dictionary<AutomatonNode,AutomatonNode>> mapping)
         {
             if (mapping[acceptanceIndex].ContainsKey(node)) {
                 return mapping [acceptanceIndex][node];
@@ -83,12 +81,12 @@ namespace LtlSharp.Buchi.Translators
             }
             
             foreach (var t in generalizedBuchiAutomaton.GetTransitions (node)) {
-                var n2 = Recur (t.Target, buchiAutomaton, newAcceptanceIndex, generalizedBuchiAutomaton);
+                var n2 = Recur (t.Target, buchiAutomaton, newAcceptanceIndex, generalizedBuchiAutomaton, mapping);
                 //var t2 = new AutomatonTransition<AutomatonNode> (bANode, n2, t.Labels);
                 buchiAutomaton.AddTransition (newNode, n2, t.Decoration);
             }
             
-            return newNode;
+            return newNode; 
         }
     }
 }

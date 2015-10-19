@@ -68,12 +68,12 @@
     <Compile Include="Automata\OmegaAutomata\TransitionGeneralizedBuchiAutomaton.cs" />
     <Compile Include="Automata\OmegaAutomata\BuchiAutomaton.cs" />
     <Compile Include="EmptinessChecker\EmptinessChecker.cs" />
-    <Compile Include="Translators\GBA2BA.cs" />
+    <Compile Include="Automata\Utils\GeneralizedBuchiExtensions.cs" />
     <Compile Include="EmptinessChecker\OnTheFlyEmptinessChecker.cs" />
     <Compile Include="EmptinessChecker\OnTheFlyGBAEmptinessChecker.cs" />
     <Compile Include="Automata\FiniteAutomata\NFA.cs" />
     <Compile Include="Automata\Nodes\AutomatonNode.cs" />
-    <Compile Include="Translators\BA2NFA.cs" />
+    <Compile Include="Automata\Utils\BuchiExtensions.cs" />
     <Compile Include="Monitoring\LTLMonitorHard.cs" />
     <Compile Include="Monitoring\MonitoredState.cs" />
     <Compile Include="Translators\Gia02.cs" />
@@ -85,7 +85,7 @@
     <Compile Include="Utils\TrajanAlgorithm.cs" />
     <Compile Include="Language\ITLFormula.cs" />
     <Compile Include="ModelCheckers\PCTLModelChecker.cs" />
-    <Compile Include="Translators\SafraDeterminization.cs" />
+    <Compile Include="Automata\Utils\RabinExtensions.cs" />
     <Compile Include="Translators\Transformer.cs" />
     <Compile Include="Automata\OmegaAutomata\RabinAutomaton.cs" />
     <Compile Include="Utils\CollectionUtils.cs" />

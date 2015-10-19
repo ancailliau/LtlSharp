@@ -12,7 +12,7 @@ using LtlSharp.Automata.Nodes.Factories;
 using LtlSharp.Automata.Utils;
 using LtlSharp.Automata.Transitions.Decorations;
 
-namespace LtlSharp.Translators
+namespace LtlSharp.Automata.Utils
 {
     /// <summary>
     /// Determinize Non-Deterministic Buchï Automata into Rabin Automata using Safra construction.
@@ -34,7 +34,7 @@ namespace LtlSharp.Translators
             var visited = new HashSet<SafraTree> ();
             
             while (pending.Count > 0) {
-                var source = pending.Pop ();                
+                var source = pending.Pop ();
                 visited.Add (source);
                 
                 foreach (var a in ba.GetOutDecorations (source.MacroState)) {
