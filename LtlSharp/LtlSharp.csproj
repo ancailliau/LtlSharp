@@ -112,7 +112,7 @@
     <Compile Include="Automata\AcceptanceConditions\GeneralizedBuchiAcceptance.cs" />
     <Compile Include="Automata\OmegaAutomata\GeneralizedBuchiAutomaton.cs" />
     <Compile Include="Automata\OmegaAutomata\DegeneralizerAutomaton.cs" />
-    <Compile Include="Automata\Transitions\AutomataTransition.cs" />
+    <Compile Include="Automata\Transitions\AutomatonTransition.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Language\LTL.g" />

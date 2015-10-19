@@ -16,9 +16,9 @@ namespace LtlSharp.Automata.OmegaAutomata
         : OmegaAutomaton<T, LiteralSetDecoration>
         where T : IAutomatonNode
     {
-        GeneralizedBuchiAcceptance<AutomataTransition<T, LiteralSetDecoration>> _acceptanceCondition;
+        GeneralizedBuchiAcceptance<AutomatonTransition<T, LiteralSetDecoration>> _acceptanceCondition;
 
-        public GeneralizedBuchiAcceptance<AutomataTransition<T, LiteralSetDecoration>> AcceptanceCondition {
+        public GeneralizedBuchiAcceptance<AutomatonTransition<T, LiteralSetDecoration>> AcceptanceCondition {
             get {
                 return _acceptanceCondition;
             }
@@ -27,10 +27,10 @@ namespace LtlSharp.Automata.OmegaAutomata
         public TransitionGeneralizedBuchiAutomata (IAutomatonNodeFactory<T> factory)
             : base (factory)
         {
-            _acceptanceCondition = new GeneralizedBuchiAcceptance<AutomataTransition<T, LiteralSetDecoration>> ();
+            _acceptanceCondition = new GeneralizedBuchiAcceptance<AutomatonTransition<T, LiteralSetDecoration>> ();
         }
         
-        public GeneralizedBuchiAcceptance<AutomataTransition<T, LiteralSetDecoration>> GetAcceptanceCondition ()
+        public GeneralizedBuchiAcceptance<AutomatonTransition<T, LiteralSetDecoration>> GetAcceptanceCondition ()
         {
             return _acceptanceCondition;
         }

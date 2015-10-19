@@ -479,7 +479,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             // This is necessary as it might be the case that we don't reach states generating all acceptance condition
             // sets (i.e. one will be empty). See LtlSharp.Tests.TestEmptiness.TestMobilizedWhenAlloc for a test case.
             for (int i = 0; i < init.Untils.Length; i++) {
-                automaton.AcceptanceCondition.Add (i, Enumerable.Empty<AutomataTransition<AutomatonNode, LtlSharp.Automata.Transitions.Decorations.LiteralSetDecoration>> ());
+                automaton.AcceptanceCondition.Add (i, Enumerable.Empty<AutomatonTransition<AutomatonNode, LtlSharp.Automata.Transitions.Decorations.LiteralSetDecoration>> ());
             }
 
             var correspondingState = new Dictionary<int, AutomatonNode> ();
@@ -495,7 +495,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             foreach (var state in states) {
                 foreach (var transition in state.Transitions) {
                     foreach (var source in transition.Source) {
-                        var ltrans = new AutomataTransition<AutomatonNode, LiteralSetDecoration> (
+                        var ltrans = new AutomatonTransition<AutomatonNode, LiteralSetDecoration> (
                             correspondingState [source],
                             correspondingState [state.StateId],
                             new LiteralSetDecoration (transition.Label)
@@ -552,7 +552,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 return x.Decoration.Labels.Count.CompareTo (y.Decoration.Labels.Count);
             });
 
-            var theEdge = new AutomataTransition<AutomatonNode, DegeneralizerDecoration> ();
+            var theEdge = new AutomatonTransition<AutomatonNode, DegeneralizerDecoration> ();
             foreach (var e0 in t0) {
                 var next0 = e0.Target;
                 var found = false;
