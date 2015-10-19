@@ -29,8 +29,14 @@ namespace LtlSharp.Automata.FiniteAutomata
         where T : IAutomatonNode
     {   
         
-
-        public T InitialNode { get; protected set; }
+        /// <summary>
+        /// Gets or sets the initial node of the automata.
+        /// </summary>
+        /// <value>The initial node.</value>
+        public T InitialNode { 
+            get; 
+            protected set; 
+        }
         
         /// <summary>
         /// Gets the set of node accepting the finite word.
