@@ -8,7 +8,7 @@ namespace LtlSharp.Automata.AcceptanceConditions
     /// Defines a Buchï acceptance condition.
     /// </summary>
     /// <remarks>
-    /// An omega automata with a Buchï condition accepts the words where at least a node in the accepting set
+    /// An omega automaton with a Buchï condition accepts the words where at least a node in the accepting set
     /// of the Buchï condition is met infinitely often.
     /// </remarks>
     /// <typeparam name="T">Types of the nodes in omega automaton.</typeparam>

@@ -9,7 +9,7 @@ namespace LtlSharp.Utils
 {
     public static class TrajanAlgorithm
     {
-        public static IEnumerable<HashSet<T>> GetBSCC<T, T2> (this Automata<T, T2> mc) 
+        public static IEnumerable<HashSet<T>> GetBSCC<T, T2> (this Automaton<T, T2> mc) 
             where T : IAutomatonNode
             where T2 : ITransitionDecoration<T2>
         {
@@ -18,7 +18,7 @@ namespace LtlSharp.Utils
             return GetSCC (mc).Where (scc => scc.IsSupersetOf (mc.Post (scc)));
         }
         
-        public static IEnumerable<HashSet<T>> GetSCC<T, T2> (this Automata<T, T2> mc) 
+        public static IEnumerable<HashSet<T>> GetSCC<T, T2> (this Automaton<T, T2> mc) 
             where T : IAutomatonNode
             where T2 : ITransitionDecoration<T2>
         {
@@ -40,7 +40,7 @@ namespace LtlSharp.Utils
         }
 
         static void StrongConnect<T, T2> (T v, 
-                                          Automata<T, T2> mc,
+                                          Automaton<T, T2> mc,
                                           Dictionary<T, int> index,
                                           Dictionary<T, int> lowlink,
                                           HashSet<T> onstack,

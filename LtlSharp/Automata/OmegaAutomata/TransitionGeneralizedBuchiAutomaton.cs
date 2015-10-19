@@ -12,7 +12,7 @@ using LtlSharp.Automata.Transitions.Decorations;
 
 namespace LtlSharp.Automata.OmegaAutomata
 {
-    public class TransitionGeneralizedBuchiAutomata<T>
+    public class TransitionGeneralizedBuchiAutomaton<T>
         : OmegaAutomaton<T, LiteralSetDecoration>
         where T : IAutomatonNode
     {
@@ -24,7 +24,7 @@ namespace LtlSharp.Automata.OmegaAutomata
             }
         }
 
-        public TransitionGeneralizedBuchiAutomata (IAutomatonNodeFactory<T> factory)
+        public TransitionGeneralizedBuchiAutomaton (IAutomatonNodeFactory<T> factory)
             : base (factory)
         {
             _acceptanceCondition = new GeneralizedBuchiAcceptance<AutomatonTransition<T, LiteralSetDecoration>> ();
@@ -35,7 +35,7 @@ namespace LtlSharp.Automata.OmegaAutomata
             return _acceptanceCondition;
         }
 
-        public override Automata<T, LiteralSetDecoration> Clone ()
+        public override Automaton<T, LiteralSetDecoration> Clone ()
         {
             throw new NotImplementedException ();
         }

@@ -11,7 +11,7 @@ using LtlSharp.Automata.Transitions.Decorations;
 
 namespace LtlSharp.Automata
 {
-    public abstract class Automata<T,T2>
+    public abstract class Automaton<T,T2>
         where T : IAutomatonNode
         where T2 : ITransitionDecoration<T2>
     {
@@ -31,7 +31,7 @@ namespace LtlSharp.Automata
             }
         }
 
-        public Automata (IAutomatonNodeFactory<T> factory)
+        public Automaton (IAutomatonNodeFactory<T> factory)
         {
             graph = new AdjacencyGraph<T, ParametrizedEdge<T, T2>> ();
             this.factory = factory;
@@ -324,7 +324,7 @@ namespace LtlSharp.Automata
             return graphviz.Generate ();
         }
 
-        public abstract Automata<T, T2> Clone ();
+        public abstract Automaton<T, T2> Clone ();
     }
 }
 

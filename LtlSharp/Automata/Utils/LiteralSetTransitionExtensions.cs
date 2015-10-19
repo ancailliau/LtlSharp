@@ -14,7 +14,7 @@ namespace LtlSharp.Automata.Utils
         /// </summary>
         /// <param name="automaton">Automaton.</param>
         /// <typeparam name="T">Type of the nodes of the automaton.</typeparam>
-        public static void SimplifyTransitions<T> (this Automata<T, LiteralSetDecoration> automaton)
+        public static void SimplifyTransitions<T> (this Automaton<T, LiteralSetDecoration> automaton)
             where T : IAutomatonNode
         {
             foreach (var trans in automaton.Edges) {
@@ -44,7 +44,7 @@ namespace LtlSharp.Automata.Utils
         /// </remarks>
         /// <param name="automaton">Automaton.</param>
         /// <typeparam name="T">Type of the nodes of the automaton.</typeparam>
-        public static void UnfoldTransitions<T> (this Automata<T, LiteralSetDecoration> automaton)
+        public static void UnfoldTransitions<T> (this Automaton<T, LiteralSetDecoration> automaton)
             where T : IAutomatonNode
         {
             var alphabet = automaton.Alphabet ().ToList ();
@@ -55,17 +55,17 @@ namespace LtlSharp.Automata.Utils
         /// Returns the set of literals that correspond to (at least) a transition.
         /// </summary>
         /// <param name="node">Node.</param>
-        public static IEnumerable<ILiteral> Alphabet<T> (this Automata<T, LiteralSetDecoration> automata)
+        public static IEnumerable<ILiteral> Alphabet<T> (this Automaton<T, LiteralSetDecoration> automaton)
             where T : IAutomatonNode
         {
-            return automata.Edges.SelectMany (e => e.Decoration.LiteralSet.GetAlphabet ()).Distinct ();
+            return automaton.Edges.SelectMany (e => e.Decoration.LiteralSet.GetAlphabet ()).Distinct ();
         }
         
         /// <summary>
         /// Returns whether the omega automaton is deterministic.
         /// </summary>
         /// <returns><c>True</c> if deterministic, <c>False</c> otherwise.</returns>
-        public static bool IsDeterministic<T> (this Automata<T, LiteralSetDecoration> automata, T initialNode)
+        public static bool IsDeterministic<T> (this Automaton<T, LiteralSetDecoration> automaton, T initialNode)
             where T : IAutomatonNode
         {
             var pending = new Stack<T> (new [] { initialNode });
@@ -74,8 +74,8 @@ namespace LtlSharp.Automata.Utils
             while (pending.Count > 0) {
                 var s0 = pending.Pop ();
                 visited.Add (s0);
-                foreach (var c in automata.GetOutDecorations (s0)) {
-                    var succs = automata.Post (s0, c);
+                foreach (var c in automaton.GetOutDecorations (s0)) {
+                    var succs = automaton.Post (s0, c);
                     if (succs.Count () > 1)
                         return false;
                     
@@ -91,47 +91,47 @@ namespace LtlSharp.Automata.Utils
         /// Returns all the successor nodes of the specified node for the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata,
+        public static IEnumerable<T> Post<T> (this Automaton<T, LiteralSetDecoration> automaton,
                                               T node, 
                                               LiteralSet labels)
             where T : IAutomatonNode
         {
-            return automata.Post (node, (l, target) => labels.Entails(l.LiteralSet));
+            return automaton.Post (node, (l, target) => labels.Entails(l.LiteralSet));
         }
 
         /// <summary>
         /// Returns all the successor nodes of the specified nodes for the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, 
+        public static IEnumerable<T> Post<T> (this Automaton<T, LiteralSetDecoration> automaton, 
                                               IEnumerable<T> nodes, 
                                               LiteralSet labels)
             where T : IAutomatonNode
         {
-            return nodes.SelectMany (node => automata.Post(node, labels));
+            return nodes.SelectMany (node => automaton.Post(node, labels));
         }
 
         /// <summary>
         /// Returns all the successor nodes of the specified node for all the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, 
+        public static IEnumerable<T> Post<T> (this Automaton<T, LiteralSetDecoration> automaton, 
                                               T node, IEnumerable<LiteralSet> labels)
             where T : IAutomatonNode
         {
-            return labels.SelectMany (l => automata.Post(node, l));
+            return labels.SelectMany (l => automaton.Post(node, l));
         }
 
         /// <summary>
         /// Returns all the successor nodes of the specified nodes for all the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, 
+        public static IEnumerable<T> Post<T> (this Automaton<T, LiteralSetDecoration> automaton, 
                                               IEnumerable<T> nodes, 
                                               IEnumerable<LiteralSet> labels)
             where T : IAutomatonNode
         {
-            return nodes.SelectMany (node => automata.Post(node, labels));
+            return nodes.SelectMany (node => automaton.Post(node, labels));
         }
     }
 }

@@ -13,7 +13,7 @@ using LtlSharp.Automata.Transitions.Decorations;
 namespace LtlSharp.Automata.OmegaAutomata
 {
     public abstract class OmegaAutomaton<T1,T2> 
-        : Automata<T1,T2> 
+        : Automaton<T1,T2> 
         where T1 : IAutomatonNode
         where T2 : ITransitionDecoration<T2>
     {

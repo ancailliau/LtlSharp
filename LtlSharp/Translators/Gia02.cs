@@ -474,12 +474,12 @@ namespace LtlSharp.Buchi.LTL2Buchi
             var init = InternalNode.CreateInitial (phi);
             var states = init.Expand (new HashSet<InternalState> ());
 
-            var automaton = new TransitionGeneralizedBuchiAutomata<AutomatonNode> (new AutomatonNodeFactory ());
+            var automaton = new TransitionGeneralizedBuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
 
             // This is necessary as it might be the case that we don't reach states generating all acceptance condition
             // sets (i.e. one will be empty). See LtlSharp.Tests.TestEmptiness.TestMobilizedWhenAlloc for a test case.
             for (int i = 0; i < init.Untils.Length; i++) {
-                automaton.AcceptanceCondition.Add (i, Enumerable.Empty<AutomatonTransition<AutomatonNode, LtlSharp.Automata.Transitions.Decorations.LiteralSetDecoration>> ());
+                automaton.AcceptanceCondition.Add (i, Enumerable.Empty<AutomatonTransition<AutomatonNode, LiteralSetDecoration>> ());
             }
 
             var correspondingState = new Dictionary<int, AutomatonNode> ();
@@ -515,7 +515,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             return SynchrounousProduct (automaton, degeneralizer);
         }
 
-        BuchiAutomaton<AutomatonNode> SynchrounousProduct (TransitionGeneralizedBuchiAutomata<AutomatonNode> tgba,
+        BuchiAutomaton<AutomatonNode> SynchrounousProduct (TransitionGeneralizedBuchiAutomaton<AutomatonNode> tgba,
                                                            DegeneralizerAutomaton<AutomatonNode> degeneralizer)
         {
             var cache = new Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> ();
@@ -532,7 +532,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         }
 
         void DFSSynchrounousProduct (BuchiAutomaton<AutomatonNode> ba,
-                                     TransitionGeneralizedBuchiAutomata<AutomatonNode> tgba,
+                                     TransitionGeneralizedBuchiAutomaton<AutomatonNode> tgba,
                                      DegeneralizerAutomaton<AutomatonNode> degeneralizer,
                                      Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> cache,
                                      AutomatonNode n0,
@@ -602,7 +602,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
         }
 
         AutomatonNode Get (BuchiAutomaton<AutomatonNode> ba,
-                           TransitionGeneralizedBuchiAutomata<AutomatonNode> automaton,
+                           TransitionGeneralizedBuchiAutomaton<AutomatonNode> automaton,
                            DegeneralizerAutomaton<AutomatonNode> degeneralizer,
                            Dictionary<Tuple<AutomatonNode, AutomatonNode>, AutomatonNode> cache,
                            AutomatonNode n0,

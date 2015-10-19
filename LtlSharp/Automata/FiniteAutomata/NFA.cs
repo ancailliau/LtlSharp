@@ -18,7 +18,7 @@ using LtlSharp.Automata.Transitions.Decorations;
 namespace LtlSharp.Automata.FiniteAutomata
 {
     /// <summary>
-    /// Defines a generic non-deterministic finite automata with node of type <c>T</c>.
+    /// Defines a generic non-deterministic finite automaton with node of type <c>T</c>.
     /// </summary>
     /// <remarks>
     /// The implementation was modelling LTL monitors. See "Andreas Bauer et al, Runtime Verification for LTL and TLTL,
@@ -26,12 +26,12 @@ namespace LtlSharp.Automata.FiniteAutomata
     /// </remarks>
     /// <typeparam name="T">Type of nodes</typeparam>
     public class NFA<T> 
-        : Automata<T, LiteralSetDecoration>
+        : Automaton<T, LiteralSetDecoration>
         where T : IAutomatonNode
     {   
         
         /// <summary>
-        /// Gets or sets the initial node of the automata.
+        /// Gets or sets the initial node of the automaton.
         /// </summary>
         /// <value>The initial node.</value>
         public T InitialNode { 
@@ -134,7 +134,7 @@ namespace LtlSharp.Automata.FiniteAutomata
             return deterministicAutomaton;
         }
 
-        public override Automata<T, LiteralSetDecoration> Clone ()
+        public override Automaton<T, LiteralSetDecoration> Clone ()
         {
             throw new NotImplementedException ();
         }

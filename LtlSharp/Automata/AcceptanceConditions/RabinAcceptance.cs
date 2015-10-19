@@ -9,7 +9,7 @@ namespace LtlSharp.Automata.AcceptanceConditions
     /// Defines a Rabin Acceptance condition.
     /// </summary>
     /// <remarks>
-    /// An omega automata with a Rabin condition accepts the words where there is at least a rabin condition
+    /// An omega automaton with a Rabin condition accepts the words where there is at least a rabin condition
     /// that is met.
     /// </remarks>
     /// <typeparam name="T">Types of the nodes in omega automaton.</typeparam>
@@ -86,7 +86,7 @@ namespace LtlSharp.Automata.AcceptanceConditions
     /// Defines a Rabin condition. 
     /// </summary>
     /// <remarks>
-    /// An omega automata with a Rabin condition accepts the words where no nodes in the rejecting set is met infinitely
+    /// An omega automaton with a Rabin condition accepts the words where no nodes in the rejecting set is met infinitely
     /// often and where at least a node in the accepting set is met infinitely often.
     /// </remarks>
     /// <typeparam name="T">Types of the nodes in omega automaton.</typeparam>

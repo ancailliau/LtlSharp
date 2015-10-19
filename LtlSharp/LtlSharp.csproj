@@ -65,7 +65,7 @@
     <Compile Include="Translators\Node.cs" />
     <Compile Include="Translators\GPVW.cs" />
     <Compile Include="EmptinessChecker\GBAEmptinessChecker.cs" />
-    <Compile Include="Automata\OmegaAutomata\GeneralizedBuchiAutomata.cs" />
+    <Compile Include="Automata\OmegaAutomata\TransitionGeneralizedBuchiAutomaton.cs" />
     <Compile Include="Automata\OmegaAutomata\BuchiAutomaton.cs" />
     <Compile Include="EmptinessChecker\EmptinessChecker.cs" />
     <Compile Include="Translators\GBA2BA.cs" />
@@ -104,7 +104,7 @@
     <Compile Include="Automata\Nodes\Factories\PowerSetAutomatonNodeFactory.cs" />
     <Compile Include="Utils\QuickGraphUtils.cs" />
     <Compile Include="LiteralSet.cs" />
-    <Compile Include="Automata\Automata.cs" />
+    <Compile Include="Automata\Automaton.cs" />
     <Compile Include="Automata\Transitions\Decorations\DegeneralizerDecoration.cs" />
     <Compile Include="Automata\Utils\ProbabilityTransitionExtensions.cs" />
     <Compile Include="Automata\Utils\LiteralSetTransitionExtensions.cs" />

@@ -15,7 +15,7 @@ namespace LtlSharp.Models
     /// Represents a Markov Chain.
     /// </summary>
     public class MarkovChain<T>
-        : Automata<T, ProbabilityDecoration>
+        : Automaton<T, ProbabilityDecoration>
         where T : IAutomatonNode
     {
 
@@ -112,7 +112,7 @@ namespace LtlSharp.Models
             return graphviz.Generate ();
         }
 
-        public override Automata<T, ProbabilityDecoration> Clone ()
+        public override Automaton<T, ProbabilityDecoration> Clone ()
         {
             var mc = new MarkovChain<T> (factory);
             foreach (var vertex in graph.Vertices) {

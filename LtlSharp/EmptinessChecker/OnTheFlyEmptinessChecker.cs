@@ -22,7 +22,7 @@ namespace LittleSharp.Buchi
             private set;
         }
         
-        public BuchiAutomaton<T2> LTLAutomata {
+        public BuchiAutomaton<T2> LTLAutomaton {
 			get;
 			private set;
 		}
@@ -35,16 +35,16 @@ namespace LittleSharp.Buchi
         		
         public OnTheFlyEmptinessChecker (BuchiAutomaton<T2> ltlAutomata, BuchiAutomaton<T1> lts)
 		{
-            LTLAutomata = ltlAutomata;
+            LTLAutomaton = ltlAutomata;
             LTS = lts;
 		}
 		
 		public bool Emptiness()
 		{
-            if (!LTLAutomata.AcceptanceCondition.IsSatisfiable)
+            if (!LTLAutomaton.AcceptanceCondition.IsSatisfiable)
                 return false;
 
-            var node = LTLAutomata.InitialNode;
+            var node = LTLAutomaton.InitialNode;
             var node2 = LTS.InitialNode;
             dfsStack1 = new Stack<Tuple<T2, T1>> ();
         
@@ -59,7 +59,7 @@ namespace LittleSharp.Buchi
 		{
             dfsStack1.Push (new Tuple<T2, T1>(n, n2));
             
-            foreach (var succ in LTLAutomata.Post (n)) {
+            foreach (var succ in LTLAutomaton.Post (n)) {
                 foreach (var succ2 in LTS.Post (n2, succ.Labels)) {
                     //if (succ.Labels.IsSubsetOf (succ2.Labels)) {
                         if (!dfsStack1.Contains (new Tuple<T2,T1> (succ, succ2))) {
@@ -72,7 +72,7 @@ namespace LittleSharp.Buchi
             }
             
             dfsStack2 = new Stack<Tuple<T2, T1>>();
-            if (LTLAutomata.AcceptanceCondition.Accept (n)) {
+            if (LTLAutomaton.AcceptanceCondition.Accept (n)) {
                 if (dfs2 (n, n2)) {
                     return true;
                 }
@@ -85,7 +85,7 @@ namespace LittleSharp.Buchi
         
         bool dfs2(T2 n, T1 n2) {
             dfsStack2.Push(new Tuple<T2, T1> (n, n2));
-            foreach (var succ in LTLAutomata.Post (n)) {
+            foreach (var succ in LTLAutomaton.Post (n)) {
                 foreach (var succ2 in LTS.Post (n2, succ.Labels)) {
                     //if (succ2.Labels.IsSubsetOf (succ.Labels)) {
                         var tuple = new Tuple<T2, T1> (succ, succ2);

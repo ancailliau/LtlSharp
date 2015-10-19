@@ -49,7 +49,7 @@ namespace LtlSharp.Automata.OmegaAutomata
             return graphviz.Generate ();
         }
 
-        public override Automata<T, LiteralSetDecoration> Clone ()
+        public override Automaton<T, LiteralSetDecoration> Clone ()
         {
             throw new NotImplementedException ();
         }

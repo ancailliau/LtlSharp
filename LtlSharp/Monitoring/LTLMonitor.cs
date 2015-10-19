@@ -56,7 +56,7 @@ namespace LtlSharp.Monitoring
                 return;
 
             } else {
-                throw new NotImplementedException ("Non deterministic automata not supported.");
+                throw new NotImplementedException ("Non deterministic automaton not supported.");
             }
 
             successors = negativeNFA.Post (currentNegative,(l, t) => state.Evaluate (l.LiteralSet));
@@ -70,7 +70,7 @@ namespace LtlSharp.Monitoring
                 return;
 
             } else {
-                throw new NotImplementedException ("Non deterministic automata not supported.");
+                throw new NotImplementedException ("Non deterministic automaton not supported.");
             }
 
             UpdateStatus ();

@@ -23,7 +23,7 @@ namespace LtlSharp.Automata.OmegaAutomata
             _acceptanceSet = new BuchiAcceptance<T> ();
         }
 
-        public override Automata<T, DegeneralizerDecoration> Clone ()
+        public override Automaton<T, DegeneralizerDecoration> Clone ()
         {
             throw new NotImplementedException ();
         }

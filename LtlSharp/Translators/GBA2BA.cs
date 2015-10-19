@@ -31,14 +31,14 @@ namespace LtlSharp.Buchi.Translators
             
             // If the GBA contains only one acceptance set, then it is a BA.
             if (gba.AcceptanceCondition.IsBuchi) {
-                var automata = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
-                automata.AddNodes (gba.Nodes);
+                var automaton = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
+                automaton.AddNodes (gba.Nodes);
                 foreach (var e in gba.Edges) {
-                    automata.AddTransition (e.Source, e.Target, e.Decoration);
+                    automaton.AddTransition (e.Source, e.Target, e.Decoration);
                 }
-                automata.SetInitialNode (gba.InitialNode);
-                automata.SetAcceptanceCondition (gba.AcceptanceCondition[0]);
-                return automata;
+                automaton.SetInitialNode (gba.InitialNode);
+                automaton.SetAcceptanceCondition (gba.AcceptanceCondition[0]);
+                return automaton;
             }
             
             mapping = new Dictionary<int, Dictionary<AutomatonNode,AutomatonNode>> ();
