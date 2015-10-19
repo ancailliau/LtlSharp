@@ -5,22 +5,22 @@ using System.Linq;
 
 namespace LtlSharp.Automata.Transitions
 {
-    public class DegeneralizerAutomataTransition
-        : IAutomatonTransitionDecorator<DegeneralizerAutomataTransition>
+    public class DegeneralizerDecoration
+        : ITransitionDecoration<DegeneralizerDecoration>
     {   
         public HashSet<int> Labels;
         public bool Else;
         
-        public DegeneralizerAutomataTransition () : this (false, Enumerable.Empty<int> ())
+        public DegeneralizerDecoration () : this (false, Enumerable.Empty<int> ())
         {}
         
-        public DegeneralizerAutomataTransition (bool @else) : this (@else, Enumerable.Empty<int> ())
+        public DegeneralizerDecoration (bool @else) : this (@else, Enumerable.Empty<int> ())
         {}
 
-        public DegeneralizerAutomataTransition (IEnumerable<int> labels): this (false, labels)
+        public DegeneralizerDecoration (IEnumerable<int> labels): this (false, labels)
         {}
         
-        public DegeneralizerAutomataTransition (bool @else, IEnumerable<int> labels)
+        public DegeneralizerDecoration (bool @else, IEnumerable<int> labels)
         {
             Labels = new HashSet<int> (labels);
             Else = @else;
@@ -32,9 +32,9 @@ namespace LtlSharp.Automata.Transitions
                 return false;
             if (ReferenceEquals (this, obj))
                 return true;
-            if (obj.GetType () != typeof(DegeneralizerAutomataTransition))
+            if (obj.GetType () != typeof(DegeneralizerDecoration))
                 return false;
-            var other = (DegeneralizerAutomataTransition)obj;
+            var other = (DegeneralizerDecoration)obj;
             return Labels.SetEquals (other.Labels) & Else == other.Else;
         }
 

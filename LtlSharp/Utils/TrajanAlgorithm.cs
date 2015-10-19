@@ -11,7 +11,7 @@ namespace LtlSharp.Utils
     {
         public static IEnumerable<HashSet<T>> GetBSCC<T, T2> (this Automata<T, T2> mc) 
             where T : IAutomatonNode
-            where T2 : IAutomatonTransitionDecorator<T2>
+            where T2 : ITransitionDecoration<T2>
         {
             // A SCC is a Bottom SCC if all successors of the nodes in the SCC are also in the SCC
             // (or no nodes outside the scc can be reached)
@@ -20,7 +20,7 @@ namespace LtlSharp.Utils
         
         public static IEnumerable<HashSet<T>> GetSCC<T, T2> (this Automata<T, T2> mc) 
             where T : IAutomatonNode
-            where T2 : IAutomatonTransitionDecorator<T2>
+            where T2 : ITransitionDecoration<T2>
         {
             // Implements Trajan algorithm
             var sccs = new List<HashSet<T>> ();
@@ -48,7 +48,7 @@ namespace LtlSharp.Utils
                                           ref int currentIndex,
                                           List<HashSet<T>> sccs) 
             where T : IAutomatonNode
-            where T2 : IAutomatonTransitionDecorator<T2>
+            where T2 : ITransitionDecoration<T2>
         {
             
             if (index.ContainsKey (v))

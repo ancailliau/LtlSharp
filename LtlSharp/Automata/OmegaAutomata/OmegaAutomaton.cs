@@ -15,7 +15,7 @@ namespace LtlSharp.Automata.OmegaAutomata
     public abstract class OmegaAutomaton<T1,T2> 
         : Automata<T1,T2> 
         where T1 : IAutomatonNode
-        where T2 : IAutomatonTransitionDecorator<T2>
+        where T2 : ITransitionDecoration<T2>
     {
 
         public T1 InitialNode { get; protected set; }

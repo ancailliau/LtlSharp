@@ -8,8 +8,8 @@ namespace LtlSharp.Automata
     /// <summary>
     /// Defines a generic structure for decoration on transitions
     /// </summary>
-    public interface IAutomatonTransitionDecorator<T>
-        where T : IAutomatonTransitionDecorator<T>
+    public interface ITransitionDecoration<T>
+        where T : ITransitionDecoration<T>
     {
     }
 }

@@ -94,8 +94,8 @@
     <Compile Include="Automata\AcceptanceConditions\BuchiAcceptance.cs" />
     <Compile Include="Automata\AcceptanceConditions\RabinAcceptance.cs" />
     <Compile Include="Automata\Nodes\IAutomatonNode.cs" />
-    <Compile Include="Automata\Transitions\IAutomatonTransitionDecorator.cs" />
-    <Compile Include="Automata\Transitions\ProbabilisticAutomatonTransition.cs" />
+    <Compile Include="Automata\Transitions\ITransitionDecoration.cs" />
+    <Compile Include="Automata\Transitions\ProbabilityDecoration.cs" />
     <Compile Include="Automata\Nodes\ProductAutomatonNode.cs" />
     <Compile Include="Automata\Nodes\PowerSetAutomatonNode.cs" />
     <Compile Include="Automata\Nodes\Factories\IAutomatonNodeFactory.cs" />
@@ -105,7 +105,7 @@
     <Compile Include="Utils\QuickGraphUtils.cs" />
     <Compile Include="LiteralsSet.cs" />
     <Compile Include="Automata\Automata.cs" />
-    <Compile Include="Automata\Transitions\DegeneralizerAutomataTransition.cs" />
+    <Compile Include="Automata\Transitions\DegeneralizerDecoration.cs" />
     <Compile Include="Automata\Utils\ProbabilityTransitionExtensions.cs" />
     <Compile Include="Automata\Utils\LiteralSetTransitionExtensions.cs" />
     <Compile Include="Automata\Transitions\LiteralSetDecoration.cs" />

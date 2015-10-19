@@ -15,7 +15,7 @@ namespace LtlSharp.Models
     /// Represents a Markov Chain.
     /// </summary>
     public class MarkovChain<T>
-        : Automata<T, ProbabilityTransitionDecorator>
+        : Automata<T, ProbabilityDecoration>
         where T : IAutomatonNode
     {
 
@@ -24,7 +24,7 @@ namespace LtlSharp.Models
         /// initial probability is 0.
         /// </summary>
         /// <value>The initial distribution .</value>
-        public Dictionary<T, ProbabilityTransitionDecorator> Initial {
+        public Dictionary<T, ProbabilityDecoration> Initial {
             get;
             private set;
         }
@@ -35,7 +35,7 @@ namespace LtlSharp.Models
         public MarkovChain (IAutomatonNodeFactory<T> factory)
             : base (factory)
         {
-            Initial = new Dictionary<T, ProbabilityTransitionDecorator> ();
+            Initial = new Dictionary<T, ProbabilityDecoration> ();
         }
 
         /// <summary>
@@ -56,9 +56,9 @@ namespace LtlSharp.Models
         public void SetInitial (T node, double probability)
         {
             if (!Initial.ContainsKey (node)) {
-                Initial.Add (node, new ProbabilityTransitionDecorator (probability));
+                Initial.Add (node, new ProbabilityDecoration (probability));
             }
-            Initial [node] = new ProbabilityTransitionDecorator (probability);
+            Initial [node] = new ProbabilityDecoration (probability);
         }
 
         /// <summary>
@@ -89,34 +89,34 @@ namespace LtlSharp.Models
         /// <param name="target">Target node.</param>
         public void AddTransition (T source, double probability, T target)
         {
-            graph.AddEdge (new ParametrizedEdge<T, ProbabilityTransitionDecorator> (source, target, new ProbabilityTransitionDecorator (probability)));
+            graph.AddEdge (new ParametrizedEdge<T, ProbabilityDecoration> (source, target, new ProbabilityDecoration (probability)));
         }
 
         public override string ToDot ()
         {
-            var graphviz = new GraphvizAlgorithm<T, ParametrizedEdge<T, ProbabilityTransitionDecorator>> (this.graph);
+            var graphviz = new GraphvizAlgorithm<T, ParametrizedEdge<T, ProbabilityDecoration>> (this.graph);
             graphviz.FormatVertex += (object sender, FormatVertexEventArgs<T> e) => {
                 e.VertexFormatter.Label = e.Vertex.Name + "\\n{" + string.Join (",", e.Vertex.Labels) + "}";
                 if (this.Initial.ContainsKey (e.Vertex))
                     e.VertexFormatter.Style = GraphvizVertexStyle.Bold;
             };
-            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<T, ParametrizedEdge<T, ProbabilityTransitionDecorator>> e) => {
+            graphviz.FormatEdge += (object sender, FormatEdgeEventArgs<T, ParametrizedEdge<T, ProbabilityDecoration>> e) => {
                 e.EdgeFormatter.Label.Value = Math.Round (e.Edge.Value.Probability, 2).ToString ();
             };
             return graphviz.Generate ();
         }
 
-        public override Automata<T, ProbabilityTransitionDecorator> Clone ()
+        public override Automata<T, ProbabilityDecoration> Clone ()
         {
             var mc = new MarkovChain<T> (factory);
             foreach (var vertex in graph.Vertices) {
                 mc.graph.AddVertex (vertex);
             }
             foreach (var edge in graph.Edges) {
-                mc.graph.AddEdge (new ParametrizedEdge<T, ProbabilityTransitionDecorator> (
+                mc.graph.AddEdge (new ParametrizedEdge<T, ProbabilityDecoration> (
                     edge.Source, 
                     edge.Target, 
-                    new ProbabilityTransitionDecorator (edge.Value.Probability)
+                    new ProbabilityDecoration (edge.Value.Probability)
                 ));
             }
             foreach (var i in Initial) {

@@ -6,7 +6,7 @@ using LtlSharp.Automata.Transitions;
 namespace LtlSharp.Automata.OmegaAutomata
 {
     public class DegeneralizerAutomaton<T> 
-        : OmegaAutomaton<T, DegeneralizerAutomataTransition>
+        : OmegaAutomaton<T, DegeneralizerDecoration>
         where T : IAutomatonNode
     {
         BuchiAcceptance<T> _acceptanceSet;
@@ -22,7 +22,7 @@ namespace LtlSharp.Automata.OmegaAutomata
             _acceptanceSet = new BuchiAcceptance<T> ();
         }
 
-        public override Automata<T, DegeneralizerAutomataTransition> Clone ()
+        public override Automata<T, DegeneralizerDecoration> Clone ()
         {
             throw new NotImplementedException ();
         }

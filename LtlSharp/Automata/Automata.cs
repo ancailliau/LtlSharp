@@ -13,7 +13,7 @@ namespace LtlSharp.Automata
 {
     public abstract class Automata<T,T2>
         where T : IAutomatonNode
-        where T2 : IAutomatonTransitionDecorator<T2>
+        where T2 : ITransitionDecoration<T2>
     {
         protected AdjacencyGraph<T, ParametrizedEdge<T, T2>> graph;
         

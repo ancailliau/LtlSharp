@@ -552,7 +552,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 return x.Decoration.Labels.Count.CompareTo (y.Decoration.Labels.Count);
             });
 
-            var theEdge = new AutomataTransition<AutomatonNode, DegeneralizerAutomataTransition> ();
+            var theEdge = new AutomataTransition<AutomatonNode, DegeneralizerDecoration> ();
             foreach (var e0 in t0) {
                 var next0 = e0.Target;
                 var found = false;
@@ -640,26 +640,26 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 for (int j = last; j > i; j--) {
                     automaton.AddTransition (nodes [i],
                                              nodes [j],
-                                             new DegeneralizerAutomataTransition (Enumerable.Range (i, j - i)));
+                                             new DegeneralizerDecoration (Enumerable.Range (i, j - i)));
                 }
                 automaton.AddTransition (nodes [i],
                                          nodes [i],
-                                         new DegeneralizerAutomataTransition (true));
+                                         new DegeneralizerDecoration (true));
             }
 
             automaton.AddTransition (nodes [last],
                                      nodes [last],
-                                     new DegeneralizerAutomataTransition (Enumerable.Range (0, last)));
+                                     new DegeneralizerDecoration (Enumerable.Range (0, last)));
 
             for (int i = last - 1; i >= 0; i--) {
                 if (i == 0) {
                     automaton.AddTransition (nodes [last],
                                              nodes [i],
-                                             new DegeneralizerAutomataTransition (true));
+                                             new DegeneralizerDecoration (true));
                 } else {
                     automaton.AddTransition (nodes [last],
                                              nodes [i],
-                                             new DegeneralizerAutomataTransition (Enumerable.Range (0, i)));
+                                             new DegeneralizerDecoration (Enumerable.Range (0, i)));
                 }
             }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LtlSharp.Automata.Transitions
 {
-    public class LiteralSetDecoration : IAutomatonTransitionDecorator<LiteralSetDecoration>
+    public class LiteralSetDecoration : ITransitionDecoration<LiteralSetDecoration>
     {
         private LiteralsSet _literalSet;
         
