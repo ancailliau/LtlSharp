@@ -69,10 +69,10 @@ namespace LtlSharp.Tests
             ILiteral nmob = new Negation (mob);
             
             var lts = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
-            var n0 = new AutomatonNode ("i"); lts.AddNode (n0);
-            var n1 = new AutomatonNode ("s0");lts.AddNode (n1);
-            var n2 = new AutomatonNode ("s1");lts.AddNode (n2);
-            var n3 = new AutomatonNode ("s2");lts.AddNode (n3);
+            var n0 = lts.AddNode ("i"); 
+            var n1 = lts.AddNode ("s0");
+            var n2 = lts.AddNode ("s1");
+            var n3 = lts.AddNode ("s2");
 
             lts.SetInitialNode (n0);
                
@@ -117,10 +117,10 @@ namespace LtlSharp.Tests
             ILiteral nmob = new Negation (mob);
             
             var lts = new BuchiAutomaton<AutomatonNode> (new AutomatonNodeFactory ());
-            var n0 = new AutomatonNode ("i"); lts.AddNode (n0);
-            var n1 = new AutomatonNode ("s0");lts.AddNode (n1);
-            var n2 = new AutomatonNode ("s1");lts.AddNode (n2);
-            var n3 = new AutomatonNode ("s2");lts.AddNode (n3);
+            var n0 = lts.AddNode ("i"); 
+            var n1 = lts.AddNode ("s0");
+            var n2 = lts.AddNode ("s1");
+            var n3 = lts.AddNode ("s2");
 
             lts.SetInitialNode (n0);
 
