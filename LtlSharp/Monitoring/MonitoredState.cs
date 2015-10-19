@@ -14,7 +14,7 @@ namespace LtlSharp.Monitoring
             state = new Dictionary<Proposition, bool> ();
         }
 
-        internal bool Evaluate (LiteralsSet labels)
+        internal bool Evaluate (LiteralSet labels)
         {
             //Console.WriteLine (string.Join (",", labels));
             //Console.WriteLine (string.Join (",", state.Select (kv => kv.Key + "=" + kv.Value)));

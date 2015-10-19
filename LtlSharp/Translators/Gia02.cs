@@ -372,7 +372,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 Transitions = new HashSet<InternalTransition> (new [] {
                 new InternalTransition (acc.Length) {
                     Source = new HashSet<int> (node.Incoming),
-                    Label = new LiteralsSet (node.Old),
+                    Label = new LiteralSet (node.Old),
                     Accepting = acc
                 }
             });
@@ -391,7 +391,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 } else {
                     Transitions.Add (new InternalTransition (acc.Length) {
                         Source = new HashSet<int> (node.Incoming),
-                        Label = new LiteralsSet (node.Old),
+                        Label = new LiteralSet (node.Old),
                         Accepting = acc
                     });
                 }
@@ -428,7 +428,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                 set;
             }
 
-            public LiteralsSet Label {
+            public LiteralSet Label {
                 get;
                 set;
             }
@@ -441,7 +441,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
             public InternalTransition (int numberOfUntils)
             {
                 Source = new HashSet<int> ();
-                Label = new LiteralsSet ();
+                Label = new LiteralSet ();
                 Accepting = new BitArray (numberOfUntils);
             }
 

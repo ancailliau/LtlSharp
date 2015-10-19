@@ -8,9 +8,9 @@ namespace LtlSharp.Automata.Transitions.Decorations
     /// </summary>
     public class LiteralSetDecoration : ITransitionDecoration<LiteralSetDecoration>
     {
-        private LiteralsSet _literalSet;
+        private LiteralSet _literalSet;
         
-        public LiteralsSet LiteralSet {
+        public LiteralSet LiteralSet {
             get {
                 return _literalSet;
             }
@@ -23,7 +23,7 @@ namespace LtlSharp.Automata.Transitions.Decorations
         /// </summary>
         public LiteralSetDecoration ()
         {
-            _literalSet = new LiteralsSet ();
+            _literalSet = new LiteralSet ();
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace LtlSharp.Automata.Transitions.Decorations
         /// <param name="nl">Nl.</param>
         public LiteralSetDecoration (IEnumerable<ILiteral> nl)
         {
-            _literalSet = new LiteralsSet (nl);
+            _literalSet = new LiteralSet (nl);
         }
         
         public override string ToString ()

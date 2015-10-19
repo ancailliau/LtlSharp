@@ -85,7 +85,7 @@ namespace LtlSharp.Automata.Utils
         /// Returns all the successor nodes of the specified node for the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, T node, LiteralsSet labels)
+        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, T node, LiteralSet labels)
             where T : IAutomatonNode
         {
             return automata.Post (node, (l, target) => labels.Entails(l.LiteralSet));
@@ -95,7 +95,7 @@ namespace LtlSharp.Automata.Utils
         /// Returns all the successor nodes of the specified nodes for the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, IEnumerable<T> nodes, LiteralsSet labels)
+        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, IEnumerable<T> nodes, LiteralSet labels)
             where T : IAutomatonNode
         {
             return nodes.SelectMany (node => automata.Post(node, labels));
@@ -105,7 +105,7 @@ namespace LtlSharp.Automata.Utils
         /// Returns all the successor nodes of the specified node for all the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, T node, IEnumerable<LiteralsSet> labels)
+        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, T node, IEnumerable<LiteralSet> labels)
             where T : IAutomatonNode
         {
             return labels.SelectMany (l => automata.Post(node, l));
@@ -115,7 +115,7 @@ namespace LtlSharp.Automata.Utils
         /// Returns all the successor nodes of the specified nodes for all the specified transition label.
         /// </summary>
         /// <param name="node">Node.</param>
-        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, IEnumerable<T> nodes, IEnumerable<LiteralsSet> labels)
+        public static IEnumerable<T> Post<T> (this Automata<T, LiteralSetDecoration> automata, IEnumerable<T> nodes, IEnumerable<LiteralSet> labels)
             where T : IAutomatonNode
         {
             return nodes.SelectMany (node => automata.Post(node, labels));

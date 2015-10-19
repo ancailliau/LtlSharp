@@ -30,7 +30,7 @@ namespace LtlSharp.Automata
         /// Gets the labels of the node.
         /// </summary>
         /// <value>The labels.</value>
-        LiteralsSet Labels {
+        LiteralSet Labels {
             get;
         }
     }

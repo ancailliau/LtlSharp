@@ -6,16 +6,16 @@ using LtlSharp.Utils;
 
 namespace LtlSharp.Automata.Transitions
 {
-    public class LiteralsSet : IEnumerable<ILiteral>
+    public class LiteralSet : IEnumerable<ILiteral>
     {
         HashSet<ILiteral> _literals;
         
-        public LiteralsSet ()
+        public LiteralSet ()
         {
             _literals = new HashSet<ILiteral>();
         }
         
-        public LiteralsSet (IEnumerable<ILiteral> literals)
+        public LiteralSet (IEnumerable<ILiteral> literals)
         {
             _literals = new HashSet<ILiteral>(literals);
         }
@@ -54,17 +54,17 @@ namespace LtlSharp.Automata.Transitions
             }));
         }
         
-        public bool Entails (LiteralsSet l)
+        public bool Entails (LiteralSet l)
         {
             return Project (l._literals).IsSubsetOf (_literals);
         }
         
-        public IEnumerable<LiteralsSet> Expand (IEnumerable<ILiteral> alphabet)
+        public IEnumerable<LiteralSet> Expand (IEnumerable<ILiteral> alphabet)
         {
             
             Console.WriteLine ("start");
-            var s = new HashSet<LiteralsSet> ();
-            s.Add (new LiteralsSet ());
+            var s = new HashSet<LiteralSet> ();
+            s.Add (new LiteralSet ());
 
             Console.WriteLine (string.Join (",", alphabet));
             
@@ -79,11 +79,11 @@ namespace LtlSharp.Automata.Transitions
                     }
 
                 } else if (_literals.Contains (current.Negate ())) {
-                    s = new HashSet<LiteralsSet> (s.Where (l => !l.Contains (current)));
+                    s = new HashSet<LiteralSet> (s.Where (l => !l.Contains (current)));
 
                 } else {
                     foreach (var e in s.ToList ()) {
-                        var ns = new LiteralsSet (e);
+                        var ns = new LiteralSet (e);
                         ns.Add (current);
                         s.Add (ns);
                     }
@@ -113,9 +113,9 @@ namespace LtlSharp.Automata.Transitions
                 return false;
             if (ReferenceEquals (this, obj))
                 return true;
-            if (obj.GetType () != typeof(LiteralsSet))
+            if (obj.GetType () != typeof(LiteralSet))
                 return false;
-            var other = (LiteralsSet)obj;
+            var other = (LiteralSet)obj;
             return _literals.SetEquals (other._literals);
         }
 

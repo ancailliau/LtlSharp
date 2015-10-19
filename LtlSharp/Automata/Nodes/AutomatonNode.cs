@@ -37,7 +37,7 @@ namespace LtlSharp.Automata
         /// Gets the labels of the nodes.
         /// </summary>
         /// <value>The labels.</value>
-        public LiteralsSet Label {
+        public LiteralSet Label {
             get;
             private set;
         }
@@ -79,7 +79,7 @@ namespace LtlSharp.Automata
         {
             Id = currentId++;
             Name = string.IsNullOrEmpty (name) ? "s" + Id : name;
-            Label = new LiteralsSet (literals);
+            Label = new LiteralSet (literals);
         }
         
         #region IAutomatonNode Members
@@ -99,7 +99,7 @@ namespace LtlSharp.Automata
             }
         }
 
-        LiteralsSet IAutomatonNode.Labels {
+        LiteralSet IAutomatonNode.Labels {
             get {
                 return Label;
             }

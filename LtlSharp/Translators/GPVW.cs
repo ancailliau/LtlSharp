@@ -193,7 +193,7 @@ namespace LtlSharp.Buchi.LTL2Buchi
                     //    mapping [node.Name]
                     //);
 
-                    var literals = new LiteralsSet ();
+                    var literals = new LiteralSet ();
                     bool contradiction = false;
                     foreach (var f in node.Old) {
                         if (f is Proposition | f is Negation) {

@@ -310,7 +310,7 @@ namespace LtlSharp.Language
             return -1;
         }
 
-        public LiteralFormula (IEnumerable<LiteralsSet> terms)
+        public LiteralFormula (IEnumerable<LiteralSet> terms)
         {
             Terms = new List<Term> ();
 

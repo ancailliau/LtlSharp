@@ -186,7 +186,7 @@ namespace LtlSharp.Translators
             /// The procedure is recursively applied on all children.
             /// </summary>
             /// <param name="a">The literals.</param>
-            public void Update (LiteralsSet a)
+            public void Update (LiteralSet a)
             {
                 MacroState = new HashSet<AutomatonNode> (ba.Post (MacroState, a));
                 
@@ -279,7 +279,7 @@ namespace LtlSharp.Translators
             /// Gets or sets the labels for the transition.
             /// </summary>
             /// <value>The labels.</value>
-            public LiteralsSet Labels {
+            public LiteralSet Labels {
                 get;
                 set;
             }
@@ -300,7 +300,7 @@ namespace LtlSharp.Translators
             /// </summary>
             /// <param name="labels">Labels.</param>
             /// <param name="target">Target.</param>
-            public SafraTransition (LiteralsSet labels, SafraTree target)
+            public SafraTransition (LiteralSet labels, SafraTree target)
             {
                 this.Labels = labels;
                 this.Target = target;
